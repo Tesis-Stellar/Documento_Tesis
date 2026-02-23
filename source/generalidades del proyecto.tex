@@ -3,81 +3,52 @@
 %----------------------------------------------------------------------------
 
 \subsection{Descripción del problema}
-A nivel mundial, .\hfill \break
-
-A nivel regional, América Latina y el Caribe .\hfill \break
-
-Según el .\hfill \break
-
-
-Finalmente, otro problema 
-
-Reflexionando sobre la información presentada, . \hfill \break
+La reventa de entradas en canales digitales enfrenta problemas de autenticidad, trazabilidad y transparencia de transacciones. En plataformas no especializadas y en mercados informales, el comprador no siempre cuenta con mecanismos verificables para confirmar propiedad, historial del ticket y validez al momento de ingreso.
 
 
 \subsection{Objetivos}
-\subsection{Objetivo General}
-Desarrollar un sistema .
+\subsubsection{Objetivo General}
+Desarrollar una solución B2B de reventa de tickets, basada en contratos inteligentes de Stellar, que garantice unicidad y autenticidad del activo digital y permita evaluar mecanismos de reducción de fraude y especulación en el mercado secundario.
 %----------------------------------------------------------------------------
 
-\subsection{Objetivos Específicos}
+\subsubsection{Objetivos Específicos}
  
 \begin{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \item Implementar .
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \item Establecer .
-    
-    \item Desarrollar una plataforma web .
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    \item Evaluar .
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    \item Diseñar un modelo de ticket NFT con unicidad verificable y trazabilidad de propiedad.
+    \item Implementar contratos inteligentes para emisión, listado, compra, transferencia y redención de tickets.
+    \item Construir un prototipo web distribuido para simular el flujo completo de reventa en testnet.
+    \item Evaluar desempeño técnico y comportamiento antifraude mediante métricas reproducibles.
 \end{itemize}
 %----------------------------------------------------------------------------
+
+\subsection{Alcance y delimitaciones}
+
+El alcance se centra en el mercado secundario de entradas con despliegue en testnet. Quedan fuera de alcance, para esta versión, integración con pasarelas fiat reales, KYC productivo, despliegue definitivo en mainnet y acoplamiento con tiqueteras comerciales de terceros.
+
+\subsection{Metodología (investigación + desarrollo del prototipo)}
+
+La metodología combina revisión técnico-científica, diseño de arquitectura, implementación incremental del prototipo y evaluación experimental. Se articula en ciclos de definición de requerimientos, desarrollo de componentes y validación por escenarios de uso y fraude.
 
 \subsection{Requerimientos}
 
+\subsubsection{Requerimientos funcionales (mínimos: 10)}
 
-\subsubsection{Requerimientos del dispositivo portátil}
+Incluyen, como base, creación y gestión de tickets, listado de reventa, compra atómica, distribución de comisiones, verificación de titularidad, redención en puerta y trazabilidad de transferencias.
 
-\begin{itemize}
+\subsubsection{Requerimientos no funcionales (mínimos: 6, base ISO/IEC 27001)}
 
-    \item \textbf{Autonomía de batería: }Debe tener una autonomía mínima de 4 horas.
-    \item \textbf{Conectividad Inalámbrica:} Capacidad de transmisión inalámbrica a Internet.
-    \item \textbf{Pantalla integrada:} Pantalla que permita visualizar datos básicos del sistema como nivel de carga de la batería, hora, y otros indicadores relevantes.
-    \item \textbf{Diseño de Interfaz:} El tamaño y contraste de los elementos mostrados deben ser claros y legibles, priorizando la funcionalidad sobre el diseño gráfico y colores.
-    \item \textbf{Facilidad de uso:} El dispositivo debe ser intuitivo, con una interfaz sencilla y fácil de usar.
-    \item \textbf{Configuración:} Debe permitir la configuración de parámetros básicos como el tiempo y la conexión a una red Wi-Fi.
+Consideran control de acceso, integridad de datos, trazabilidad de eventos, gestión de claves, disponibilidad operativa y monitoreo de fallos en componentes críticos.
 
-\end{itemize}
-%----------------------------------------------------------------------------
+\subsubsection{Requerimientos complementarios (no obligatorios)}
+
+Como extensiones se consideran reglas dinámicas de mercado, políticas avanzadas de cancelación, analítica de especulación y soporte para activos de pago adicionales.
+
+\subsection{Estado del arte (comparación técnica y evidencia empírica)}
+
+La literatura y la evidencia de mercado reportan riesgos persistentes de fraude en ticketing digital, especialmente en contextos de alta demanda. Como línea comparativa, este trabajo contrasta mecanismos tradicionales de reventa con enfoques basados en blockchain en términos de trazabilidad, verificabilidad y tiempos de liquidación.
+
+\subsection{Marco legal colombiano (caso de referencia: Ley 1493/2011 y fiscalización digital)}
+
+El proyecto usa la Ley 1493 de 2011 como marco de referencia documental para discutir fiscalización y trazabilidad digital de transacciones en espectáculos públicos. El análisis jurídico se modela como mapeo normativo simulado dentro del diseño, sin declarar cumplimiento regulatorio productivo.
 \subsubsection{Requerimientos de conectividad}
-
-\begin{itemize}
-
-    \item \textbf{Protocolos:} Soporte para protocolos estándar de IoT como MQTT
-    \item \textbf{Compatibilidad:} Debe ser compatible con red Wi-Fi.
-    
-\end{itemize}
-%----------------------------------------------------------------------------
-
-\subsubsection{Requerimientos de la plataforma web}
-
-\begin{itemize}
-
-     \item \textbf{Interfaz de Usuario:} Diseño limpio y sencillo que facilite la navegación y comprensión de la información.
-     \item \textbf{Notificaciones:} Capacidad de enviar alertas o notificaciones de eventos.
-     \item \textbf{Historial:} Almacenamiento y visualización del registro de asistencia de cada asistente (adulto mayor) al CV.
-     \item \textbf{Configuración:} Facilidad para configurar parámetros y ajustes de la aplicación según las necesidades del usuario.
-     \item \textbf{Soporte: }Disponibilidad de información de ayuda sobre el manejo de la plataforma.
-     \item \textbf{Gestión de usuarios: } Capacidad para añadir, actualizar y borrar nuevos usuarios.
-\end{itemize}
-%----------------------------------------------------------------------------
-
-
-\subsection{Estado del arte}
-
-
-El Internet de las Cosas (IoT) ha revolucionado numerosas industrias, y el cuidado de la salud es una de las áreas más beneficiadas. Esta tecnología ha permitido la creación de soluciones innovadoras que mejoran significativamente la calidad de vida de los adultos mayores (AM), una población en rápido crecimiento a nivel mundial. Los sistemas de gestión del cuidado geriátrico que utilizan IoT y técnicas de visión por computadora, como se describe en la referencia \cite{1}, ofrecen una integración avanzada que permite una vigilancia constante y precisa de los pacientes, mejorando así la calidad de la atención. Estudios han demostrado que el uso de IoT en la atención médica puede reducir la carga sobre los sistemas de salud, minimizando costos operativos y mejorando la eficiencia del cuidado. Tal como lo mencionan en el estudio presentado en \cite{3}, la implementación de tecnologías IoT en el cuidado de los AM puede ayudar a mitigar el impacto del envejecimiento de la población, proporcionando herramientas que permiten a los cuidadores y profesionales de la salud ofrecer una atención más efectiva y menos intrusiva. Estos sistemas no solo mejoran la calidad de vida de los AM, sino que también les permiten mantener su independencia durante más tiempo, retrasando la necesidad de cuidados institucionalizados.\hfill \break
-inuo.\hfill \break
 

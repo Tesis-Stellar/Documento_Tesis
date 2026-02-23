@@ -1,49 +1,49 @@
 \newpage
 \section{Implementación}
 
-En esta sección se ilustra cómo se planificaron, diseñaron, construyeron e integraron los .\hfill\break
-%--------------------------------------------------------------------------------------------------
-\subsection{Estación Fija de Registro de Asistencia}
+Esta sección describe la materialización técnica del diseño propuesto en un entorno de prueba sobre Stellar testnet.
 
-La 
-\subsubsection{Esquemático y Diseño de la PCB de la Estación Fija}
+\subsection{Implementación de contratos Soroban}
 
-En esta sección se presenta el esquemático 
+Se desarrollan los contratos principales para representar tickets, gestionar reventa y controlar redención.
 
-\subsubsection{Diseño de la PCB en 2D}
+\subsubsection{NFT Ticket (OpenZeppelin)}
 
-El diseño de la PCB 
+Se adapta un patrón NFT para emisión y gestión de propiedad de tickets con identificador único.
 
-\subsubsection{Código de la Estación Fija de Registro de Asistencia}
+\subsubsection{Marketplace y pagos (XLM + USDC\_SIM)}
 
-El 
+La lógica de mercado implementa listado, compra y liquidación con distribución de comisiones usando activos de prueba.
 
-\subsubsection{Pruebas de la estación fija}
+\subsubsection{Redeem y control de acceso}
 
-\paragraph{Prueba 1:}Evaluar la detectabilidad del dispositivo vestible por la estación fija.\hfill\break
+La verificación en puerta combina validación de estado del ticket y control de titularidad para evitar reutilización.
 
+\subsection{Backend Node.js + Stellar SDK}
 
+El backend centraliza integración contractual, reglas de negocio y exposición de servicios para la interfaz web.
 
-%-------------------------------------------------------------------------------------------------
-\subsection{Implementación del Dispositivo Vestible}
+\subsubsection{API (usuarios, eventos, listings, verificación)}
 
-El dispositivo 
+Se implementan endpoints para autenticación, consulta de entradas, operaciones de reventa y validación.
 
+\subsubsection{Indexer (ingesta de eventos)}
 
+Un proceso dedicado consume eventos on-chain y los almacena para trazabilidad histórica.
 
+\subsubsection{Persistencia Postgres (historial, listados, auditoría)}
 
-\paragraph{Prueba 3:}Evaluar la duración de la batería durante la transmisión de datos a la nube en tasas de consumo máximo y mínimo.
+La base de datos relacional conserva entidades de negocio, historial de transacciones y evidencias para análisis.
 
-a.\hfill\break
+\subsection{Frontend web (simulación ticketera)}
 
+La interfaz permite simular flujos B2B2C de compra, listado, reventa y verificación de tickets.
 
-%-----------------------------------------------
-\subsection{Integración del sistema}
+\subsection{Despliegue distribuido (3 nodos)}
 
+El sistema se despliega en nodos diferenciados para capa de presentación, capa de servicios y capa de datos/indexación.
 
-% Configuración de color y estilo para el código
-\definecolor{codegreen}{rgb}{0,0.6,0}
-\definecolor{codegray}{rgb}{0.5,0.5,0.5}
-\definecolor{codepurple}{rgb}{0.58,0,0.82}
-\definecolor{backcolour}{rgb}{255, 255, 255}
+\subsection{Pruebas (unitarias, integración, antifraude, medición)}
+
+La validación técnica incluye pruebas unitarias de contratos, integración entre servicios, escenarios de fraude y medición de desempeño.
 

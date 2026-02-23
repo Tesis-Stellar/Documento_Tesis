@@ -1,62 +1,59 @@
 \newpage
 \section{Marco Teórico}
 
-%\subsection{¿Qué es el internet de las cosas?}
-%El Internet de las Cosas (IoT) es un componente clave de la cuarta revolución industrial, que facilita la conexión entre objetos, personas y dispositivos a través de Internet. Esta tecnología interactúa y trabaja en conjunto con otras tecnologías como sensores inalámbricos, machine learning e inteligencia artificial para habilitar conceptos como ciudades inteligentes, salud inteligente, transporte inteligente, agricultura inteligente e industria avanzada, entre otros sectores que se benefician de los avances y soluciones de IoT \cite{mincomercio_2022_gua}.\hfill \break
+\subsection{Blockchain y contratos inteligentes}
 
-Blockchain se describe como  \cite{aracle_2014_qu}.\hfill \break
+Blockchain es una estructura de datos distribuida que permite registrar transacciones de forma verificable entre múltiples participantes sin una autoridad única de control. Sobre esta infraestructura, los contratos inteligentes se modelan como programas que ejecutan reglas de negocio de manera determinística, facilitando automatización y trazabilidad en flujos de intercambio digital.
 
-En resumen, d.\hfill \break
+\subsection{Red Stellar}
 
-\subsection{Arquitectura de los sistemas basados en Internet de las Cosas}
+Stellar es una red orientada a pagos y transferencia de valor digital que combina tiempos de confirmación reducidos con comisiones de bajo costo. Su arquitectura permite integrar activos tokenizados y lógica contractual para casos de uso de mercado secundario.
 
-Para a en el diagrama \ref{diag:flujo capas general} \cite{Ávila-Camacho_Moreno-Villalba_2023}.
+\subsubsection{Modelo de transacciones/operaciones y comisiones}
 
+El modelo de Stellar diferencia transacciones y operaciones, permitiendo agrupar acciones dentro de una misma ejecución. Este enfoque es relevante para el diseño de compra atómica en reventa, donde pago, comisiones y transferencia del ticket deben validarse en una sola interacción.
 
+\subsubsection{Componentes de interacción (RPC, indexación de eventos)}
 
-\subsubsection{Capa 1: Captura o Dispositivo}
- Este es eor.\hfill \break
- 
- 
-\subsubsection{Capa 2: Almacenamiento}
-La capa d.\hfill \break
+La interacción con contratos se realiza mediante servicios RPC y herramientas de indexación. La estrategia de ingestión de eventos hacia una base de datos off-chain resulta clave para conservar historial de largo plazo y soportar auditoría de transferencias.
 
+\subsection{Protocolo de Consenso Stellar (SCP)}
 
-\subsubsection{Capa 3: Análisis}
-La.\hfill \break
+SCP se basa en Federated Byzantine Agreement y define mecanismos de acuerdo entre nodos mediante quórums y quorum slices. Este modelo permite analizar garantías de seguridad del estado del ledger bajo supuestos distribuidos.
 
+\subsubsection{Federated Byzantine Agreement: quorums y quorum slices (base teórica)}
 
-\subsubsection{Capa 4: Visualización}
-La .\hfill \break
+En FBA cada nodo define subconjuntos de confianza y participa en decisiones de consenso a partir de intersección de quórums. El diseño de confianza federada condiciona robustez y disponibilidad de la red.
 
-\subsection{Variables importantes a medir}
+\subsubsection{Propiedades: safety vs liveness (según documentación oficial)}
 
-\subsubsection{Clasificación de la actividad física}
+El análisis de SCP distingue propiedades de safety y liveness para caracterizar comportamiento del sistema ante fallos, particiones y escenarios de red adversos.
 
-El s. \hfill\break
- 
-\textit{
-''El gasto energético que produce cada actividad física (AF) se suele medir en MET (por las siglas en inglés de metabolic equivalent of task, (equivalente metabólico de la tarea). Un MET es la cantidad de energía gastada o consumida en una actividad, definida como la proporción de múltiplos o submúltiplos de la energía gastada durante el reposo en posición sentada. Por ejemplo, una actividad que consuma el doble de energía que estando sentado y en reposo equivale a 2 MET.''} \hfill\break
+\subsubsection{Evidencia formal (pruebas/modelos sobre SCP)}
 
+La literatura formal sobre SCP provee modelos para razonar sobre consistencia e intersección de quórums. Estos resultados fundamentan la discusión académica del protocolo dentro del proyecto.
 
-\subsection{Tabla de umbrales MET para catalogar una actividad:}
+\subsection{Soroban (Rust/Wasm)}
 
+Soroban es la capa de contratos inteligentes de Stellar y utiliza Rust compilado a WebAssembly. Su modelo de ejecución permite implementar lógica de emisión, transferencia y validación de activos digitales con control explícito de estado.
 
-    En la bús\ref{ME} es.\hfill\break
+\subsubsection{Storage y eventos}
 
-    
+Los contratos en Soroban gestionan estado persistente y emisión de eventos, habilitando trazabilidad técnica para componentes de auditoría e indexación.
 
-\subsection{Cálculo del MET a partir de acelerómetro tri-axial}
-intensidad de los movimientos durante la actividad física, tal como lo señalan los autores en \cite{MET4}.\hfill\break
+\subsubsection{NFTs en Soroban (OpenZeppelin)}
 
+El patrón NFT en Soroban permite representar entradas no fungibles con identificadores únicos, propiedad transferible y reglas de redención controlada.
 
-\begin{equation}
-VM = \sqrt{(Eje X)^{2} + (Eje Y)^{2} + (Eje Z)^{2}}
-\end{equation}
+\subsection{Tokens y pagos}
 
-El rtyrt
+El sistema de pagos de la propuesta contempla activos de prueba sobre testnet para ejecutar compras y distribución de comisiones durante la reventa.
 
+\subsubsection{XLM vía Stellar Asset Contract (SAC)}
 
+XLM se utiliza como activo base de liquidación para los escenarios principales de compra y transferencia en el prototipo.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Token simulado USDC\_SIM vía SAC}
+
+Como extensión experimental, se define un token de prueba USDC\_SIM para analizar comportamiento de pagos con un activo estable simulado dentro del mismo flujo contractual.
 

@@ -1,137 +1,19 @@
 
 \section{Evaluación y resultados}
 
-La validación deo.
+\subsection{Metodología de medición (latencia E2E, confirmación, tasa de fallos)}
 
+La evaluación se estructura con métricas cuantitativas de desempeño y consistencia funcional. Se miden tiempos de envío y confirmación de transacciones, latencia extremo a extremo desde interfaz, y proporción de fallos por tipo de operación.
 
+\subsection{Resultados del prototipo (Testnet)}
 
-\subsection{Validación con usuario}
+En esta subsección se consolidan resultados de ejecución sobre testnet para los flujos de emisión, listado, compra, transferencia y redención. La presentación de resultados incluye tablas comparativas y análisis por percentiles cuando aplique.
 
+\subsection{Evaluación antifraude (doble redención, reventa múltiple, QR estático)}
 
-A continuación se describirá cada una de las actividades que se visualizan 
+Se prueban escenarios de riesgo priorizados para validar que el sistema rechaza usos inválidos y conserva trazabilidad verificable del ticket a lo largo de su ciclo de vida.
 
-\textbf{Actividad 1: Detección del \textit{dispositivo vestible }por la \textit{estación fija}} \\
-  El objetivo de esta actividad .\hfill\break
+\subsection{Discusión comparativa (contra estado del arte)}
 
-\textbf{Actividad 2: Dibujo en reposo} \\
-Los participantes seguirán a sentarse.\hfill\break 
-
-\textbf{Actividad 3: Caminata dentro del laboratorio} \\
- Después .\hfill\break 
-
-\textbf{Actividad 4: Visualización de vídeo en televisor} \\
- Para finalizar  .\hfill\break
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.8\linewidth]{Imagenes/pruebasfootlab.png}
-    \caption{Entorno controlado de las pruebas realizadas con los sujetos de prueba.}
-    \label{pruebas footlab}
-\end{figure}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Pruebas en entorno controlado Footlab}
-
-La 
-%%%%%%%%%%%%%%%%%
-
-
-\subsection{Evaluación del proyecto}
-
-El balance general del proyecto, logró desarrollar un sistema integrado que combina un dispositivo vestible, una estación fija y una plataforma web para monitorizar el comportamiento sedentario en adultos mayores. Este sistema permite la captura y análisis en tiempo real de datos críticos para la salud, utilizando tecnologías del Internet de las Cosas (IoT).\hfill\break
-
-\begin{landscape}
-
-\subsubsection{Presupuesto}
-En la tabla \ref{presupuesto} se observa el  presupuesto estimado, el cual tiene un valor de $\$66.000.000 (COP)$ para realización del proyecto. 
-
-
-\begin{table}[H]
-    
-    \begin{tabular}{|c|c|c|c|c|c|}
-    \hline
-    \multicolumn{5}{|c|}{Presupuesto} \\ \hline
-    %----------------------------------------------------------------------------------------
-       Item& Cantidad& Precio unitario(COP)& Total (COP) & Fuente de financiación \\ \hline
-    %----------------------------------------------------------------------------------------
-        Horas de trabajo de los estudiantes& 840&  \$15.000&  \$12.600.000 & Propia\\ \hline
-    %----------------------------------------------------------------------------------------
-        Horas de trabajo del consultor 1& 76&  \$160.000&  \$12.160.000 & Matrícula universitaria \\ \hline
-        
-         Horas de trabajo del consultor 2 & 76&  \$160.000&  \$12.160.000 & Matrícula universitaria \\ \hline
-    %----------------------------------------------------------------------------------------
-        Horas de trabajo del asesor de concepción& 76& \$160.000& \$12.160.000 & Matrícula universitaria  \\ \hline
-    %----------------------------------------------------------------------------------------
-       
-    %----------------------------------------------------------------------------------------
-        Sensor RFID & 1& \$20.000& \$20.000 & Propia  \\ \hline
-    %----------------------------------------------------------------------------------------
-        Acelerómetro BMA400& 1& \$50.000& \$50.000 & Propia\\ \hline
-    %----------------------------------------------------------------------------------------
-       Devmodule KIT ESP32 & 1& \$20.000& \$20.000 &  Propia\\ \hline
-    %----------------------------------------------------------------------------------------
-       TT-GO ESP32 & 1& \$50.000& \$50.000 &  Propia\\ \hline
-       %----------------------------------------------------------------------------------------
-        %----------------------------------------------------------------------------------------
-       Pantalla & 2& \$12.000& \$24.000 &  Propia\\ \hline
-       %----------------------------------------------------------------------------------------
-         %----------------------------------------------------------------------------------------
-       Bateria de 400 Mah & 2& \$22.000& \$44.000 &  Propia\\ \hline
-       %----------------------------------------------------------------------------------------
-        Protoboard & 1& \$15.000& \$15.000 & Propia \\ \hline
-    %----------------------------------------------------------------------------------------
-        Circuito impreso& 2& \$300.000& \$600.000& Matrícula universitaria \\ \hline
-    %----------------------------------------------------------------------------------------
-        Componentes pasivos& 20& \$40.000& \$800.000& Propia\\ \hline
-    %----------------------------------------------------------------------------------------
-        Licencia Atium Designer& 1& 5.016.400& 5.016.400& Matrícula universitaria\\ \hline
-    %----------------------------------------------------------------------------------------
-        Estación de soldadura& 1& \$250.000& \$250.000& Matrícula universitaria\\ \hline
-    %----------------------------------------------------------------------------------------
-        Fabricación carcasa  3D del dispositivo& 2& \$150.000& \$300.000& Propia \\ \hline
-    %----------------------------------------------------------------------------------------
-        Osciloscopio& 1& \$2.026.400& \$2.026.400& Matrícula universitaria \\ \hline
-    %----------------------------------------------------------------------------------------
-        Multímetro& 1& \$90.000& \$90.000& Matrícula universitaria\\ \hline
-    %----------------------------------------------------------------------------------------
-        Computador portátil& 1& \$600.000& \$600.000&  Propia\\ \hline
-    %----------------------------------------------------------------------------------------
-        Fuente de voltaje& 1& \$748.000& \$748.000& Matrícula universitaria \\ \hline
-    %----------------------------------------------------------------------------------------
-    \multicolumn{4}{|c|}{\textbf{SUBTOTAL inversion propia}}                                                                           &  \$    1.023.000   \\ \hline
-   
-          \multicolumn{4}{|c|}{\textbf{SUBTOTAL}}                                                                           &  \$60.000.000     \\ \hline
-    %----------------------------------------------------------------------------------------
-         \multicolumn{4}{|c|}{\textbf{Adicionales e imprevistos 10 \%}}                                                             &      \$ 6.000.000           \\ \hline
-    %----------------------------------------------------------------------------------------
-        \multicolumn{4}{|c|}{\textbf{TOTAL}}   &  \$66.000.000 \\ \hline
-    %----------------------------------------------------------------------------------------
-    \end{tabular}
-     \caption{Presupuesto.}
-    \label{presupuesto}
-\end{table}
-
-\end{landscape}
-
-
-
-
-
-\begin{landscape}
-\subsubsection{Diagrama de Gantt}
-\begin{figure}[H]
-\centering
-\includegraphics[page=1,width=6.9in]{Imagenes/Gantt tesis.pdf}
-\caption{Diagrama de Gantt - Página 1.}
-\label{diagrama_de_gantt_1}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[page=2,width=7in]{Imagenes/Gantt tesis.pdf}
-\caption{Diagrama de Gantt - Página 2.}
-\label{diagrama_de_gantt_2}
-\end{figure}
-
-\end{landscape}
+Los resultados obtenidos se contrastan con referencias del estado del arte para discutir alcances, limitaciones y viabilidad técnica del enfoque basado en contratos inteligentes.
 

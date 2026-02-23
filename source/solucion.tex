@@ -1,17 +1,65 @@
 \newpage
-\section{Arquitectura y descripción general del sistema IoT propuesto}
+\section{Arquitectura y diseño del sistema propuesto}
 
-El sistema desarrollado, .\hfill\break
+\subsection{Actores, roles y límites de confianza (ticketera, vendedor, comprador, verificador)}
 
+La arquitectura considera una plataforma de ticketing como actor B2B principal, junto con vendedores, compradores y verificadores en puerta. Los límites de confianza se definen entre operaciones on-chain verificables y componentes off-chain responsables de interfaz, persistencia y analítica.
 
+\subsection{Modelo del ticket NFT (unicidad, autenticidad y trazabilidad)}
 
-%%----------------------------------------------------------------------------------------------------------------------------------------
+Cada ticket se representa como un activo no fungible con identidad única y metadatos validados por hash. La propiedad y transferencias se rastrean mediante eventos de contrato e indexación en base de datos.
 
+\subsubsection{Identificador único y hash de metadatos (sin exponer datos sensibles)}
 
-\subsection{Funcionalidades del dispositivo portátil:}
+El diseño separa datos operativos públicos y datos sensibles de usuario. En on-chain se almacena la referencia mínima para verificar integridad, mientras el detalle extendido permanece en persistencia off-chain.
 
-\subsubsection{Detección de comportamiento Sedentario:}El dispositivo vestible registrará las variables de acelerometría y calculará el índice MET cada minuto. Posteriormente, cada 10 minutos se calculará los MET acumulados, como lo mencionan los autores de \cite{MET2}. Esto permitirá que el sistema de manera automática determine el tipo de actividad (ligera, moderada, intensa) que se está realizando y a su vez, si está por debajo del umbral de 1,6 MET se cataloga un comportamiento sedentario. %%-----------------------------------------------------------------------------------------------
-\subsubsection{Registro de asistencia:} El dispositivo vestible se integrará junto con una base fija con tecnología RFID en el centro vida. Al momento de hacer contacto el uno con el otro marcará el registro de asistencia de cada adulto mayor cuando inicie y acabe la jornada del Centro Vida.
+\subsubsection{Estados del ticket (VALIDO/USADO/CANCELADO) y no-burn en v1}
+
+En la versión inicial, la redención marca el ticket como USADO sin quemar el activo, con el fin de conservar trazabilidad completa del ciclo de vida para evaluación y auditoría.
+
+\subsection{Diseño de contratos inteligentes (Soroban)}
+
+La lógica de negocio crítica se implementa en contratos Soroban para garantizar consistencia transaccional en operaciones de reventa.
+
+\subsubsection{Funciones: mint/list/buy/transfer/redeem}
+
+El conjunto funcional mínimo contempla emisión, listado de reventa, compra, transferencia de propiedad y redención del ticket.
+
+\subsubsection{Compra atómica (pago + comisiones + transferencia)}
+
+La operación de compra integra pago, reparto de comisiones y cambio de titularidad en una única ejecución para evitar estados parciales.
+
+\subsubsection{Política de comisiones (10\% ticketera, 5\% plataforma)}
+
+El modelo de negocio adopta una política de distribución porcentual parametrizable en el contrato para facilitar trazabilidad de recaudo.
+
+\subsection{Arquitectura distribuida (3 nodos)}
+
+El prototipo se despliega en tres nodos lógicos para separar responsabilidades y mejorar observabilidad del sistema.
+
+\subsubsection{Nodo Web (UI ticketera)}
+
+Gestiona la interacción de usuarios con catálogos, listados y flujo de compra/reventa.
+
+\subsubsection{Nodo API (Node.js)}
+
+Orquesta autenticación, reglas de negocio off-chain, integración con contratos y endpoints para verificación.
+
+\subsubsection{Nodo Datos (PostgreSQL + Indexer)}
+
+Consolida historial, auditoría y analítica mediante persistencia relacional e ingestión de eventos de blockchain.
+
+\subsection{Indexación y auditoría (eventos on-chain hacia Postgres)}
+
+La trazabilidad histórica se logra consumiendo eventos de contrato y almacenándolos en tablas de auditoría para consultas por ticket, usuario y transacción.
+
+\subsubsection{Ventana de retención de getEvents y necesidad de ingesta}
+
+Debido a restricciones de retención en consultas RPC, el indexador se considera un componente obligatorio para mantener historia completa del sistema.
+
+\subsection{Mapeo normativo simulado (Ley 1493/2011 en diseño, solo documental)}
+
+El diseño incorpora un mapeo documental de reglas de fiscalización como referencia académica, sin declarar implementación legal productiva.
 
 
  

@@ -1,5 +1,5 @@
 # Archivos compilados de LaTeX
-*.pdf
+#*.pdf
 *.aux
 *.bbl
 *.bcf
