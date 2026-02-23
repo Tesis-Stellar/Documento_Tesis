@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+\input{source/_preamble}
+
+\usepackage{caption}
+\usepackage{newfloat}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\DeclareFloatingEnvironment[fileext=ldiag,placement={!ht},name=Diagrama]{diagrama}
+\usepackage[pdftex,
+            pdfauthor={Nombre del Autor},
+            pdftitle={Título del Documento},
+            pdfsubject={Temática o Campo del Conocimiento},
+            pdfkeywords={Palabras Clave},
+            pdfproducer={Latex},
+            pdfcreator={pdflatex},
+            hidelinks]{hyperref}
+            
+
+\begin{document}
+\input{source/_cover}
+%------------------------------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/RECTOR}
+\input{source/ARTICULO23}
+\input{source/AGRADECIMIENTOS}
+%--------------------------------------------------------------------------------------------------------------------------
+\frontmatter
+\input{source/_table_of_contents}
+%\input{source/resumen}
+%------------------------------------------------------------------------------------------------------------------------------
+\mainmatter
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/introduccion}
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/generalidades del proyecto}
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/marco_teorico}
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/solucion}
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/sistema de arquitectura}
+%---------------------
+\input{source/Estandares de ingenieria}
+%---------------------
+\input{source/evaluacion y resultados}
+%---------------------
+\input{source/conclusiones}
+%---------------------
+\backmatter
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/referencias}
+%------------------------------------------------------------------------------------------------------------------------------
+\input{source/apendice_a}
+%------------------------------------------------------------------------------------------------------------------------------
+
+\end{document}
