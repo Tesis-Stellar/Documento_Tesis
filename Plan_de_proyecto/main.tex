@@ -1,0 +1,487 @@
+% !TEX TS-program = pdflatex
+% SPMP - Secciones 1 a 6 completas (contexto real: Tickets-NFT B2B en Stellar/Soroban)
+% Versión 1.1 - Revisión y mejoras
+
+\documentclass[12pt,oneside]{report}
+
+% ====== Paquetes y formato ======
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=black,
+  pdfauthor={Grupo 12},
+  pdftitle={SPMP - Proyecto Tickets-NFT B2B}
+}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\setlist[itemize]{left=0pt,label=--,itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{left=0pt,itemsep=2pt,topsep=4pt}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+% ====== Metadatos del proyecto ======
+\newcommand{\projectname}{Reventa B2B de tickets con NFTs en Stellar (Soroban)}
+\newcommand{\shortname}{Proyecto Tickets-NFT B2B}
+\newcommand{\version}{1.1}
+\newcommand{\docdate}{5 de noviembre de 2025}
+\newcommand{\course}{Planeación Proyecto Final}
+\newcommand{\team}{Grupo 12}
+
+% ====== Portada ======
+\begin{document}
+
+  \begin{titlepage}
+    \centering
+    {\Large Plan de Gestión del Proyecto de Software (SPMP)\par}
+    \vspace{1.2cm}
+    {\huge \textbf{\projectname}\par}
+    \vspace{0.3cm}
+    {\Large (\shortname)\par}
+    \vspace{1.2cm}
+    {\large Versión \version\ — \docdate\par}
+    \vspace{0.8cm}
+    % Logo (usa el archivo en la misma carpeta del .tex)
+    \includegraphics[width=4cm]{pontificia-universidad-javeriana-seeklogo.png}\par
+    \vspace{0.4cm}
+    {\Large Pontificia Universidad Javeriana Bogotá\par}
+    \vfill
+    {\large \course\par}
+    {\large \team\par}
+    \vspace{0.3cm}
+    {\large Semestre 2025-2\par}
+  \end{titlepage}
+
+  % ====== Preliminares ======
+  \pagenumbering{roman}
+
+  \section*{Historial de cambios}
+  \begin{longtable}{@{}p{2cm} p{3cm} p{7.5cm} p{2.5cm}@{}}
+    \toprule
+    \textbf{Versión} & \textbf{Fecha} & \textbf{Descripción} & \textbf{Autor(es)}\\
+    \midrule
+    \endfirsthead
+    \toprule
+    \textbf{Versión} & \textbf{Fecha} & \textbf{Descripción} & \textbf{Autor(es)}\\
+    \midrule
+    \endhead
+    \bottomrule
+    \endfoot
+    1.0 & 21 de octubre de 2025 & Primera emisión del SPMP con secciones 1 a 6 completas. & \team\\
+    1.1 & 5 de noviembre de 2025 & Revisión general: mejora de redacción en propósito y alcance; corrección de error tipográfico en entregables (cierre de enumerate); ampliación de glosario con términos clave (PM, WIP, DoD); ajuste de hipervínculos (color azul para mejor navegación); refinamiento de estructura en tablas de presupuesto. & \team\\
+  \end{longtable}
+
+  \section*{Prefacio}
+  Este \textbf{Plan de Gestión del Proyecto de Software (SPMP)} define cómo se dirigirá y controlará el \textbf{\shortname}. El documento cubre ciclo de vida, organización, calendarización, presupuesto, riesgos, calidad, configuración, aceptación y transición del producto para asegurar ejecución trazable y medible.
+  
+  \textbf{Audiencia.} Equipo del proyecto, docentes evaluadores y revisores académicos.
+  
+  \textbf{Uso del documento.} La \textbf{Sección~\ref{sec:vista-general}} resume el proyecto y su contexto; las secciones posteriores (8--12, por desarrollar) detallarán ciclo de vida, herramientas, planes de trabajo, monitoreo y soporte. El enfoque de trabajo es \textbf{Ágil con Kanban} (flujo continuo, WIP limitado, revisiones semanales).
+  
+  \textbf{Relación con artefactos.} Este SPMP se coordina con: Especificación de Requisitos de Software (SRS), documentos de Arquitectura/Diseño, Plan y Evidencias de Pruebas, Guía de Despliegue, Manual de Usuario y materiales de Póster/Demo.
+  
+  \textbf{Convenciones.} Terminología consistente: plataforma de ticketing, reventa B2B, ticket/entrada, NFT, contrato inteligente, Stellar/Soroban, comprador, vendedor, comisión, testnet, KPI, incidente, cambio de alcance.
+  
+  \textbf{Mantenimiento.} El equipo mantiene el documento y su historial de cambios. Actualizaciones relevantes (alcance, hitos, presupuesto, riesgos críticos) se registran y comunican en la siguiente revisión semanal.
+
+  \tableofcontents
+  \listoffigures
+  \listoftables
+  \clearpage
+
+  % ====== Cuerpo ======
+  \pagenumbering{arabic}
+
+  % =========================================================
+  % SECCIÓN 1 — Introducción
+  % =========================================================
+  \section{Introducción}
+  \label{sec:introduccion}
+
+    \subsection{Propósito del documento}
+    Establecer el \textit{plan de gestión} para el \textbf{\shortname}, definiendo procesos, roles, artefactos y mecanismos de control necesarios para entregar, dentro del semestre académico 2025-2, una solución B2B de reventa de tickets basada en \textbf{contratos inteligentes} y \textbf{NFTs} sobre la red \textbf{Stellar} con \textbf{Soroban}.
+
+    \subsection{Audiencia y lectores}
+    \begin{itemize}
+      \item Miembros del equipo de proyecto.
+      \item Docentes evaluadores del curso de Ingeniería de Software.
+      \item Actores externos invitados (Stellar)
+    \end{itemize}
+
+    \subsection{Alcance del documento}
+    Este SPMP abarca:
+    \begin{itemize}
+      \item \textbf{Vista general} (Sección~\ref{sec:vista-general}): visión, alcance, objetivos, supuestos, restricciones, entregables y resumen de calendarización/presupuesto.
+      \item \textbf{Contexto del proyecto} (Sección~8, por desarrollar): modelo de ciclo de vida, herramientas, plan de aceptación y organización.
+      \item \textbf{Administración} (Sección~9): métodos de estimación, planes de trabajo (WBS, Gantt, recursos, presupuesto).
+      \item \textbf{Monitoreo y control} (Sección~10): administración de requerimientos, métricas de progreso y cierre.
+      \item \textbf{Entrega del producto} (Sección~11): plan de transición.
+      \item \textbf{Procesos de soporte} (Sección~12): riesgos, configuración, métricas y calidad.
+    \end{itemize}
+
+    \subsection{Relación con otros artefactos}
+    Este plan se integra con:
+    \begin{itemize}
+      \item \textbf{SRS (Especificación de Requisitos de Software):} define funcionalidades y criterios de aceptación.
+      \item \textbf{Arquitectura/Diseño:} diagramas de componentes, despliegue y vistas técnicas.
+      \item \textbf{Plan de Pruebas y Evidencias:} estrategia de testing y validación de criterios.
+      \item \textbf{Manual de Usuario/Despliegue:} instrucciones operativas para stakeholders y equipo técnico.
+      \item \textbf{Póster y Demo final:} artefactos de presentación y validación académica.
+    \end{itemize}
+    Las decisiones de gestión descritas en este SPMP gobiernan la creación, revisión y mantenimiento de todos los artefactos listados.
+
+    \subsection{Cómo usar este documento}
+    \begin{itemize}
+      \item Para obtener una \textbf{visión rápida del proyecto}: leer Sección~\ref{sec:vista-general}.
+      \item Para consultar \textbf{procesos, prácticas y herramientas}: revisar secciones 8--12 (por completar en iteraciones futuras).
+      \item Utilizar la \textbf{Tabla de Contenidos}, \textbf{Lista de Figuras} y \textbf{Lista de Tablas} para navegación directa.
+      \item Los \textbf{hipervínculos internos} (azul) facilitan referencias cruzadas entre secciones.
+    \end{itemize}
+
+  % =========================================================
+  % SECCIÓN 3 — Definiciones, acrónimos y abreviaturas
+  % =========================================================
+  \section{Definiciones, acrónimos y abreviaturas}
+  \label{sec:glosario}
+    \begin{longtable}{@{}p{3.8cm} p{10.7cm}@{}}
+      \toprule
+      \textbf{Término} & \textbf{Definición}\\
+      \midrule
+      \endhead
+      \bottomrule
+      \endfoot
+      NFT & \textit{Non-Fungible Token} (Token No Fungible): activo digital único y trazable que representa un ticket en blockchain. Cada NFT tiene un identificador único que impide duplicación o falsificación.\\
+      Contrato inteligente & Programa autoejecutable desplegado en \textbf{Soroban} (Stellar) que gobierna la emisión, transferencia, comisiones y reglas de negocio de los tickets tokenizados.\\
+      Stellar & Red blockchain descentralizada diseñada para pagos rápidos y emisión de activos digitales. Utiliza el Protocolo de Consenso Stellar (SCP) para validación de transacciones.\\
+      Soroban & Plataforma de \textit{smart contracts} sobre Stellar, basada en WebAssembly (Wasm), que permite programar lógica de negocio compleja en Rust.\\
+      Ticket/Entrada & Activo digital (NFT) que otorga derecho de acceso a un evento. Incluye metadatos (evento, fecha, sección) y trazabilidad completa de propiedad.\\
+      Reventa B2B & Modelo de negocio \textit{Business-to-Business} orientado a plataformas de ticketing y organizadores para gestionar el mercado secundario de entradas de forma transparente y regulada.\\
+      Testnet & Red de pruebas de Stellar sin valor monetario real, utilizada para validar contratos, transacciones y flujos end-to-end antes de producción.\\
+      KPI (Key Performance Indicator) & Indicador clave de desempeño para monitorear avance y calidad del proyecto (ej: \% de casos de prueba aprobados, defectos abiertos, cumplimiento de hitos).\\
+      BPMN & \textit{Business Process Model and Notation}: notación estándar para modelar procesos de negocio y flujos de trabajo (ej: proceso de reventa, aceptación de cambios).\\
+      Carta Gantt & Diagrama de barras que visualiza actividades del proyecto, sus duraciones, dependencias y línea temporal.\\
+      WIP (Work In Progress) & Límite de trabajo en curso aplicado en Kanban para evitar sobrecarga y mejorar flujo continuo de tareas.\\
+      DoD (Definition of Done) & Criterios claros que una tarea o historia de usuario debe cumplir para considerarse completada y lista para entrega.\\
+      E2E (End-to-End) & Flujo completo desde la emisión del ticket hasta su validación final, pasando por publicación, compra y transferencia.\\
+      \bottomrule
+    \end{longtable}
+
+  % =========================================================
+  % SECCIÓN 4 — Descripción general del plan
+  % =========================================================
+  \section{Descripción general del plan}
+  \label{sec:descripcion-plan}
+    Este plan se estructura en las siguientes secciones principales:
+    \begin{itemize}
+      \item \textbf{Sección~\ref{sec:vista-general} (Vista general del proyecto):} visión del producto, propósito/alcance/objetivos, supuestos y restricciones, entregables, y resumen de calendarización y presupuesto.
+      \item \textbf{Sección 8 (Contexto del proyecto):} modelo de ciclo de vida y prácticas ágiles; lenguajes de programación y herramientas; plan de aceptación del producto; estructura organizacional y canales de comunicación.
+      \item \textbf{Sección 9 (Administración del proyecto):} métodos y herramientas de estimación; plan de inicio (entrenamiento e infraestructura); planes de trabajo detallados (WBS, carta Gantt, asignación de recursos y presupuesto).
+      \item \textbf{Sección 10 (Monitoreo y control):} administración de requerimientos; monitoreo y control de progreso (métricas, KPIs, acciones correctivas); proceso de cierre de fases e iteraciones.
+      \item \textbf{Sección 11 (Entrega del producto):} plan de transición y entrega al cliente/docente; responsables y cronograma de artefactos finales.
+      \item \textbf{Sección 12 (Procesos de soporte):} ambiente de trabajo y reglas de equipo; análisis y administración de riesgos; administración de configuración y documentación; métricas y proceso de medición; control de calidad (verificación, validación, revisiones).
+    \end{itemize}
+
+  % =========================================================
+  % SECCIÓN 5 — Políticas y convenciones del documento
+  % =========================================================
+  \section{Políticas y convenciones del documento}
+  \label{sec:politicas}
+    \begin{itemize}
+      \item \textbf{Control de cambios y versión:} toda actualización relevante (cambios de alcance, hitos, presupuesto, riesgos críticos, decisiones arquitectónicas) se registra en el \textbf{Historial de Cambios} con: número de versión, fecha, descripción y autor(es) responsable(s).
+      \item \textbf{Estructura y estilos:} el documento utiliza jerarquía de títulos (\texttt{\textbackslash section}, \texttt{\textbackslash subsection}, \texttt{\textbackslash subsubsection}) con numeración automática (latex). Figuras y tablas incluyen título descriptivo y fuente (cuando aplique). Tamaño de letra en figuras/tablas: mínimo 10pt.
+      \item \textbf{Lenguaje y enlaces:} redacción en español con terminología técnica consistente (ver Sección~\ref{sec:glosario}). Hipervínculos internos (azul) para referencias cruzadas entre secciones, tablas y figuras. URLs externas en color azul.
+      \item \textbf{Trazabilidad:} cada plan, métrica o decisión referencia los artefactos relacionados (SRS, Arquitectura, Plan de Pruebas) y las secciones del SPMP donde se detallan.
+      \item \textbf{Revisiones periódicas:} reunión semanal de seguimiento (ver Sección~\ref{subsec:evolucion-plan}). El equipo sincroniza cambios de alcance, actualizaciones de riesgos y ajustes al plan.
+      \item \textbf{Formato no alterable:} mantener tamaños de letra, márgenes, espaciado y estilos definidos. Permitido: cambio de colores (sin dificultar legibilidad) y marcas de agua institucionales.
+    \end{itemize}
+
+  % =========================================================
+  % SECCIÓN 6 — Vista general del proyecto (completa)
+  % =========================================================
+  \section{Vista general del proyecto}
+  \label{sec:vista-general}
+
+    \subsection{Visión del producto}
+    \label{subsec:vision}
+    Desarrollar una \textbf{solución B2B complementaria} para plataformas de boletería que permita la \textbf{reventa confiable, transparente y trazable de entradas} mediante \textbf{NFTs (tokens no fungibles)} emitidos y transferidos por \textbf{contratos inteligentes en Stellar (Soroban)}, brindando:
+    \begin{itemize}
+      \item \textbf{Trazabilidad completa:} historial inmutable de propiedad y transacciones de cada ticket.
+      \item \textbf{Autenticidad garantizada:} imposibilidad criptográfica de falsificación o duplicación.
+      \item \textbf{Reglas de comisión embebidas:} distribución automática de regalías a organizadores y artistas en cada reventa.
+      \item \textbf{Integración no invasiva:} complemento a sistemas de ticketing existentes, sin reemplazo de infraestructura.
+    \end{itemize}
+    La visión a largo plazo es establecer un \textbf{estándar de mercado secundario justo} que elimine fraude, scalping especulativo y opacidad, devolviendo control y valor a organizadores, artistas y compradores legítimos.
+
+    \subsection{Propósito, alcance y objetivos}
+    \label{subsec:proposito-alcance}
+
+      \subsubsection*{Propósito}
+      Mitigar \textbf{fraude}, \textbf{falta de garantías} y \textbf{opacidad} en la reventa de entradas mediante un modelo B2B \textbf{trazable, auditable y de alta velocidad}, apoyado en \textbf{contratos inteligentes} y \textbf{NFTs} sobre \textbf{Stellar/Soroban}, con un \textbf{prototipo web funcional} y \textbf{servicios backend} de respaldo que demuestren viabilidad técnica y de negocio en entorno académico (testnet).
+
+      \subsubsection*{Alcance (qué incluye el proyecto)}
+      \begin{itemize}
+        \item \textbf{Modelo de negocio B2B:} diseño conceptual y operativo de reventa para integración con plataformas de ticketing y organizadores.
+        \item \textbf{Smart contract Soroban:}
+        \begin{itemize}
+          \item Emisión de tickets como NFTs únicos con metadatos del evento.
+          \item Transferencia segura entre usuarios (compra/reventa).
+          \item Aplicación automática de comisiones programables (porcentaje a organizador/artista).
+          \item Consulta de historial de propiedad y trazabilidad.
+        \end{itemize}
+        \item \textbf{Prototipo web (Frontend) y API (Backend):}
+        \begin{itemize}
+          \item Flujo end-to-end en testnet: emisión de tickets, publicación en marketplace, compra/transferencia y consulta de trazabilidad.
+          \item Interfaz de usuario para compradores, vendedores y administradores de plataforma.
+          \item Servicios backend que interactúan con el contrato Soroban.
+        \end{itemize}
+        \item \textbf{Criterios de aceptación} medibles y \textbf{evidencias de prueba:} casos de prueba funcionales, de integración y de aceptación del usuario.
+        \item \textbf{Despliegue de demo} en entorno académico y documentación completa.
+        \item \textbf{Póster académico y video/demo final} para presentación y evaluación.
+      \end{itemize}
+
+      \subsubsection*{Alcance (qué NO incluye el proyecto)}
+      \begin{itemize}
+        \item Despliegue en \textbf{mainnet de Stellar} con fondos reales (fuera del alcance académico).
+        \item Integración con sistemas de ticketing de producción (limitado a sandbox/maquetas).
+        \item Pasarelas de pago fiat reales (solo simulación de transacciones).
+        \item Desarrollo de aplicaciones móviles nativas (solo web responsive).
+      \end{itemize}
+
+      \subsubsection*{Objetivos del proyecto}
+      \begin{enumerate}
+        \item \textbf{Modelar} el proceso de reventa B2B y la arquitectura lógico-técnica (diagramas BPMN, componentes, despliegue).
+        \item \textbf{Implementar} smart contract Soroban con funciones de:
+        \begin{itemize}
+          \item Emisión de NFTs (tickets).
+          \item Transferencia segura entre billeteras.
+          \item Aplicación automática de comisiones.
+          \item Consulta de historial de transacciones.
+        \end{itemize}
+        \item \textbf{Integrar} API backend y frontend web que operen el flujo E2E en testnet de Stellar.
+        \item \textbf{Definir y validar} criterios de aceptación con casos de prueba ejecutados y evidencias documentadas.
+        \item \textbf{Generar} artefactos de documentación técnica y académica requeridos (SRS, Arquitectura, Manual, Póster).
+        \item \textbf{Demostrar} la viabilidad técnica y de negocio del modelo B2B basado en blockchain ante docentes y stakeholders.
+      \end{enumerate}
+
+    \subsection{Supuestos y restricciones}
+    \label{subsec:supuestos-restricciones}
+
+      \subsubsection*{Supuestos (condiciones asumidas como verdaderas)}
+      \begin{itemize}
+        \item Acceso continuo y estable a \textbf{de Stellar/Soroban} durante todo el semestre.
+        \item Disponibilidad de \textbf{herramientas gratuitas o de licencia académica} (IDEs, plataformas de hosting, control de versiones).
+        \item \textbf{Equipo completo} disponible durante el semestre académico.
+        \item \textbf{Entregas parciales y finales} alineadas al calendario académico oficial de la Universidad.
+        \item Acceso a documentación técnica actualizada de Stellar, Soroban y herramientas complementarias.
+      \end{itemize}
+
+      \subsubsection*{Restricciones (limitaciones del proyecto)}
+      \begin{itemize}
+        \item \textbf{Tiempo acotado:} proyecto limitado a un semestre académico (aprox. 16 semanas).
+        \item \textbf{Cumplimiento de políticas institucionales:} código de ética académica, buenas prácticas de desarrollo, estándares de documentación de la Universidad.
+        \item \textbf{No sustitución de plataformas existentes:} la solución es un \textbf{complemento integrable}, no un reemplazo de sistemas de ticketing en producción.
+        \item \textbf{Recursos humanos:} equipo de 4 personas con dedicación parcial (proyecto académico, no tiempo completo).
+        \item \textbf{Recursos financieros:} presupuesto limitado a gastos operativos mínimos (hosting, dominio, impresiones); sin inversión en infraestructura de producción.
+      \end{itemize}
+
+    \subsection{Entregables}
+    \label{subsec:entregables}
+    Los entregables del proyecto se clasifican en:
+      \begin{enumerate}
+        \item \textbf{SPMP (Plan de Gestión del Proyecto):} este documento y sus actualizaciones periódicas (v1.0, v1.1, v2.0...).
+        \item \textbf{Modelo del proceso de reventa:} diagrama BPMN del flujo B2B completo (emisión, publicación, compra, transferencia, validación).
+        \item \textbf{Arquitectura del sistema:}
+        \begin{itemize}
+          \item Vista lógica (componentes, capas).
+          \item Vista de despliegue (infraestructura en testnet).
+          \item Diagrama de secuencia de operaciones críticas.
+        \end{itemize}
+        \item \textbf{Smart contract Soroban:}
+        \begin{itemize}
+          \item Código fuente en Rust.
+          \item Pruebas unitarias e integración básicas.
+          \item Contrato desplegado en testnet con dirección verificable.
+        \end{itemize}
+        \item \textbf{API/Backend:}
+        \begin{itemize}
+          \item Servicios RESTful para interactuar con el contrato.
+          \item Endpoints: emisión, transferencia, consulta de historial, cálculo de comisiones.
+          \item Documentación de API (Swagger/OpenAPI).
+        \end{itemize}
+        \item \textbf{Frontend Web (prototipo demo):}
+        \begin{itemize}
+          \item Interfaz para compradores, vendedores y administradores.
+          \item Flujo E2E funcional en testnet.
+          \item Diseño responsive.
+        \end{itemize}
+        \item \textbf{Plan de Pruebas y Evidencias:}
+        \begin{itemize}
+          \item Especificación de casos de prueba (funcionales, integración, aceptación).
+          \item Resultados de ejecución y evidencias (capturas, logs).
+          \item Reporte de cobertura y defectos encontrados/corregidos.
+        \end{itemize}
+        \item \textbf{Guía de Despliegue:} instrucciones paso a paso para replicar el entorno demo (configuración de testnet, despliegue de contrato, ejecución de API y frontend).
+        \item \textbf{Manual de Usuario:} guía operativa para usuarios finales (compradores, vendedores) y administradores de plataforma.
+        \item \textbf{Póster académico y Video/Demo final:} materiales de presentación para evaluación y difusión del proyecto.
+      \end{enumerate}
+
+    \subsection{Resumen de calendarización y presupuesto}
+    \label{subsec:resumen-calendario-presupuesto}
+
+      \subsubsection{Calendarización de fases e hitos (fechas tentativas 2026)}
+      La Tabla~\ref{tab:fases-hitos} resume las principales fases del proyecto, los hitos/entregables clave asociados, fechas estimadas y responsables. Las fechas se definirán con precisión una vez confirmado el calendario académico oficial.
+
+      \begin{table}[H]
+        \centering
+        \begin{tabularx}{\textwidth}{@{}p{3.2cm} X p{3.4cm} p{3.2cm}@{}}
+          \toprule
+          \textbf{Fase} & \textbf{Hito/Entregable clave} & \textbf{Fechas (2026)} & \textbf{Responsable}\\
+          \midrule
+          Inicio y Alcance & SPMP v1.0 aprobado (propósito, alcance, objetivos, riesgos iniciales, WBS preliminar) & Semana 1--2 & Líder/PM\\
+          \midrule
+          Análisis y Diseño & BPMN del proceso de reventa, arquitectura lógica y de despliegue, especificación de criterios de aceptación (SRS preliminar) & Semana 3--5 & BE/Blockchain + PM\\
+          \midrule
+          Implementación Smart Contract & Contrato Soroban (emisión/transferencia/comisiones) desplegado en testnet con pruebas unitarias básicas & Semana 6--9 & BE/Blockchain\\
+          \midrule
+          Prototipo Web/API & Demo web + API integradas al contrato; flujo E2E operativo en testnet & Semana 10--12 & FE + BE\\
+          \midrule
+          Pruebas y Validación & Ejecución de casos de prueba, evidencias documentadas, validación vs. criterios de aceptación & Semana 13--14 & QA/DevOps + Todos\\
+          \midrule
+          Documentación e Integración & Guía de despliegue, manual de usuario, actualización de SPMP, póster y preparación de demo final & Semana 15 & Todos (PM coordina)\\
+          \midrule
+          Cierre & Entrega final completa + presentación + lecciones aprendidas (post-mortem) & Semana 16 & PM\\
+          \bottomrule
+        \end{tabularx}
+        \caption{Resumen de fases e hitos del proyecto}
+        \label{tab:fases-hitos}
+      \end{table}
+
+      \subsubsection{Presupuesto consolidado (académico)}
+      
+      \paragraph{Horas-persona estimadas}
+      La Tabla~\ref{tab:horas-persona} detalla la distribución estimada de esfuerzo por rol. El total de 120 horas-persona se distribuye a lo largo del semestre académico.
+
+      \begin{table}[H]
+        \centering
+        \begin{tabular}{@{}l r@{}}
+          \toprule
+          \textbf{Rol} & \textbf{Horas estimadas}\\
+          \midrule
+          Reuniones equipo & 20\\
+          Backend/Blockchain (Soroban, API) & 40\\
+          Frontend (React/Vue, interfaz web) & 35\\
+          QA/DevOps (Pruebas, CI/CD, despliegue) & 25\\
+          \midrule
+          \textbf{Total} & \textbf{120}\\
+          \bottomrule
+        \end{tabular}
+        \caption{Presupuesto en horas-persona por rol}
+        \label{tab:horas-persona}
+      \end{table}
+
+      \paragraph{Costos operativos estimados (COP)}
+      La Tabla~\ref{tab:costos-operativos} consolida los gastos previstos para el proyecto. Se incluye una contingencia del 10\% para imprevistos.
+
+      \begin{table}[H]
+        \centering
+        \begin{tabular}{@{}l r p{5.5cm}@{}}
+          \toprule
+          \textbf{Ítem} & \textbf{Monto (COP)} & \textbf{Comentario}\\
+          \midrule
+          Hosting demo (PaaS/Cloud) & 40{,}000 & Uso académico, bajo consumo (ej: Vercel, Railway, Google Cloud Run free tier)\\
+          Impresiones (póster, anexos) & 120{,}000 & Material para entrega final y presentación académica\\
+          Transporte/viáticos & 80{,}000 & Reuniones presenciales, pruebas de usuario, validación con stakeholders\\
+          \midrule
+          \textbf{Subtotal} & \textbf{240{,}000} & \\
+          Contingencia 10\% & 24{,}000 & Reserva para imprevistos\\
+          \midrule
+          \textbf{Total estimado} & \textbf{264{,}000} & \\
+          \bottomrule
+        \end{tabular}
+        \caption{Presupuesto monetario consolidado (costos operativos)}
+        \label{tab:costos-operativos}
+      \end{table}
+
+      \textbf{Notas sobre el presupuesto:}
+      \begin{itemize}
+        \item Los costos de licencias de software son $\sim$0 (uso de herramientas open-source y planes académicos gratuitos).
+        \item Testnet de Stellar no tiene costos de transacción reales.
+        \item No se incluyen costos de hardware (equipos personales de los miembros del equipo).
+        \item El presupuesto total de \textbf{264,000 COP} es indicativo y puede ajustarse según disponibilidad de recursos institucionales o patrocinios.
+      \end{itemize}
+
+    \subsection{Evolución del plan}
+    \label{subsec:evolucion-plan}
+    El SPMP es un \textbf{documento vivo} que se revisa y actualiza periódicamente. El proceso de evolución se gestiona así:
+    
+    \subsubsection*{Frecuencia de revisión}
+    \begin{itemize}
+      \item \textbf{Revisión semanal:} reunión de seguimiento del equipo (duración: 30--60 min) donde se valida:
+      \begin{itemize}
+        \item Avance vs. plan (comparación con carta Gantt).
+        \item Estado de riesgos (identificación de nuevos riesgos o cambios en prioridad).
+        \item Necesidad de ajustes al alcance, calendario o presupuesto.
+      \end{itemize}
+      \item \textbf{Revisión al final de cada fase:} el equipo consolida lecciones aprendidas y actualiza secciones relevantes del SPMP (Sección~\ref{subsec:resumen-calendario-presupuesto}, Sección 12.2 Riesgos, etc.).
+    \end{itemize}
+
+    \subsubsection*{Triggers para actualización del SPMP}
+    El documento se actualiza formalmente (nueva versión en historial de cambios) cuando ocurra alguno de los siguientes eventos:
+    \begin{itemize}
+      \item \textbf{Cambios de alcance:} adición/eliminación de funcionalidades o entregables aprobados por el equipo y docente.
+      \item \textbf{Ajustes a hitos o fechas críticas:} reprogramación de entregas debido a retrasos, cambios en calendario académico o decisiones estratégicas.
+      \item \textbf{Modificaciones al presupuesto:} incremento/reducción de costos operativos o reasignación de horas-persona entre roles.
+      \item \textbf{Riesgos críticos materializados:} cuando un riesgo de alta prioridad se convierte en incidente y requiere plan de mitigación documentado.
+      \item \textbf{Decisiones arquitectónicas mayores:} cambios en la pila tecnológica, diseño del contrato inteligente o arquitectura del sistema que impacten tiempos/recursos.
+      \item \textbf{Resultados de pruebas que obligan a replanificar:} defectos críticos descubiertos que requieran iteraciones adicionales o ajuste de prioridades.
+    \end{itemize}
+
+    \subsubsection*{Responsabilidades}
+    \begin{itemize}
+
+      \item \textbf{Todos los miembros del equipo:} deben gestionar la línea base del plan, registrar cambios en el historial de versiones, comunica actualizaciones relevantes al equipo y docente.
+      \item \textbf{Docente/revisor:} valida y aprueba cambios de alcance mayores propuestos por el equipo.
+    \end{itemize}
+
+    \subsubsection*{Control de versiones}
+    \begin{itemize}
+      \item El SPMP se mantiene bajo control de versiones (Git/GitHub).
+      \item El \textbf{Historial de Cambios} al inicio del documento registra: versión, fecha, descripción breve del cambio y autor(es).
+      \item Cambios menores (correcciones tipográficas, formato) no requieren nueva versión formal; cambios sustantivos sí.
+    \end{itemize}
+
+  % ====== FIN DE SECCIONES 1-6 ======
+  % Las secciones 8-12 se desarrollarán en iteraciones futuras
+
+  \section*{Nota final}
+  Las secciones 8 a 12 de este SPMP (\textbf{Contexto del proyecto, Administración del proyecto, Monitoreo y control, Entrega del producto y Procesos de soporte}) se completarán en las siguientes iteraciones del documento, conforme avance el proyecto y se definan con mayor detalle los procesos operativos, herramientas, métricas y planes de trabajo.
+
+  La estructura actual (Secciones 1--6) establece la \textbf{base sólida} del proyecto: propósito, alcance, visión, objetivos, supuestos, restricciones, entregables y un panorama general de calendarización y presupuesto. Esta base permite iniciar el trabajo de análisis y diseño mientras se refinan los planes detallados de gestión.
+
+  % =========================================================
+  %  Referencias
+  % =========================================================
+  \section{Referencias}
+  \label{sec:referencias}
+    \begin{enumerate}[leftmargin=*,label={[\arabic*]}]
+      \item IEEE Std 1058-1998: \textit{IEEE Standard for Software Project Management Plans}.
+      \item ISO/IEC/IEEE 12207:2017: \textit{Systems and software engineering — Software life cycle processes}.
+      \item Project Management Institute (PMI): \textit{A Guide to the Project Management Body of Knowledge (PMBOK® Guide)}, 7th Edition, 2021.
+      \item Guía y plantilla del curso para SPMP, Pontificia Universidad Javeriana, 2025.
+      \item Stellar Development Foundation: \textit{Stellar Documentation}, \url{https://developers.stellar.org/}.
+      \item Soroban Documentation: \textit{Smart Contracts on Stellar}, \url{https://soroban.stellar.org/}.
+    \end{enumerate}
+
+\end{document}

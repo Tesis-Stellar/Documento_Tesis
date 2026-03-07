@@ -1,0 +1,604 @@
+%=================================================================
+% SRS - Proyecto Tickets-NFT B2B
+%=================================================================
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+% Nombres en español para índices
+\renewcommand{\contentsname}{Contenido}
+\renewcommand{\listtablename}{Lista de tablas}
+\renewcommand{\listfigurename}{Lista de ilustraciones}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+% Datos del proyecto (cámbialos si quieres)
+\newcommand{\nombreProyecto}{Reventa B2B de tickets con NFTs en Stellar (Soroban)}
+\newcommand{\nombreEmpresa}{SecureTicket}
+\newcommand{\universidad}{Pontificia Universidad Javeriana -- Ingeniería de Sistemas}
+\newcommand{\versionDoc}{0.1}
+
+\begin{document}
+
+%---------------------------------------------------------------
+% PORTADA (según plantilla SRSINGESOFT)
+%---------------------------------------------------------------
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\Large \textbf{\nombreProyecto}\par}
+    \vspace{0.5cm}
+    {\large \universidad\par}
+    \vspace{0.5cm}
+    {\large \nombreEmpresa\par}
+    
+    \vspace{2cm}
+    {\LARGE \textbf{ESPECIFICACIÓN DE REQUERIMIENTOS DE SOFTWARE}\par}
+    
+    \vspace{1.5cm}
+    {\large Fecha: \today\par}
+    {\large Versión del documento: \versionDoc\par}
+    
+    \vspace{2cm}
+    % Logos (opcional: descomenta y apunta a tus archivos)
+    %\includegraphics[width=0.3\textwidth]{logo_puj.png}\hspace{1cm}
+    %\includegraphics[width=0.3\textwidth]{logo_proyecto.png}
+    
+    \vfill
+    {\large Autores:\par}
+    {\large Juan Diego Arias Durán\\
+    Santiago Andres Mesa Niño\\
+    Andres Felipe Manosalva Garzón\\
+    Juan Camilo Carvajal Rodriguez\par}
+    
+    \vspace{1cm}
+\end{titlepage}
+
+%---------------------------------------------------------------
+% HISTORIAL DE CAMBIOS
+%---------------------------------------------------------------
+\section*{Historial de cambios}
+\addcontentsline{toc}{section}{Historial de cambios}
+
+En esta sección se presenta una tabla que describe la evolución y los cambios
+realizados al documento desde su primera versión hasta la versión actual.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{p{1.5cm}p{2cm}p{3cm}p{6cm}p{3cm}}
+        \toprule
+        \textbf{Versión} & \textbf{Fecha} & \textbf{Sección modificada} &
+        \textbf{Descripción de cambios} & \textbf{Responsable(s)} \\
+        \midrule
+        0.1 & \today & Documento completo &
+        Versión inicial del SRS para el prototipo académico del sistema de
+        reventa B2B de tickets con NFTs en Stellar (Soroban). &
+        Juan Diego Arias Durán \\
+        % Ejemplo de futuras filas:
+        % 0.2 & 10/12/2025 & 2, 3 & Ajuste de alcance y refinamiento de RF. & Equipo \\
+        \bottomrule
+    \end{tabular}
+    \caption{Historial de cambios}
+    \label{tab:historial_cambios}
+\end{table}
+
+\newpage
+
+%---------------------------------------------------------------
+% CONTENIDO, LISTA DE TABLAS, LISTA DE ILUSTRACIONES
+%---------------------------------------------------------------
+\tableofcontents
+\newpage
+
+\listoftables
+\newpage
+
+\listoffigures
+\newpage
+
+%===============================================================
+\section{Introducción}
+%===============================================================
+
+\subsection{Propósito}
+
+El presente documento corresponde a la \textit{Especificación de Requerimientos
+de Software} (SRS) del sistema \textbf{Tickets-NFT B2B}. Su propósito es:
+
+\begin{itemize}
+    \item Describir de manera completa, consistente y verificable los
+          requerimientos del sistema.
+    \item Servir como acuerdo formal entre los interesados (equipo de tesis,
+          docentes, potenciales aliados de boletería y desarrolladores) sobre
+          qué debe hacer el sistema y bajo qué restricciones.
+    \item Proveer la base para las actividades posteriores de diseño,
+          implementación, pruebas, documentación y mantenimiento.
+\end{itemize}
+
+Este SRS describe únicamente la primera versión del prototipo académico del
+sistema, ejecutado sobre la \textit{testnet} de Stellar.
+
+\subsection{Alcance}
+
+El sistema \textbf{Tickets-NFT B2B} es un módulo de software que se integra con
+plataformas de boletería existentes para soportar el mercado secundario de
+entradas. La versión descrita en este documento tiene como alcance:
+
+\begin{itemize}
+    \item Emitir entradas a eventos como \textit{tokens no fungibles} (NFTs)
+          únicos sobre la red Stellar (testnet), utilizando contratos
+          inteligentes Soroban.
+    \item Gestionar la transferencia de propiedad de dichos NFTs entre usuarios
+          en el contexto de reventa B2B/B2C.
+    \item Aplicar reglas de negocio configurables (comisiones por reventa,
+          límites de precio, ventanas de reventa, políticas anti-especulación).
+    \item Exponer una API REST para que la plataforma de boletería integre
+          estas capacidades dentro de sus procesos de venta primaria y
+          secundaria.
+    \item Proveer una interfaz web de demostración para administradores de
+          plataforma y compradores/vendedores.
+\end{itemize}
+
+Quedan fuera del alcance de esta versión: despliegue en \textit{mainnet},
+integraciones reales con pasarelas de pago fiat, aplicaciones móviles nativas,
+procesos de identificación y verificación de usuarios (KYC/AML) y aspectos
+comerciales o legales más allá del contexto académico.
+
+\subsection{Definiciones, acrónimos y abreviaciones}
+
+En la Tabla~\ref{tab:acronimos} se definen los términos y acrónimos más
+relevantes utilizados en este SRS. Cualquier término adicional deberá
+incorporarse a esta tabla en versiones posteriores del documento.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{p{3cm}p{10cm}}
+        \toprule
+        \textbf{Término} & \textbf{Definición} \\
+        \midrule
+        NFT & \textit{Non-Fungible Token}. Activo digital único emitido sobre una red blockchain. En el sistema, cada ticket se representa como un NFT. \\
+        Stellar & Red blockchain orientada a pagos y emisión de activos digitales, utilizada como infraestructura base del sistema. \\
+        Soroban & Plataforma de contratos inteligentes de Stellar utilizada para implementar la lógica de emisión y reventa de tickets. \\
+        Tickets-NFT B2B & Nombre corto del sistema de reventa B2B de entradas con NFTs en Stellar. \\
+        SRS & \textit{Software Requirements Specification}. Este documento. \\
+        SPMP & \textit{Software Project Management Plan} del proyecto Tickets-NFT B2B. \\
+        API & \textit{Application Programming Interface}. Conjunto de endpoints expuestos por el backend. \\
+        B2B & \textit{Business to Business}. Modelo en el que el sistema se ofrece a otras empresas (plataformas de boletería). \\
+        B2C & \textit{Business to Consumer}. Interacción entre la plataforma y el consumidor final. \\
+        RF & Requerimiento funcional. \\
+        RNF & Requerimiento no funcional. \\
+        Testnet & Red de pruebas de Stellar, sin valor monetario real. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Acrónimos y definiciones relevantes}
+    \label{tab:acronimos}
+\end{table}
+
+\subsection{Referencias}
+
+Las referencias empleadas para la elaboración de este SRS se encuentran
+organizadas en el sistema de gestión bibliográfica del Overleaf. Entre las más relevantes se encuentran:
+
+\begin{itemize}
+    \item Plantilla \textit{SRSINGESOFT\_V2.0} de IronWorks -- Ingeniería de
+          Sistemas, Pontificia Universidad Javeriana.
+    \item Plan de Gestión del Proyecto de Software (SPMP) del sistema
+          Tickets-NFT B2B.
+    \item Documento ``Mercado de reventa, Stellar y Blockchain'', que describe
+          el contexto del mercado de reventa de entradas y motiva el uso de
+          Stellar/Soroban.
+    \item Documentación oficial de Stellar y Soroban (protocolos, SDK,
+          guías de desarrollo y mejores prácticas).
+    \item Normativa colombiana relacionada con comercio electrónico y
+          protección al consumidor (Ley 1480 de 2011 y reglamentaciones
+          asociadas).
+\end{itemize}
+
+\subsection{Apreciación global}
+
+El resto del documento se estructura de la siguiente forma:
+
+\begin{itemize}
+    \item La \textbf{Sección 2} presenta una descripción global del sistema,
+          incluyendo su perspectiva dentro del entorno de boletería, las
+          funciones de alto nivel, las características de los usuarios,
+          restricciones, modelo del dominio, suposiciones y dependencias, y una
+          distribución preliminar de requerimientos.
+    \item La \textbf{Sección 3} detalla los requerimientos específicos del
+          producto, incluyendo interfaces externas, requerimientos funcionales,
+          requerimientos de desempeño, restricciones de diseño, atributos de
+          calidad y requerimientos de base de datos.
+    \item La \textbf{Sección 4} describe el proceso de ingeniería de
+          requerimientos utilizado para obtener, analizar y documentar los
+          requerimientos del sistema.
+    \item La \textbf{Sección 5} expone el proceso de verificación y
+          validación de los requerimientos.
+    \item La \textbf{Sección 6} incluye anexos con material complementario
+          (diagramas de modelo de dominio, plantillas de casos de uso, matrices
+          de trazabilidad, etc.).
+\end{itemize}
+
+%===============================================================
+\section{Descripción global}
+%===============================================================
+
+Esta sección describe el contexto general del producto, los usuarios
+objetivo y las restricciones que condicionan los requerimientos. No pretende
+ser una lista exhaustiva de requerimientos, sino el marco conceptual sobre el
+cual se apoya la Sección~3.
+
+%---------------------------------------------------------------
+\subsection{Perspectiva del producto}
+%---------------------------------------------------------------
+
+El sistema \textbf{Tickets-NFT B2B} es un \textit{producto nuevo} que se
+integra como componente de backend dentro del ecosistema de las plataformas de
+boletería actuales. No reemplaza completamente los sistemas existentes, sino
+que provee servicios especializados para:
+
+\begin{itemize}
+    \item Representar tickets como NFTs en Stellar.
+    \item Gestionar el mercado secundario de reventa de esos tickets.
+    \item Exponer la trazabilidad de propiedad de cada ticket.
+\end{itemize}
+
+Desde el punto de vista de la plataforma de boletería, el sistema se percibe
+como un servicio externo accesible mediante una API REST, responsable de la
+interacción con la red Stellar/Soroban y del manejo de la lógica de reventa.
+
+\subsubsection{Interfaces con el sistema}
+
+Los principales sistemas externos con los que interactúa Tickets-NFT B2B son:
+
+\begin{itemize}
+    \item \textbf{Plataforma de boletería aliada}: sistema que gestiona la
+          venta primaria de entradas (creación de eventos, asignación de
+          localidades, precios base). Interactúa con el backend de
+          Tickets-NFT B2B a través de una API REST para:
+          \begin{itemize}
+              \item Registrar eventos y lotes de tickets que serán tokenizados.
+              \item Consultar el estado de los tickets y sus historiales de
+                    reventa.
+          \end{itemize}
+    \item \textbf{Red Stellar (testnet) y nodos Soroban}: infraestructura de
+          libro mayor distribuido donde se emiten y transfieren los NFTs. El
+          backend utiliza los SDK y endpoints oficiales para enviar
+          transacciones y consultar estado.
+\end{itemize}
+
+El motor de base de datos utilizado por Tickets-NFT B2B se considera parte del
+mismo producto y no se trata como un sistema externo.
+
+\subsubsection{Interfaces con el usuario}
+
+La interacción de los usuarios se realiza principalmente mediante una
+\textbf{aplicación web} accesible desde navegadores modernos. Se distinguen
+dos tipos de interfaz:
+
+\begin{itemize}
+    \item \textbf{Interfaz de administrador de plataforma}:
+          \begin{itemize}
+              \item Permite crear y administrar eventos y lotes de tickets.
+              \item Configura políticas de reventa (porcentaje de comisión,
+                    límites de precio, periodo en el que la reventa está
+                    permitida).
+              \item Consulta reportes resumidos de actividad de reventa.
+          \end{itemize}
+    \item \textbf{Interfaz de comprador/vendedor}:
+          \begin{itemize}
+              \item Permite visualizar los tickets que posee el usuario.
+              \item Permite publicar tickets en venta en el mercado secundario.
+              \item Permite adquirir tickets en reventa y verificar su
+                    autenticidad y trazabilidad.
+          \end{itemize}
+\end{itemize}
+
+Requisitos preliminares de interfaz:
+
+\begin{itemize}
+    \item Se prioriza compatibilidad con navegadores Google Chrome y Mozilla
+          Firefox en sus versiones actuales.
+    \item Resolución mínima recomendada: 1366x768 píxeles.
+    \item La interfaz debe presentar mensajes de error claros y evitar, en lo
+          posible, exponer terminología técnica de blockchain al usuario final.
+\end{itemize}
+
+\subsubsection{Interfaces con el hardware}
+
+El sistema está pensado como una aplicación web cliente-servidor que no
+requiere hardware especializado. Las interfaces relevantes son:
+
+\begin{itemize}
+    \item \textbf{Equipos cliente}: computadores de escritorio o portátiles,
+          y potencialmente dispositivos móviles, con tarjeta de red Ethernet o
+          WiFi que les permita conectarse a Internet.
+    \item \textbf{Servidor de aplicación}: máquina virtual o servidor en la
+          nube capaz de ejecutar el backend, la base de datos y las
+          herramientas de despliegue del contrato Soroban.
+\end{itemize}
+
+A nivel preliminar se asume que el servidor cuenta con al menos 2~vCPU, 4~GB
+de RAM y 20~GB de almacenamiento disponible para el prototipo.
+
+\subsubsection{Interfaces con el software}
+
+El sistema depende de varios productos de software. La Tabla~\ref{tab:soft_interfaces}
+resume los principales componentes previstos en esta etapa (sujetos a cambios en el
+documento de diseño).
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{p{3cm}p{2cm}p{4cm}p{5cm}}
+        \toprule
+        \textbf{Producto} & \textbf{Versión} & \textbf{Fuente} & \textbf{Propósito} \\
+        \midrule
+        SO servidor (Ubuntu) & 22.04 LTS & Sitio oficial Ubuntu & Sistema operativo del servidor de aplicación y base de datos. \\
+        PostgreSQL & 15.x & Sitio oficial PostgreSQL & Almacenamiento de información off-chain (usuarios, eventos, configuración, vínculos a NFTs). \\
+        Entorno backend (p.ej. Node.js) & 20.x & Sitio oficial Node.js & Ejecución de la API REST y lógica de negocio fuera de la blockchain. \\
+        SDK Stellar/Soroban & Última estable & Documentación oficial Stellar & Firma y envío de transacciones a la red Stellar y al contrato Soroban. \\
+        Navegadores web & Versiones actuales & Sitios oficiales & Ejecución del frontend en los equipos cliente. \\
+        \bottomrule
+    \end{tabular}
+    \caption{Interfaces de software previstas}
+    \label{tab:soft_interfaces}
+\end{table}
+
+\subsubsection{Interfaces de comunicación}
+
+La comunicación entre los componentes del sistema se realiza mediante:
+
+\begin{itemize}
+    \item \textbf{HTTP/HTTPS} sobre protocolo \textbf{TCP/IP} para:
+          \begin{itemize}
+              \item Comunicación entre el frontend web y el backend.
+              \item Consumo de la API REST por parte de la plataforma de
+                    boletería.
+              \item Acceso del backend a endpoints públicos de la red Stellar
+                    y servicios asociados.
+          \end{itemize}
+    \item \textbf{Conexiones de base de datos} sobre \textbf{TCP/IP} entre el
+          backend y el servidor PostgreSQL.
+\end{itemize}
+
+Los puertos específicos y configuraciones de firewall se detallarán en el
+documento de diseño e instalación.
+
+\subsubsection{Restricciones de memoria}
+
+Aunque no se prevé un consumo intensivo de memoria en el contexto académico, se
+establecen los siguientes mínimos recomendados:
+
+\begin{itemize}
+    \item Servidor de aplicación: al menos 4~GB de memoria RAM disponible para
+          backend, base de datos y servicios auxiliares.
+    \item Equipos cliente: al menos 4~GB de RAM para ejecutar un navegador
+          moderno sin afectar la experiencia de usuario.
+\end{itemize}
+
+En futuras versiones, si el número de usuarios o eventos crece
+significativamente, será necesario ajustar estas cifras.
+
+\subsubsection{Operaciones}
+
+Se identifican los siguientes modos de operación relevantes:
+
+\begin{itemize}
+    \item \textbf{Modo administrador}: orientado a la gestión de eventos, lotes
+          de tickets y políticas de reventa.
+    \item \textbf{Modo comprador/vendedor}: orientado a la gestión del
+          inventario de tickets y las operaciones de compra/venta.
+\end{itemize}
+
+Adicionalmente, el sistema debe soportar operaciones periódicas como:
+
+\begin{itemize}
+    \item Generación de respaldos de la base de datos (por ejemplo, diarios).
+    \item Registro de logs de actividad para fines de auditoría y depuración.
+\end{itemize}
+
+\subsubsection{Requerimientos de adaptación del sitio}
+
+Para adaptarse a distintas plataformas de boletería, el sistema deberá permitir
+configurar, sin modificar el código fuente:
+
+\begin{itemize}
+    \item Parámetros de identificación de la plataforma (nombre comercial,
+          logotipo, URL de retorno).
+    \item Moneda de referencia y formato de precios.
+    \item Reglas por defecto de reventa (comisión base, límite máximo de
+          precio, ventana de reventa).
+\end{itemize}
+
+Estos parámetros se gestionarán mediante archivos de configuración o tablas de
+base de datos, documentadas en la guía de instalación y operación.
+
+%---------------------------------------------------------------
+\subsection{Funciones del producto}
+%---------------------------------------------------------------
+
+A un nivel alto, el sistema Tickets-NFT B2B proporciona las siguientes funciones:
+
+\begin{itemize}
+    \item \textbf{Gestión de eventos y lotes de tickets}: creación, consulta y
+          actualización de eventos y de los lotes de tickets asociados.
+    \item \textbf{Emisión de tickets NFT}: generación de NFTs en la red
+          Stellar y registro de su relación con los tickets del sistema.
+    \item \textbf{Gestión de inventario de tickets}: asignación de tickets a
+          usuarios, visualización de tickets disponibles y vendidos.
+    \item \textbf{Gestión de mercado secundario}: publicación de tickets en
+          venta, consulta de ofertas y ejecución de operaciones de
+          compra/venta.
+    \item \textbf{Cálculo y distribución de comisiones}: aplicación de reglas
+          configurables al realizar reventas.
+    \item \textbf{Consulta de trazabilidad}: visualización del historial de
+          propiedad y transacciones asociadas a un ticket NFT.
+\end{itemize}
+
+Estas funciones se refinarán en la Sección~3 como requerimientos funcionales
+individuales.
+
+%---------------------------------------------------------------
+\subsection{Características del usuario}
+%---------------------------------------------------------------
+
+Se identifican las siguientes clases de usuarios:
+
+\begin{itemize}
+    \item \textbf{Administrador de plataforma}:
+          \begin{itemize}
+              \item Perfil: personal de la plataforma de boletería o del equipo
+                    de operación del sistema.
+              \item Responsabilidades: configurar eventos, lotes de tickets y
+                    políticas de reventa; monitorear la actividad general del
+                    sistema.
+              \item Nivel técnico: familiarizado con herramientas web de
+                    administración; no se asume conocimiento profundo de
+                    blockchain.
+          \end{itemize}
+    \item \textbf{Comprador/Vendedor}:
+          \begin{itemize}
+              \item Perfil: usuario final que compra entradas y, en caso
+                    necesario, revende sus tickets.
+              \item Responsabilidades: gestionar su inventario de tickets,
+                    publicar ofertas de venta y comprar tickets en el mercado
+                    secundario.
+              \item Nivel técnico: conocimientos básicos de navegación web; se
+                    espera que el sistema abstraiga los detalles técnicos de
+                    la red Stellar.
+          \end{itemize}
+\end{itemize}
+
+En futuras versiones del SRS se podrá incluir una tabla para cada tipo de
+usuario, especificando capacidades, necesidades de capacitación y nivel de
+seguridad requerido.
+
+%---------------------------------------------------------------
+\subsection{Restricciones}
+%---------------------------------------------------------------
+
+Las restricciones que condicionan el diseño y los requerimientos del sistema se
+clasifican de la siguiente forma:
+
+\paragraph{Restricciones generales}
+
+\begin{itemize}
+    \item El sistema se desarrolla como parte de un proyecto académico con
+          tiempo y recursos limitados, lo cual acota el alcance funcional y el
+          nivel de robustez esperado.
+    \item La versión descrita está orientada a funcionar exclusivamente sobre
+          la \textit{testnet} de Stellar.
+\end{itemize}
+
+\paragraph{Restricciones de software}
+
+\begin{itemize}
+    \item Uso de tecnologías libremente disponibles o con licencias adecuadas
+          para fines académicos.
+    \item El sistema debe ejecutarse en entornos compatibles con las versiones
+          especificadas de SO, DBMS y frameworks listados en la
+          Tabla~\ref{tab:soft_interfaces}.
+\end{itemize}
+
+\paragraph{Restricciones de hardware}
+
+\begin{itemize}
+    \item Se asume disponibilidad de un servidor con recursos mínimos
+          indicados en la sección de interfaces con el hardware.
+    \item Los clientes deben disponer de equipos con capacidad para ejecutar
+          navegadores modernos sin degradación severa del rendimiento.
+\end{itemize}
+
+%---------------------------------------------------------------
+\subsection{Modelo del dominio}
+%---------------------------------------------------------------
+
+El modelo de dominio describe los conceptos principales del problema y sus
+relaciones, independientemente de la implementación final. De manera preliminar
+se identifican las siguientes entidades:
+
+\begin{itemize}
+    \item \textbf{Evento}: representación de un concierto, espectáculo u otro
+          tipo de evento.
+    \item \textbf{Ticket}: derecho de asistir a un evento en una localidad
+          específica; se vincula a un NFT.
+    \item \textbf{Usuario}: persona o entidad que compra, posee o revende
+          tickets.
+    \item \textbf{Transacción de reventa}: operación mediante la cual un
+          ticket cambia de propietario en el mercado secundario.
+    \item \textbf{Política de reventa}: conjunto de reglas asociadas a un
+          evento o plataforma, que definen comisiones y restricciones de
+          reventa.
+\end{itemize}
+
+En una versión posterior de este documento se añadirá un diagrama de modelo de
+dominio y una tabla por cada entidad, con sus atributos, tipo de dato y
+descripción, siguiendo el formato propuesto por la plantilla.
+
+%---------------------------------------------------------------
+\subsection{Suposiciones y dependencias}
+%---------------------------------------------------------------
+
+\paragraph{Suposiciones}
+
+\begin{itemize}
+    \item Se asume que la plataforma de boletería interesada cuenta ya con un
+          sistema de venta primaria de tickets y un modelo de datos básico para
+          eventos y usuarios.
+    \item Se asume que los usuarios finales disponen de conexión a Internet
+          estable para usar la interfaz web.
+    \item Se asume que la red Stellar testnet estará disponible y con un nivel
+          razonable de rendimiento durante el periodo de desarrollo y pruebas.
+\end{itemize}
+
+\paragraph{Dependencias}
+
+\begin{itemize}
+    \item El correcto funcionamiento del sistema depende de la disponibilidad
+          de la red Stellar testnet y de los servicios asociados a Soroban.
+    \item La API REST que expone Tickets-NFT B2B depende de la infraestructura
+          de red y de los servidores donde se despliegue el backend.
+    \item Cualquier cambio significativo en los SDK o en los modelos de
+          transacción de Stellar/Soroban puede requerir ajustes en el diseño y
+          en los requerimientos.
+\end{itemize}
+
+%---------------------------------------------------------------
+\subsection{Distribución de requerimientos}
+%---------------------------------------------------------------
+
+De forma preliminar, los requerimientos del sistema se distribuyen entre los
+siguientes módulos funcionales:
+
+\begin{itemize}
+    \item \textbf{Módulo de gestión de eventos y tickets}: agrupa los
+          requerimientos relacionados con la creación y administración de
+          eventos y lotes de tickets.
+    \item \textbf{Módulo de emisión NFT}: agrupa los requerimientos que
+          definen cómo se crean y vinculan los NFTs en Stellar para cada
+          ticket.
+    \item \textbf{Módulo de mercado secundario}: agrupa los requerimientos
+          sobre publicación de ofertas, compra/venta y trazabilidad.
+    \item \textbf{Módulo de configuración y políticas}: agrupa los
+          requerimientos sobre comisiones, restricciones de reventa y
+          parámetros de integración con plataformas externas.
+    \item \textbf{Módulo de usuarios y autenticación}: agrupa los
+          requerimientos de manejo de cuentas de usuario y control de acceso.
+\end{itemize}
+
+%===============================================================
+% Aquí después vendría la Sección 3: Requerimientos específicos
+%===============================================================
+
+\end{document}

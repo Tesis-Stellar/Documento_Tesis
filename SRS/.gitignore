@@ -1,0 +1,39 @@
+# Archivos compilados de LaTeX
+#*.pdf
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.ilg
+*.ind
+
+# Borrador de TeX
+*.dvi
+*.ps
+*.eps
+
+# Directorios de caché
+.cache/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# MiKTeX
+miktex.log
