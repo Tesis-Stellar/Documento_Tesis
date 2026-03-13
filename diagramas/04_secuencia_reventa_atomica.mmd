@@ -1,0 +1,34 @@
+sequenceDiagram
+    participant V as Vendedor
+    participant C as Comprador
+    participant WEB as Frontend Ticketera
+    participant API as Backend API
+    participant IDX as Indexador
+    participant FAC as Contrato Factory
+    participant EVT as Contrato Evento
+    participant SAC as Token XLM/USDC_SIM
+
+    V->>WEB: Publicar ticket para reventa
+    WEB->>API: Crear listing(ticket_root_id, version_actual, precio)
+    API->>EVT: list_ticket(ticket_id_versionado)
+    EVT-->>API: Listing activo
+    API-->>WEB: Listing confirmado
+
+    C->>WEB: Comprar ticket
+    WEB->>API: buy_listing(listing_id)
+    API->>EVT: buy_ticket_atomico(...)
+
+    Note over EVT: Transacción atómica
+    EVT->>SAC: Transferir comisión ticketera
+    EVT->>SAC: Transferir comisión plataforma
+    EVT->>SAC: Transferir pago neto vendedor
+    EVT->>EVT: Burn(ticket_version_actual)
+    EVT->>EVT: Mint(ticket_nueva_version)
+    EVT->>EVT: Emitir evento TicketResold(root_id, old_v, new_v)
+
+    EVT-->>API: Compra exitosa
+    API->>IDX: Registrar evento on-chain
+    IDX->>API: Historial actualizado
+    API-->>WEB: Entregar nuevo comprobante al comprador
+    WEB-->>C: Ticket vigente (nueva versión)
+    WEB-->>V: Ticket anterior inválido

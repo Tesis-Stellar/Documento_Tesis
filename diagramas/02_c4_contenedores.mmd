@@ -1,0 +1,50 @@
+flowchart LR
+    subgraph CLIENTE[Cliente]
+        C1[Frontend Web Ticketera\nReact/Next.js]
+        C2[Freighter Wallet]
+        C3[App Verificador\nModo online/offline]
+    end
+
+    subgraph SERVIDOR[Nodo API]
+        A1[API REST/GraphQL]
+        A2[Módulo Auth y Roles]
+        A3[Módulo Reventa]
+        A4[Módulo Verificación QR]
+        A5[Indexador de Eventos Stellar]
+        A6[Cola de sincronización offline]
+    end
+
+    subgraph DATOS[Nodo Data]
+        D1[(PostgreSQL)]
+        D2[(Bitácora de auditoría)]
+        D3[(Cache de estado de tickets)]
+    end
+
+    subgraph BLOCKCHAIN[Stellar Testnet]
+        B1[Contrato Factory]
+        B2[Contrato por Evento]
+        B3[SAC XLM]
+        B4[Token USDC_SIM opcional]
+    end
+
+    C1 --> A1
+    C1 --> C2
+    C3 --> A4
+
+    A1 --> A2
+    A1 --> A3
+    A4 --> A6
+    A3 --> B2
+
+    A5 --> B1
+    A5 --> B2
+    A5 --> D1
+
+    A1 --> D1
+    A2 --> D1
+    A3 --> D3
+    A4 --> D2
+
+    B1 --> B2
+    B2 --> B3
+    B2 --> B4

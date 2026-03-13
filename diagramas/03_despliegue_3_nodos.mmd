@@ -1,0 +1,51 @@
+flowchart TB
+    subgraph N1[Nodo 1: Web]
+        W1[Frontend Ticketera]
+        W2[Portal Admin Event Manager]
+        W3[Portal Verificador]
+    end
+
+    subgraph N2[Nodo 2: API]
+        A1[API Gateway]
+        A2[Servicio Reventa]
+        A3[Servicio Verificación]
+        A4[Indexador Blockchain]
+        A5[Servicio Firma QR]
+    end
+
+    subgraph N3[Nodo 3: Datos]
+        D1[(PostgreSQL)]
+        D2[(Tabla usuarios)]
+        D3[(Tabla eventos)]
+        D4[(Tabla tickets_versionados)]
+        D5[(Tabla checkins)]
+        D6[(Tabla auditoría)]
+    end
+
+    BC[Stellar Testnet\nFactory + Contratos por Evento]
+    FW[Freighter Wallet Usuarios]
+
+    W1 --> A1
+    W2 --> A1
+    W3 --> A1
+
+    A1 --> A2
+    A1 --> A3
+    A2 --> A4
+    A3 --> A5
+
+    A2 --> D1
+    A3 --> D1
+    A4 --> D1
+    D1 --> D2
+    D1 --> D3
+    D1 --> D4
+    D1 --> D5
+    D1 --> D6
+
+    A2 --> BC
+    A3 --> BC
+    A4 --> BC
+
+    W1 --> FW
+    FW --> BC

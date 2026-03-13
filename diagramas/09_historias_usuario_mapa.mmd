@@ -1,0 +1,26 @@
+flowchart TB
+    E1[Épica 1: Configuración B2B por ticketera]
+    E2[Épica 2: Reventa segura B2C]
+    E3[Épica 3: Verificación y acceso]
+    E4[Épica 4: Trazabilidad y auditoría]
+
+    HU1[HU-01\nComo admin ticketera\nquiero crear un evento\npara habilitar reventa]
+    HU2[HU-02\nComo admin ticketera\nquiero definir wallets y fees\npara distribuir comisiones]
+    HU3[HU-03\nComo plataforma\nquiero desplegar contrato por evento\npara aislar configuración]
+
+    HU4[HU-04\nComo vendedor\nquiero listar mi ticket\npara ofrecerlo en marketplace]
+    HU5[HU-05\nComo comprador\nquiero comprar con wallet\npara recibir titularidad]
+    HU6[HU-06\nComo sistema\nquiero ejecutar compra atómica\npara evitar inconsistencias]
+
+    HU7[HU-07\nComo verificador\nquiero validar online\npara decidir acceso]
+    HU8[HU-08\nComo verificador\nquiero validar offline temporal\npara continuidad operativa]
+    HU9[HU-09\nComo sistema\nquiero sincronizar consumos\npara resolver conflictos]
+
+    HU10[HU-10\nComo auditor\nquiero ver historial por root_id\npara trazabilidad de propiedad]
+    HU11[HU-11\nComo plataforma\nquiero indexar eventos on-chain\npara consultas rápidas]
+    HU12[HU-12\nComo tesis\nquiero comparar métricas\npara validación académica]
+
+    E1 --> HU1 --> HU2 --> HU3
+    E2 --> HU4 --> HU5 --> HU6
+    E3 --> HU7 --> HU8 --> HU9
+    E4 --> HU10 --> HU11 --> HU12

@@ -1,0 +1,30 @@
+sequenceDiagram
+    participant USR as Asistente
+    participant VRF as Dispositivo Verificador
+    participant API as Backend Verificación
+    participant DB as PostgreSQL
+    participant CH as Contrato Evento
+
+    USR->>VRF: Presenta QR (ticket_id, version, firma, exp)
+
+    alt Modo online
+        VRF->>API: validar_qr(payload)
+        API->>DB: Consultar estado cacheado
+        API->>CH: Verificar owner/version/used
+        CH-->>API: Estado on-chain
+        API->>DB: Persistir check-in
+        API-->>VRF: ACEPTADO o RECHAZADO
+    else Modo offline
+        VRF->>VRF: Verificar firma y expiración local
+        VRF->>VRF: Verificar lista local de consumidos
+        VRF-->>USR: Resultado provisional
+        Note over VRF: Ventana offline máxima: 30 min
+    end
+
+    opt Recuperación de conectividad
+        VRF->>API: Sincronizar check-ins pendientes
+        API->>DB: Resolver conflictos
+        API->>CH: Confirmar redenciones
+        API-->>VRF: Confirmación final
+        Note over API,VRF: Política: primer check-in sincronizado gana
+    end

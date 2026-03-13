@@ -1,0 +1,33 @@
+flowchart LR
+    subgraph TQ[Swimlane: Ticketera B2B]
+        T1[Crear evento de reventa]
+        T2[Configurar wallet de fees y reglas]
+        T3[Solicitar despliegue contrato del evento]
+    end
+
+    subgraph PL[Swimlane: Plataforma Stellar Tickets]
+        P1[Factory despliega contrato por evento]
+        P2[Registrar evento y parámetros en BD]
+        P3[Exponer marketplace web white-label]
+    end
+
+    subgraph US[Swimlane: Usuario Final B2C]
+        U1[Conectar wallet]
+        U2[Listar ticket para reventa]
+        U3[Comprar ticket en marketplace]
+        U4[Recibir ticket versión vigente]
+        U5[Presentar QR en acceso]
+    end
+
+    subgraph VR[Swimlane: Verificación Acceso]
+        V1[Validación online]
+        V2[Validación offline provisional]
+        V3[Sincronizar consumos pendientes]
+        V4[Resolver conflicto y auditar]
+    end
+
+    T1 --> T2 --> T3 --> P1 --> P2 --> P3
+    P3 --> U1 --> U2 --> U3 --> U4 --> U5
+    U5 --> V1
+    U5 --> V2 --> V3 --> V4
+    V1 --> V4

@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> EmitidoStub: Venta primaria stub
+    EmitidoStub --> Asignado: Asignación inicial a comprador
+    Asignado --> Listado: Usuario publica reventa
+    Listado --> Asignado: Cancelar listing
+    Listado --> Revendido: Compra confirmada
+
+    state Revendido {
+        [*] --> BurnPrevio
+        BurnPrevio --> RemintNuevo
+        RemintNuevo --> VersionVigente
+    }
+
+    Revendido --> Listado: Nueva reventa
+    Asignado --> Verificado: Check-in válido
+    Revendido --> Verificado: Check-in válido
+    Verificado --> Consumido: Redención final
+
+    Asignado --> Invalidado: Evento cancelado/política ticketera
+    Listado --> Invalidado: Evento cancelado/política ticketera
+    Revendido --> Invalidado: Evento cancelado/política ticketera
+
+    Consumido --> [*]
+    Invalidado --> [*]

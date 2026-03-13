@@ -1,0 +1,103 @@
+erDiagram
+    USUARIO {
+        uuid id PK
+        string email
+        string nombre_completo
+        string documento_identidad
+        string telefono
+        string wallet_address
+        datetime created_at
+    }
+
+    TICKETERA {
+        uuid id PK
+        string nombre
+        string dominio_white_label
+        string wallet_fee
+        datetime created_at
+    }
+
+    EVENTO {
+        uuid id PK
+        uuid ticketera_id FK
+        string nombre
+        datetime fecha_hora
+        string lugar
+        int aforo
+        string contract_address
+        int fee_ticketera_bp
+        int fee_plataforma_bp
+    }
+
+    TICKET_ROOT {
+        uuid id PK
+        uuid evento_id FK
+        string root_id_onchain
+        string estado_actual
+        datetime created_at
+    }
+
+    TICKET_VERSION {
+        uuid id PK
+        uuid ticket_root_id FK
+        int version
+        string owner_wallet
+        bool for_sale
+        decimal price
+        bool consumed
+        string tx_hash_mint
+        string tx_hash_burn
+        datetime created_at
+    }
+
+    LISTING_REVENTA {
+        uuid id PK
+        uuid ticket_version_id FK
+        decimal precio_publicado
+        string estado_listing
+        datetime publicado_at
+        datetime vendido_at
+    }
+
+    TRANSACCION_REVENTA {
+        uuid id PK
+        uuid listing_id FK
+        string buyer_wallet
+        string seller_wallet
+        decimal monto_total
+        decimal fee_ticketera
+        decimal fee_plataforma
+        decimal neto_vendedor
+        string asset_code
+        string tx_hash_buy
+        datetime created_at
+    }
+
+    CHECKIN {
+        uuid id PK
+        uuid ticket_version_id FK
+        string modo
+        string dispositivo_id
+        string resultado
+        datetime checkin_at
+        bool synced
+    }
+
+    AUDITORIA_EVENTO {
+        uuid id PK
+        uuid evento_id FK
+        string tipo_evento
+        string referencia_onchain
+        string detalle
+        datetime created_at
+    }
+
+    TICKETERA ||--o{ EVENTO : gestiona
+    EVENTO ||--o{ TICKET_ROOT : contiene
+    TICKET_ROOT ||--o{ TICKET_VERSION : versiona
+    TICKET_VERSION ||--o| LISTING_REVENTA : publica
+    LISTING_REVENTA ||--o| TRANSACCION_REVENTA : materializa
+    TICKET_VERSION ||--o{ CHECKIN : registra
+    EVENTO ||--o{ AUDITORIA_EVENTO : audita
+    USUARIO ||--o{ CHECKIN : opera
+    USUARIO ||--o{ LISTING_REVENTA : publica

@@ -1,0 +1,33 @@
+flowchart TB
+    U1[Comprador]
+    U2[Vendedor]
+    U3[Verificador en puerta]
+    U4[Admin Ticketera]
+    U5[Admin Plataforma Stellar Tickets]
+
+    subgraph SISTEMA[Plataforma de Reventa B2B sobre Stellar]
+        S1[Portal Web de Ticketera\nwhite-label]
+        S2[API Backend + Indexador]
+        S3[Base de Datos PostgreSQL]
+        S4[Factory de Contratos por Evento\nSoroban]
+        S5[Contrato de Evento\nTicket NFT + Reventa]
+        S6[Red Stellar Testnet]
+    end
+
+    U1 -->|Compra/Reventa| S1
+    U2 -->|Lista y vende ticket| S1
+    U3 -->|Valida QR\nonline/offline| S1
+    U4 -->|Configura evento, fees y políticas| S1
+    U5 -->|Configura fee plataforma| S2
+
+    S1 --> S2
+    S2 --> S3
+    S2 --> S4
+    S4 --> S5
+    S5 --> S6
+
+    S1 -. Wallet no-custodial .-> W1[Freighter Wallet]
+    W1 -. Firma transacciones .-> S6
+
+    S6 -->|Eventos on-chain| S2
+    S2 -->|Historial y auditoría| S3
