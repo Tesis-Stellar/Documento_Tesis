@@ -1,0 +1,1733 @@
+\documentclass[12pt, letterpaper]{article}
+
+% ── Paquetes ──────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{setspace}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{float}
+\usepackage{caption}
+
+\geometry{
+  letterpaper,
+  top=2.5cm, bottom=2.5cm,
+  left=3cm,  right=3cm,
+  headheight=15pt
+}
+
+% ── Colores ───────────────────────────────────────────────────────────────────
+\definecolor{azulPUJ}{HTML}{1F3864}
+\definecolor{azulMed}{HTML}{2E74B5}
+\definecolor{azulClr}{HTML}{D6E4F7}
+\definecolor{grisText}{HTML}{404040}
+\definecolor{grisCl}{HTML}{F2F2F2}
+\definecolor{lineColor}{HTML}{BFBFBF}
+\definecolor{naranCl}{HTML}{FCE4D6}
+\definecolor{verdeCl}{HTML}{E2EFDA}
+
+% ── Columnas de tabla personalizadas ─────────────────────────────────────────
+% P{w} = parbox justificado con ancho fijo
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ── Header / Footer ───────────────────────────────────────────────────────────
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyhead[L]{\small\color{azulMed} Plataforma IoT de Monitoreo Industrial --- SAD}
+\fancyhead[R]{\small\color{grisText} Pontificia Universidad Javeriana}
+\fancyfoot[L]{\small\color{grisText} Arquitectura de Software · Taller 1 · Caso 9}
+\fancyfoot[R]{\small\color{azulMed} \thepage}
+
+% ── Hipervínculos ─────────────────────────────────────────────────────────────
+\hypersetup{
+  colorlinks=true,
+  linkcolor=azulMed,
+  urlcolor=azulMed,
+  pdftitle={SAD -- Plataforma IoT de Monitoreo Industrial},
+  pdfauthor={Mesa, Peñuela, Parra}
+}
+
+% ── Espaciado entre párrafos ──────────────────────────────────────────────────
+\setlength{\parskip}{6pt}
+\setlength{\parindent}{0pt}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% Evita anclas duplicadas de hyperref al reiniciar numeracion despues de portada.
+\hypersetup{pageanchor=false}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% PORTADA
+% ══════════════════════════════════════════════════════════════════════════════
+\begin{titlepage}
+  \thispagestyle{empty}
+  \centering
+
+  \includegraphics[width=4cm]{LogoPUJ.png}
+
+  \vspace{0.4cm}
+  {\color{lineColor}\rule{\linewidth}{0.4pt}}
+  \vspace{0.3cm}
+
+  {\fontsize{11}{13}\selectfont\color{azulPUJ}
+    \textbf{PONTIFICIA UNIVERSIDAD JAVERIANA}
+  }\\[0.15cm]
+  {\fontsize{10}{12}\selectfont\color{grisText}
+    Departamento de Ingeniería de Sistemas
+  }\\[0.05cm]
+  {\fontsize{10}{12}\selectfont\color{grisText}
+    \textit{Arquitectura de Software}
+  }
+
+  \vspace{0.5cm}
+  {\color{lineColor}\rule{\linewidth}{0.4pt}}
+
+  \vfill
+
+  {\fontsize{10}{12}\selectfont\color{grisText}
+    \MakeUppercase{Documento de Arquitectura de Software}
+  }\\[0.3cm]
+
+  {\fontsize{20}{24}\selectfont\bfseries\color{azulPUJ}
+    Plataforma IoT de Monitoreo\\[0.2cm]
+    Industrial para Infraestructura\\[0.2cm]
+    Energética
+  }
+
+  \vspace{0.6cm}
+
+  {\fontsize{12}{14}\selectfont\color{grisText}
+    Taller 1 \quad\textbullet\quad Caso 9
+  }
+
+  \vfill
+
+  {\color{lineColor}\rule{\linewidth}{0.4pt}}
+  \vspace{0.4cm}
+
+  {\fontsize{10}{14}\selectfont\color{grisText}
+    \begin{tabular}{c}
+      Santiago Mesa \\[0.1cm]
+      Camilo Peñuela \\[0.1cm]
+    \end{tabular}
+  }
+
+  \vspace{0.5cm}
+  {\color{lineColor}\rule{\linewidth}{0.4pt}}
+  \vspace{0.3cm}
+
+  {\fontsize{10}{12}\selectfont\color{grisText}
+    Bogotá, Colombia \quad\textbullet\quad 11 de marzo de 2026
+  }
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+
+% Reinicia numeración desde la página de contenido
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 1: REQUERIMIENTOS
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Requerimientos}
+
+El sistema consolida la telemetría de 120.000 dispositivos IoT distribuidos en subestaciones
+eléctricas, plantas de generación y redes de transmisión nacionales. La plataforma procesa
+aproximadamente 2,4 millones de eventos por minuto (3,4 mil millones diarios), detecta
+anomalías críticas en menos de 3 segundos y garantiza una disponibilidad mínima del 99,95\%
+anual. Los requerimientos se clasifican en tres categorías: proyecto, dominio y producto.
+
+% ── 1.1 Requerimientos de Proyecto ───────────────────────────────────────────
+\subsection{Requerimientos de Proyecto}
+
+\begin{longtable}{
+  C{1.5cm}
+  P{2.8cm}
+  P{5.2cm}
+  P{4.2cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Nombre} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.2cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.2cm}}{Justificación} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Nombre} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.2cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.2cm}}{Justificación} \\
+\endhead
+
+\rowcolor{grisCl}
+\textbf{RP-01} & Metodología Scrum &
+  El equipo entrega incrementos funcionales cada dos semanas mediante sprints con revisiones
+  y retrospectivas. &
+  Permite responder con agilidad a cambios de requisitos en entornos industriales cambiantes. \\
+
+\textbf{RP-02} & Arquitectura nativa en la nube &
+  El diseño implementa microservicios en Docker orquestados con Kubernetes, aislando fallos
+  operativos por módulo. &
+  Evita el colapso total ante picos de alertas simultáneas; solo se reinicia el módulo afectado. \\
+
+\rowcolor{grisCl}
+\textbf{RP-03} & Tecnologías de código abierto &
+  La plataforma integra InfluxDB, Apache Kafka y Grafana; evita licencias por nodo sensor. &
+  Escala a cientos de miles de sensores sin incremento lineal de costos de licenciamiento. \\
+
+\textbf{RP-04} & CI/CD automatizado &
+  Pipeline de integración y despliegue continuo con pruebas automáticas previas a cada
+  actualización productiva. &
+  Elimina riesgo de fallos manuales en actualizaciones de un sistema crítico 24/7. \\
+
+\rowcolor{grisCl}
+\textbf{RP-05} & Pruebas de carga automatizadas &
+  Simulación del tráfico equivalente a 120.000 sensores en entorno de pre-producción antes
+  de cada release. &
+  Detecta cuellos de botella antes de que ocurran en producción durante una emergencia real. \\
+
+\textbf{RP-06} & Documentación como código &
+  Arquitectura y decisiones técnicas documentadas en repositorios versionados junto al código
+  fuente. &
+  Garantiza trazabilidad de decisiones para auditorías regulatorias y nuevos integrantes del
+  equipo. \\
+
+\rowcolor{grisCl}
+\textbf{RP-07} & Monitoreo de infraestructura propia &
+  La plataforma mide continuamente CPU, memoria, latencia de red y throughput de los nodos
+  de procesamiento. &
+  Previene saturación silenciosa que retrasaría el procesamiento de alarmas críticas de la red
+  eléctrica. \\
+
+\end{longtable}
+
+% ── 1.2 Requerimientos de Dominio ────────────────────────────────────────────
+\subsection{Requerimientos de Dominio}
+
+\begin{longtable}{
+  C{1.5cm}
+  P{2.8cm}
+  P{5.2cm}
+  P{4.2cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Nombre} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.2cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.2cm}}{Justificación} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Nombre} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.2cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.2cm}}{Justificación} \\
+\endhead
+
+\rowcolor{grisCl}
+\textbf{RD-01} & IEC 61850 &
+  Estándar de interoperabilidad para comunicaciones en subestaciones eléctricas mediante
+  Ethernet industrial. &
+  Garantiza que equipos de distintos fabricantes se comuniquen sin adaptadores propietarios. \\
+
+\textbf{RD-02} & MQTT v5 &
+  Protocolo de ingesta de telemetría con mínimo consumo de ancho de banda en redes celulares
+  rurales. &
+  El protocolo HTTP transmitiría cabeceras pesadas que colapsan conexiones inestables en
+  zonas remotas. \\
+
+\rowcolor{grisCl}
+\textbf{RD-03} & OPC UA &
+  Integración cifrada y segura con los sistemas SCADA legados existentes en las subestaciones. &
+  Exponer la base de datos directamente abriría brechas críticas en la red de operación (OT). \\
+
+\textbf{RD-04} & NERC CIP &
+  Cumplimiento de la normativa internacional de ciberseguridad para infraestructuras eléctricas
+  críticas. &
+  Obligación regulatoria; el incumplimiento expone a sanciones legales y riesgo de
+  interrupción del servicio nacional. \\
+
+\rowcolor{grisCl}
+\textbf{RD-05} & IEEE 1547 &
+  Soporte al monitoreo de recursos energéticos distribuidos como paneles solares y baterías. &
+  El estándar permite integrar generación renovable sin rediseñar la plataforma. \\
+
+\textbf{RD-06} & PTP IEEE 1588 &
+  Sincronización de tiempo con precisión de microsegundos en todos los nodos de la red. &
+  Corrige la desincronización de reloj en subestaciones remotas, evitando inconsistencias
+  temporales en datos de series de tiempo. \\
+
+\rowcolor{grisCl}
+\textbf{RD-07} & ISO 27001 &
+  Marco internacional de gestión de seguridad de la información aplicado a todos los controles
+  de la plataforma. &
+  Proporciona validación auditable de las medidas de seguridad para entes reguladores. \\
+
+\end{longtable}
+
+% ── 1.3 Requerimientos de Producto ───────────────────────────────────────────
+\subsection{Requerimientos de Producto}
+
+\begin{longtable}{
+  C{1.5cm}
+  P{2.8cm}
+  P{4.8cm}
+  P{4.6cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Nombre} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.8cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.6cm}}{Criterio de aceptación} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Nombre} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.8cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.6cm}}{Criterio de aceptación} \\
+\endhead
+
+\rowcolor{grisCl}
+\textbf{RF-01} & Base de datos de series de tiempo &
+  Almacenamiento de millones de lecturas por segundo con timestamp exacto mediante InfluxDB
+  Cluster. &
+  Escritura sostenida de 50.000 eventos/s sin degradación; consultas por rango en menos de
+  2 s. \\
+
+\textbf{RF-02} & Motor de eventos en tiempo real &
+  Detección de anomalías de voltaje, vibración, temperatura y presión con disparo de alarmas
+  en milisegundos. &
+  El 99,9\% de alertas críticas visibles en el panel en menos de 3 s desde el evento. \\
+
+\rowcolor{grisCl}
+\textbf{RF-03} & Interfaz geoespacial &
+  Panel visual interactivo con ubicación exacta de sensores y fallas sobre mapa nacional en
+  tiempo real. &
+  El operador localiza cualquier sensor en menos de 5 s de navegación en el mapa. \\
+
+\textbf{RF-04} & Actuación remota con MFA &
+  Apagado y reconexión remota de transformadores desde el centro de control con autenticación
+  de dos factores. &
+  Tiempo de actuación confirmada menor a 10 s; 0 comandos ejecutados sin segundo factor
+  válido. \\
+
+\rowcolor{grisCl}
+\textbf{RF-05} & Operación offline --- Edge &
+  El gateway local procesa alarmas críticas y almacena telemetría durante cortes de
+  conectividad a la nube. &
+  Cero pérdida de datos tras 24 h de desconexión; resincronización completa en menos de
+  15 min. \\
+
+\textbf{RF-06} & Firmware OTA &
+  Envío y aplicación de parches de seguridad a los sensores de forma remota sin intervención
+  física. &
+  100\% de nodos parcheados en menos de 24 h tras publicación de vulnerabilidad crítica. \\
+
+\rowcolor{grisCl}
+\textbf{RF-07} & Notificaciones omnicanal &
+  Alertas urgentes enviadas por SMS, correo electrónico y notificaciones push a los operadores
+  designados. &
+  Notificación entregada en menos de 30 s desde la detección en al menos 2 canales
+  simultáneos. \\
+
+\textbf{RF-08} & API RESTful de exportación &
+  Interfaz para que sistemas de terceros consuman históricos de telemetría con autenticación
+  y rate limiting. &
+  API disponible al 99,5\% con tiempo de respuesta menor a 3 s para consultas de hasta
+  1 millón de registros. \\
+
+\end{longtable}
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 2: USUARIOS
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Usuarios}
+
+La arquitectura modela diez actores con perfiles diferenciados. El diseño aplica el principio
+de menor privilegio sobre cada perfil, garantizando que ningún actor pueda acceder a
+funciones fuera de su ámbito operativo. Se distinguen actores humanos y actores máquina
+(sistemas externos).
+
+\begin{longtable}{
+  P{3.0cm}
+  C{1.8cm}
+  P{3.2cm}
+  P{5.7cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.0cm}}{Actor} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Tipo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.2cm}}{Privilegio} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.7cm}}{Descripción funcional} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.0cm}}{Actor} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Tipo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.2cm}}{Privilegio} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.7cm}}{Descripción funcional} \\
+\endhead
+
+\textbf{Operador de Centro de Control} &
+  Humano & Visualización + Gestión de alarmas &
+  Monitorea tableros en tiempo real y gestiona alarmas operativas. Sin permisos de
+  configuración para evitar desconexión accidental de sensores críticos. \\
+
+\rowcolor{grisCl}
+\textbf{Ingeniero de Mantenimiento} &
+  Humano & Lectura + Registro de campo &
+  Acceso móvil al diagnóstico de sensores in situ. Registra calibraciones y cierra
+  incidentes físicos en campo. \\
+
+\textbf{Administrador TI/OT} &
+  Humano & Configuración + Control de acceso &
+  Gestiona la red, emite certificados X.509 y actualiza firmware. Centraliza el control
+  de acceso de los gateways industriales. \\
+
+\rowcolor{grisCl}
+\textbf{Especialista en Ciberseguridad} &
+  Humano & Auditoría + Gestión de políticas &
+  Audita tráfico de red, gestiona políticas del WAF/IDS y bloquea nodos comprometidos
+  sin afectar la operación eléctrica. \\
+
+\textbf{Analista de Datos Energéticos} &
+  Humano & Lectura histórica + Análisis &
+  Consulta réplicas de lectura para análisis predictivos pesados sin degradar el
+  monitoreo en tiempo real. \\
+
+\rowcolor{grisCl}
+\textbf{Gerente de Operaciones} &
+  Humano & Lectura ejecutiva &
+  Accede a dashboards ejecutivos con métricas de disponibilidad y eficiencia energética.
+  No recibe alertas operativas menores. \\
+
+\textbf{Auditor de Cumplimiento} &
+  Humano & Solo lectura --- Auditoría &
+  Acceso de solo lectura a registros inmutables (WORM) para garantizar transparencia
+  ante reguladores sin comprometer datos operativos. \\
+
+\rowcolor{grisCl}
+\textbf{Sistema SCADA Legado} &
+  Máquina & Recepción de datos consolidados &
+  Recibe datos del nuevo sistema vía OPC UA para los paneles de control heredados no
+  reemplazables en el corto plazo. \\
+
+\textbf{Sistema Meteorológico Nacional} &
+  Máquina & Provisión de datos climáticos &
+  Suministra pronósticos vía API REST para cruzar condiciones climáticas con temperatura
+  de transformadores y anticipar fallas térmicas. \\
+
+\rowcolor{grisCl}
+\textbf{Sistema ERP Corporativo} &
+  Máquina & Lectura de métricas de activos &
+  Recibe métricas de vida útil de sensores (ej.\ SAP) para automatizar órdenes de
+  compra de repuestos. \\
+
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 3: MÓDULOS FUNCIONALES
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Módulos Funcionales}
+
+La arquitectura divide el sistema en cinco módulos principales alineados con los actores
+operativos y con los criterios de calidad de la norma ISO 25010. Cada módulo es desplegable
+y escalable de forma independiente sobre Kubernetes.
+
+% ── 3.1 Descripción de Módulos ────────────────────────────────────────────────
+\subsection{Descripción de Módulos}
+
+\begin{longtable}{
+  P{2.5cm}
+  P{4.0cm}
+  P{3.5cm}
+  P{3.7cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.5cm}}{Módulo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.0cm}}{Responsabilidad} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Tecnología principal} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.7cm}}{Dependencias clave} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.5cm}}{Módulo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.0cm}}{Responsabilidad} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Tecnología principal} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.7cm}}{Dependencias clave} \\
+\endhead
+
+\rowcolor{azulClr}
+\textbf{Motor de Alertas} &
+  Detecta anomalías en tiempo real mediante reglas CEP y modelos ML. Dispara notificaciones
+  omnicanal en menos de 3 s. &
+  Apache Flink, Apache Kafka, scikit-learn / TensorFlow Lite &
+  Módulo de Ingesta, Base de Datos Hot \\
+
+\rowcolor{azulClr}
+\textbf{Panel Geoespacial} &
+  Visualiza la ubicación y estado de los 120.000 sensores en mapa nacional interactivo.
+  Gestiona alarmas activas por región. &
+  Grafana, PostGIS, Leaflet.js, API Gateway &
+  Motor de Alertas, Gestión de Nodos \\
+
+\rowcolor{azulClr}
+\textbf{Históricos y Analítica} &
+  Almacena telemetría a largo plazo con retención de 5 años. Provee capacidades de análisis
+  histórico para mantenimiento predictivo. &
+  InfluxDB Cluster, Object Storage (S3), Apache Spark &
+  Motor de Alertas, API RESTful \\
+
+\rowcolor{azulClr}
+\textbf{Gestión de Nodos} &
+  Administra el ciclo de vida de los 120.000 sensores y gateways: registro, configuración,
+  actualización OTA y monitoreo de salud. &
+  Kubernetes Operator, HashiCorp Vault, CI/CD pipeline &
+  PKI Interna, Módulo de Auditoría \\
+
+\rowcolor{azulClr}
+\textbf{Auditoría y Logs} &
+  Registra de forma inmutable todos los accesos, comandos y eventos del sistema para
+  cumplimiento regulatorio (NERC CIP, ISO 27001). &
+  ELK Stack, WORM Storage, Wazuh SIEM &
+  Todos los módulos \\
+
+\end{longtable}
+
+% ── 3.2 Matriz de Trazabilidad: Actores vs. Módulos ──────────────────────────
+\subsection{Matriz de Trazabilidad: Actores vs.\ Módulos}
+
+Convenciones: \textbf{C} = Configura, \textbf{U} = Usa, \textbf{L} = Lee,
+\textbf{---} = Sin acceso.
+
+\vspace{6pt}
+
+\begin{longtable}{
+  P{3.4cm}
+  C{1.8cm}
+  C{1.8cm}
+  C{1.8cm}
+  C{1.8cm}
+  C{1.8cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.4cm}}{Actor / Módulo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Motor Alertas} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Panel Geo.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Históricos} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Gestión Nodos} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Auditoría} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.4cm}}{Actor / Módulo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Motor Alertas} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Panel Geo.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Históricos} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Gestión Nodos} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Auditoría} \\
+\endhead
+
+Operador Centro Control    & \cellcolor{azulClr}U & \cellcolor{azulClr}U & \cellcolor{azulClr}L & ---                  & ---                  \\
+\rowcolor{grisCl}
+Ing.\ de Mantenimiento     & \cellcolor{azulClr}L & \cellcolor{azulClr}L & \cellcolor{azulClr}L & \cellcolor{azulClr}U & ---                  \\
+Administrador TI/OT        & \cellcolor{azulClr}L & \cellcolor{azulClr}L & ---                  & \cellcolor{naranCl}C & \cellcolor{azulClr}L \\
+\rowcolor{grisCl}
+Esp.\ Ciberseguridad       & ---                  & ---                  & ---                  & \cellcolor{naranCl}C & \cellcolor{azulClr}U \\
+Analista de Datos          & ---                  & ---                  & \cellcolor{azulClr}U & ---                  & ---                  \\
+\rowcolor{grisCl}
+Gerente de Operaciones     & ---                  & \cellcolor{azulClr}L & \cellcolor{azulClr}L & ---                  & ---                  \\
+Auditor de Cumplimiento    & ---                  & ---                  & ---                  & ---                  & \cellcolor{azulClr}L \\
+\rowcolor{grisCl}
+Sistema SCADA Legado       & \cellcolor{azulClr}U & ---                  & ---                  & ---                  & ---                  \\
+Sistema ERP Corporativo    & ---                  & ---                  & \cellcolor{azulClr}L & \cellcolor{azulClr}L & ---                  \\
+Sistema Meteorológico      & \cellcolor{naranCl}C & ---                  & ---                  & ---                  & ---                  \\
+
+\end{longtable}
+
+% ── 3.3 Matriz de Módulos vs. Atributos ISO 25010 ────────────────────────────
+\subsection{Matriz de Módulos vs.\ Atributos ISO 25010}
+
+Niveles de exigencia técnica: \textbf{A} = Alto, \textbf{M} = Medio, \textbf{B} = Bajo.
+
+\vspace{6pt}
+
+\begin{longtable}{
+  P{2.8cm}
+  C{1.4cm}
+  C{1.4cm}
+  C{1.4cm}
+  C{1.4cm}
+  C{1.4cm}
+  C{1.4cm}
+  C{1.4cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Módulo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Efic.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Fiabil.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Segur.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Compat.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Usabil.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Mant.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Portab.} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Módulo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Efic.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Fiabil.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Segur.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Compat.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Usabil.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Mant.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Portab.} \\
+\endhead
+
+Motor de Alertas  & \cellcolor{naranCl}A & \cellcolor{naranCl}A & \cellcolor{naranCl}A & \cellcolor{grisCl}M  & B                    & \cellcolor{grisCl}M  & \cellcolor{grisCl}M  \\
+\rowcolor{grisCl}
+Panel Geoespacial & \cellcolor{naranCl}A & \cellcolor{grisCl}M  & \cellcolor{grisCl}M  & \cellcolor{grisCl}M  & \cellcolor{naranCl}A & \cellcolor{grisCl}M  & \cellcolor{naranCl}A \\
+Históricos        & \cellcolor{naranCl}A & \cellcolor{naranCl}A & \cellcolor{grisCl}M  & B                    & B                    & \cellcolor{grisCl}M  & B                    \\
+\rowcolor{grisCl}
+Gestión de Nodos  & \cellcolor{grisCl}M  & \cellcolor{naranCl}A & \cellcolor{naranCl}A & \cellcolor{naranCl}A & \cellcolor{grisCl}M  & \cellcolor{naranCl}A & \cellcolor{naranCl}A \\
+Auditoría y Logs  & \cellcolor{grisCl}M  & \cellcolor{naranCl}A & \cellcolor{naranCl}A & \cellcolor{grisCl}M  & B                    & \cellcolor{naranCl}A & B                    \\
+
+\end{longtable}
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 4: RESTRICCIONES Y RIESGOS
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Restricciones y Riesgos}
+
+El diseño arquitectónico asume limitaciones innegociables impuestas por el entorno operativo
+y anticipa problemas futuros que amenazan la viabilidad del sistema.
+
+% ── 4.1 Restricciones Arquitectónicas ────────────────────────────────────────
+\subsection{Restricciones Arquitectónicas}
+
+\begin{longtable}{
+  C{1.5cm}
+  P{2.8cm}
+  P{4.8cm}
+  P{4.6cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Restricción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.8cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.6cm}}{Impacto arquitectónico} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.5cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Restricción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.8cm}}{Descripción} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.6cm}}{Impacto arquitectónico} \\
+\endhead
+
+\rowcolor{grisCl}
+\textbf{RC-01} & Integración obligada con SCADA legado &
+  El cliente prohíbe reemplazar los controladores físicos actuales. La nueva plataforma
+  debe conectarse mediante OPC UA. &
+  Obliga a implementar una capa de adaptación OPC UA y limita la frecuencia de
+  actualización de datos heredados. \\
+
+\textbf{RC-02} & Presupuesto limitado para licencias &
+  El proyecto carece de fondos para licencias corporativas por sensor. Toda la pila
+  tecnológica debe ser open-source. &
+  Tecnologías como Oracle DB, Splunk o Azure Event Hubs quedan descartadas; la elección
+  recae en InfluxDB, Kafka y Grafana. \\
+
+\rowcolor{grisCl}
+\textbf{RC-03} & Hardware de borde con recursos limitados &
+  Las subestaciones antiguas no tienen espacio ni refrigeración para servidores de
+  tamaño completo. Los gateways deben operar en hardware ARM de baja potencia. &
+  Los algoritmos de detección local deben ser ligeros; modelos ML complejos ejecutan
+  en la nube, no en el borde. \\
+
+\textbf{RC-04} & Retención regulatoria de 5 años &
+  La normativa exige conservar datos operativos históricos por al menos 5 años con
+  integridad garantizable. &
+  Requiere estrategia de almacenamiento por niveles (hot/warm/cold) y uso de WORM
+  storage para inmutabilidad. \\
+
+\rowcolor{grisCl}
+\textbf{RC-05} & Disponibilidad 99,95\% anual &
+  El SLA exige un máximo de 4,38 h de inactividad acumulada por año, incluyendo
+  mantenimientos programados. &
+  Impone arquitectura multi-zona activa-activa con failover automático y despliegues
+  blue/green sin downtime. \\
+
+\end{longtable}
+
+% ── 4.2 Riesgos del Proyecto ─────────────────────────────────────────────────
+\subsection{Riesgos del Proyecto}
+
+\begin{longtable}{
+  C{1.2cm}
+  P{2.8cm}
+  C{1.2cm}
+  C{1.4cm}
+  P{3.6cm}
+  P{3.5cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Riesgo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{Prob.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Impacto} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.6cm}}{Plan de mitigación} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Contingencia} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Riesgo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{Prob.} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.4cm}}{Impacto} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.6cm}}{Plan de mitigación} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Contingencia} \\
+\endhead
+
+\textbf{RZ-01} &
+  Saturación en capa de ingesta por picos extremos (+60\% volumen) &
+  \cellcolor{naranCl}Alta & \cellcolor{red!15}Crítico &
+  Auto-escalado horizontal en Kafka con HPA de Kubernetes basado en lag del consumer
+  group. &
+  Circuit breaker en gateways edge para priorizar eventos críticos y descartar
+  telemetría no urgente. \\
+
+\rowcolor{grisCl}
+\textbf{RZ-02} &
+  Pérdida de conectividad en nodos remotos durante eventos climáticos &
+  \cellcolor{naranCl}Alta & \cellcolor{naranCl}Alto &
+  Edge Computing con almacenamiento local de 24 h y mecanismo Store-and-Forward
+  con MQTT QoS~2. &
+  Activación de enlace 4G/LTE de respaldo; alertas locales sin dependencia de nube
+  central. \\
+
+\textbf{RZ-03} &
+  Inconsistencias temporales por desincronización de reloj en regiones &
+  \cellcolor{verdeCl}Media & \cellcolor{naranCl}Alto &
+  Protocolo PTP IEEE~1588 con Grandmaster Clock por región; corrección de clock skew
+  en Flink. &
+  Marcas de tiempo relativas al gateway local + reconciliación post-hoc con NTP como
+  fallback. \\
+
+\rowcolor{grisCl}
+\textbf{RZ-04} &
+  Ciberataque a infraestructura crítica (inyección de datos o comandos) &
+  \cellcolor{verdeCl}Media & \cellcolor{red!15}Crítico &
+  mTLS con X.509 por dispositivo, segmentación de red OT/IT, WAF, IDS/IPS y
+  auditoría en tiempo real. &
+  Aislamiento inmediato del nodo comprometido; activación de modo degradado con
+  operación manual local. \\
+
+\textbf{RZ-05} &
+  Cuellos de botella en procesamiento streaming durante tormentas &
+  \cellcolor{verdeCl}Media & \cellcolor{naranCl}Alto &
+  Particionado de Kafka por región geográfica; Flink con backpressure automático y
+  ventanas de tiempo adaptativas. &
+  Reducción dinámica de granularidad de sensores no críticos; procesamiento diferido
+  para análisis no urgente. \\
+
+\rowcolor{grisCl}
+\textbf{RZ-06} &
+  Costos exponenciales de almacenamiento a largo plazo &
+  \cellcolor{verdeCl}Media & \cellcolor{grisCl}Medio &
+  Política de retención en InfluxDB (90 días hot), compresión warm tier, Object
+  Storage para cold ($>$1 año). &
+  Revisión anual de política de retención; downsampling de métricas de baja prioridad
+  después de 6 meses. \\
+
+\textbf{RZ-07} &
+  Vulneración física de gateways en subestaciones sin vigilancia &
+  \cellcolor{verdeCl}Baja & \cellcolor{red!15}Crítico &
+  Cifrado de disco AES-256, TPM~2.0, detección de apertura de carcasa (tamper
+  detection), VPN site-to-site. &
+  Revocación remota de certificados X.509 del dispositivo comprometido; reemplazo de
+  hardware programado. \\
+
+\end{longtable}
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 5: ATRIBUTOS DE CALIDAD SEGÚN ISO 25010
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Atributos de Calidad según ISO 25010}
+
+La norma ISO 25010 define ocho características de calidad del producto software. La
+arquitectura prioriza \textbf{Eficiencia de Desempeño}, \textbf{Fiabilidad} y
+\textbf{Seguridad} como atributos críticos (Nivel~1) dado el contexto de infraestructura
+energética nacional. Los cinco restantes se clasifican como importantes (Nivel~2) y están
+subordinados a los pilares críticos.
+
+\begin{longtable}{
+  C{1.2cm}
+  P{2.8cm}
+  C{1.8cm}
+  P{3.8cm}
+  P{4.1cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{Nivel} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Atributo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Prioridad} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.8cm}}{Razón de priorización} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.1cm}}{Impacto operativo si se incumple} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{Nivel} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Atributo} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.8cm}}{Prioridad} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.8cm}}{Razón de priorización} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.1cm}}{Impacto operativo si se incumple} \\
+\endhead
+
+\cellcolor{naranCl}\textbf{1} & \textbf{Eficiencia de Desempeño} &
+  \cellcolor{red!15}Crítica &
+  El sistema procesa 2,4~M de eventos/min con SLA de latencia de 3~s para alertas
+  críticas. Cualquier degradación es inaceptable en tiempo real. &
+  Una latencia mayor a 3~s impide detectar sobrecargas en transformadores a tiempo,
+  causando explosiones físicas y apagones regionales. \\
+
+\rowcolor{grisCl}
+\cellcolor{naranCl}\textbf{1} & \textbf{Fiabilidad} &
+  \cellcolor{red!15}Crítica &
+  La red eléctrica exige monitoreo continuo 24/7/365. Un tiempo de inactividad superior
+  a 4,38~h/año viola el SLA contractual. &
+  La caída del sistema deja ciegos a los centros de control y retrasa la respuesta ante
+  apagones en cascada a nivel ciudad o regional. \\
+
+\cellcolor{naranCl}\textbf{1} & \textbf{Seguridad} &
+  \cellcolor{red!15}Crítica &
+  La ley NERC~CIP obliga a proteger infraestructuras eléctricas. La plataforma es
+  objetivo directo de actores estatales y ciberterroristas. &
+  Una vulnerabilidad exitosa permite apagar subestaciones remotamente, paralizando
+  hospitales, acueductos y sistemas de comunicación. \\
+
+\rowcolor{grisCl}
+\cellcolor{verdeCl}\textbf{2} & \textbf{Compatibilidad} &
+  \cellcolor{verdeCl}Importante &
+  Coexistencia obligada con sistemas SCADA legados y estándares industriales
+  IEC~61850 y OPC~UA. &
+  Sin compatibilidad, el sistema operaría en silos sin visibilidad sobre equipos
+  heredados que representan el 80\% de la infraestructura actual. \\
+
+\cellcolor{verdeCl}\textbf{2} & \textbf{Usabilidad} &
+  \cellcolor{verdeCl}Importante &
+  Operadores de centro de control deben actuar en segundos bajo presión. Errores de
+  interfaz son inaceptables en emergencias. &
+  Una interfaz confusa puede llevar a un operador a desconectar el sensor equivocado o
+  ignorar una alarma crítica por fatiga visual. \\
+
+\rowcolor{grisCl}
+\cellcolor{verdeCl}\textbf{2} & \textbf{Mantenibilidad} &
+  \cellcolor{verdeCl}Importante &
+  La arquitectura de microservicios permite actualizar módulos sin detener el
+  monitoreo. Esencial para parches de seguridad urgentes. &
+  Sin separación de módulos, cada actualización requiere ventana de mantenimiento
+  total, violando el SLA de disponibilidad. \\
+
+\cellcolor{verdeCl}\textbf{2} & \textbf{Portabilidad} &
+  \cellcolor{verdeCl}Importante &
+  El empaquetamiento en Docker/Kubernetes permite migrar entre proveedores de nube
+  para evitar vendor lock-in regulatorio. &
+  La dependencia de un único proveedor cloud expone la infraestructura crítica a
+  fallos de disponibilidad del proveedor. \\
+
+\rowcolor{grisCl}
+\cellcolor{verdeCl}\textbf{2} & \textbf{Adecuación Funcional} &
+  \cellcolor{verdeCl}Importante &
+  El sistema debe capturar métricas eléctricas precisas y generar alertas correctas
+  para los tipos de sensores del dominio energético. &
+  Funciones incompletas generan falsos negativos (anomalías no detectadas) o falsos
+  positivos que saturan a los operadores. \\
+
+\end{longtable}
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 6: ESCENARIOS DE CALIDAD
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Escenarios de Calidad}
+
+Se definen escenarios de calidad para las subcategorías más críticas de ISO~25010,
+utilizando la plantilla estándar de seis elementos: \textbf{Fuente}, \textbf{Estímulo},
+\textbf{Artefacto}, \textbf{Entorno}, \textbf{Respuesta} y \textbf{Medida de respuesta}.
+
+% Macro para uniformizar la tabla de cada escenario
+\newcommand{\escenario}[7]{%
+  \begin{longtable}{P{2.8cm} P{10.9cm}}
+  \rowcolor{azulPUJ}
+  \multicolumn{2}{l}{%
+    \textbf{\color{white}#1}%
+  } \\
+  \endfirsthead
+  \rowcolor{azulPUJ}
+  \multicolumn{2}{l}{%
+    \textbf{\color{white}#1}%
+  } \\
+  \endhead
+  \rowcolor{azulClr}\textbf{Fuente}    & #2 \\
+  \textbf{Estímulo}                    & #3 \\
+  \rowcolor{azulClr}\textbf{Artefacto} & #4 \\
+  \textbf{Entorno}                     & #5 \\
+  \rowcolor{azulClr}\textbf{Respuesta} & #6 \\
+  \textbf{Medida}                      & #7 \\
+  \end{longtable}
+  \vspace{4pt}
+}
+
+% ── 6.1 Eficiencia de Desempeño ───────────────────────────────────────────────
+\subsection{Eficiencia de Desempeño}
+
+\escenario{ESC-01 \textnormal{---} Comportamiento temporal bajo carga extrema}
+  {Red completa de 120.000 sensores IoT desplegados en subestaciones nacionales.}
+  {Los sensores envían telemetría simultánea debido a una tormenta eléctrica que
+   incrementa el volumen en un 60\% (hasta 3,84~M eventos/min).}
+  {Clúster de ingesta Kafka + Motor de procesamiento Apache Flink.}
+  {Operación degradada por evento climático extremo; hora pico de consumo eléctrico.}
+  {El sistema activa auto-escalado horizontal en Kafka (nuevas particiones) y en Flink
+   (nuevos task managers). Los eventos se encolan sin rechazo de conexiones. El motor
+   prioriza eventos críticos sobre telemetría de baja prioridad mediante backpressure
+   adaptativo.}
+  {El 99\% de las alertas críticas aparecen en el panel del operador en menos de 3~s
+   desde la generación en el sensor. Throughput sostenido de al menos 3,84~M
+   eventos/min sin degradación de latencia.}
+
+\escenario{ESC-02 \textnormal{---} Utilización de recursos en gateways edge}
+  {Edge Gateway ARM con 4~GB de RAM operando en subestación remota.}
+  {1.000 sensores locales envían datos simultáneamente durante un pico de voltaje zonal.}
+  {Motor de reglas local en el Edge Gateway (InfluxDB local + reglas CEP simplificadas).}
+  {Operación normal; conectividad con la nube disponible; temperatura ambiente dentro
+   de rango operativo.}
+  {El gateway evalúa las reglas críticas localmente, almacena telemetría en buffer local
+   y reenvía a la nube sin superar el 70\% de CPU ni el 80\% de RAM.}
+  {CPU promedio menor al 70\%; RAM menor al 80\%; tiempo de evaluación de reglas
+   críticas menor a 500~ms en el dispositivo.}
+
+% ── 6.2 Fiabilidad ────────────────────────────────────────────────────────────
+\subsection{Fiabilidad}
+
+\escenario{ESC-03 \textnormal{---} Tolerancia a fallos --- Corte de conectividad regional}
+  {Fenómeno climático severo (huracán o tormenta eléctrica en la Costa Caribe
+   colombiana).}
+  {Se corta el enlace principal de fibra óptica entre 15 subestaciones rurales y el
+   centro de datos regional. El enlace 4G de respaldo también cae por saturación de la
+   red móvil.}
+  {Edge Gateways instalados en cada subestación afectada.}
+  {Operación degradada --- desconexión total de la nube central por más de 24 horas.}
+  {Los gateways continúan evaluando reglas críticas de forma autónoma, ejecutando
+   apagados de emergencia locales si detectan sobrecarga, y almacenando telemetría en
+   InfluxDB local. Al restaurarse la conexión, sincronizan datos mediante MQTT QoS~2
+   con reintentos automáticos.}
+  {Cero pérdida de datos críticos tras 24~h de desconexión. Sincronización completa
+   con la nube en menos de 15~min tras restaurar el enlace. El operador no pierde
+   trazabilidad histórica de ningún evento ocurrido durante la desconexión.}
+
+\escenario{ESC-04 \textnormal{---} Recuperabilidad --- Fallo catastrófico del data center}
+  {Fallo de infraestructura eléctrica en el data center principal (zona de
+   disponibilidad primaria).}
+  {Caída total de todos los servicios cloud en la zona primaria, incluyendo bases de
+   datos, procesamiento y API gateway.}
+  {Arquitectura multi-zona activa-activa con replicación cross-region continua.}
+  {Desastre total de la zona primaria; zona secundaria en estado warm standby.}
+  {El balanceador de carga global redirige automáticamente el tráfico a la zona
+   secundaria. Kubernetes detecta la indisponibilidad y activa los pods en la zona
+   alternativa. Los datos replicados en tiempo real garantizan consistencia.}
+  {RTO menor a 15~min. RPO menor a 30~s de datos perdidos. Disponibilidad anual
+   resultante mayor al 99,95\%.}
+
+% ── 6.3 Seguridad ─────────────────────────────────────────────────────────────
+\subsection{Seguridad}
+
+\escenario{ESC-05 \textnormal{---} Confidencialidad --- Intercepción de tráfico OT}
+  {Atacante externo con acceso a la red de telecomunicaciones que transporta tráfico
+   de la subestación.}
+  {El atacante realiza un ataque man-in-the-middle para interceptar y decodificar
+   telemetría de la red eléctrica.}
+  {Canal de comunicación MQTT entre sensores/gateways y el MQTT Broker en la nube.}
+  {Operación normal; la red de telecomunicaciones está comprometida en un tramo
+   intermedio.}
+  {Todo el tráfico MQTT viaja cifrado con TLS~1.3. La autenticación mutua mTLS con
+   certificados X.509 únicos por dispositivo impide que el atacante se identifique como
+   un nodo legítimo. El tráfico interceptado es ilegible sin las claves privadas del
+   dispositivo, almacenadas en el TPM~2.0.}
+  {0\% de tráfico sensible accesible en texto plano. Tiempo de detección de dispositivo
+   con certificado inválido menor a 50~ms. El intento de conexión queda registrado en
+   el SIEM.}
+
+\escenario{ESC-06 \textnormal{---} Integridad --- Inyección de comandos maliciosos}
+  {Atacante que ha comprometido credenciales de un operador mediante phishing.}
+  {El atacante intenta enviar comandos de apagado a transformadores de alta tensión
+   desde un dispositivo no autorizado.}
+  {Módulo de Gestión de Nodos --- API Gateway de actuación remota.}
+  {Operación bajo ataque activo; credenciales del operador comprometidas.}
+  {El sistema exige autenticación multifactor (MFA) para comandos de actuación. El
+   certificado del dispositivo del atacante no coincide con el registrado. El WAF
+   detecta el patrón de acceso inusual (horario, geolocalización) y bloquea la sesión.
+   El SIEM genera alerta inmediata al Especialista en Ciberseguridad.}
+  {100\% de comandos de actuación requieren MFA válido. El sistema bloquea la sesión
+   comprometida en menos de 5~s tras detección de anomalía. El intento queda registrado
+   con hash inmutable en el log de auditoría.}
+
+% ── 6.4 Compatibilidad ────────────────────────────────────────────────────────
+\subsection{Compatibilidad}
+
+\escenario{ESC-07 \textnormal{---} Interoperabilidad con sistemas SCADA legados}
+  {Centro de control regional con sistema SCADA de 15 años de antigüedad.}
+  {El SCADA legado solicita datos consolidados de voltaje y temperatura de las
+   subestaciones de su región en el formato propietario que entiende.}
+  {Capa de adaptación OPC~UA del módulo de Gestión de Nodos.}
+  {Operación normal; el sistema legado no ha sido modificado ni actualizado.}
+  {El adaptador OPC~UA traduce los datos del formato interno de la plataforma al modelo
+   de información IEC~61850 que el SCADA legado consume. La comunicación es
+   bidireccional y cifrada.}
+  {100\% de los sistemas SCADA registrados reciben datos en su formato esperado.
+   Latencia de traducción OPC~UA menor a 1~s. Sin modificaciones al software legado.}
+
+% ── 6.5 Usabilidad ────────────────────────────────────────────────────────────
+\subsection{Usabilidad}
+
+\escenario{ESC-08 \textnormal{---} Prevención de errores operativos bajo presión}
+  {Operador de Centro de Control durante un blackout regional con 200 alarmas activas
+   simultáneas.}
+  {El operador debe identificar el sensor con la anomalía más crítica y ejecutar un
+   apagado de emergencia en menos de 2~minutos.}
+  {Panel Geoespacial --- interfaz de gestión de alarmas.}
+  {Emergencia operativa; múltiples alarmas simultáneas; presión alta sobre el operador.}
+  {El panel ordena automáticamente las alarmas por criticidad y geolocalización. El
+   mapa resalta visualmente el transformador en riesgo. Un diálogo de confirmación con
+   countdown previene actuaciones accidentales.}
+  {El operador localiza el sensor crítico en menos de 30~s. Tasa de actuaciones
+   accidentales (comandos sobre el nodo equivocado) menor al 0,1\%.}
+
+% ── 6.6 Mantenibilidad ────────────────────────────────────────────────────────
+\subsection{Mantenibilidad}
+
+\escenario{ESC-09 \textnormal{---} Modificabilidad --- Actualización de módulo sin downtime}
+  {Equipo de desarrollo que detecta una vulnerabilidad crítica en el Motor de Alertas.}
+  {Se requiere desplegar un parche de seguridad en producción dentro de las 4~horas
+   siguientes a la publicación del CVE.}
+  {Motor de Alertas --- microservicio independiente en Kubernetes.}
+  {Sistema en producción con monitoreo activo de 120.000 sensores.}
+  {El pipeline CI/CD ejecuta pruebas automáticas del parche en staging en menos de
+   20~min. Kubernetes realiza un rolling update del Motor de Alertas sin afectar los
+   demás módulos. El tráfico se redirige gradualmente a las nuevas réplicas.}
+  {Tiempo total del parche (commit $\rightarrow$ producción) menor a 2~h. Cero
+   interrupciones del monitoreo durante el despliegue. 100\% de las pruebas de
+   regresión automáticas pasadas antes del despliegue.}
+
+% ── 6.7 Portabilidad ──────────────────────────────────────────────────────────
+\subsection{Portabilidad}
+
+\escenario{ESC-10 \textnormal{---} Adaptabilidad --- Migración entre proveedores cloud}
+  {Decisión regulatoria que exige mover la infraestructura a un proveedor cloud con
+   sede en Colombia.}
+  {El equipo de infraestructura recibe la orden de migrar la plataforma completa a un
+   nuevo proveedor cloud en un plazo de 6~meses.}
+  {Plataforma completa empaquetada en contenedores Docker orquestada con Kubernetes.}
+  {Operación continua requerida durante la migración; sin ventana de mantenimiento
+   total disponible.}
+  {La arquitectura cloud-agnostic con Kubernetes, Helm charts y Terraform permite
+   reprovisionar el entorno en el nuevo proveedor con mínimas modificaciones. La
+   migración de datos usa herramientas estándar de InfluxDB y PostgreSQL.}
+  {Migración completa en menos de 6~meses. Sin reescritura de lógica de negocio. Menos
+   de 4~h de downtime total durante el proceso de migración.}
+
+% ── 6.8 Adecuación Funcional ──────────────────────────────────────────────────
+\subsection{Adecuación Funcional}
+
+\escenario{ESC-11 \textnormal{---} Corrección funcional --- Precisión en detección de anomalías}
+  {Sensor de voltaje en subestación de alta tensión.}
+  {El sensor reporta una lectura de voltaje un 15\% por encima del umbral nominal
+   (indicador temprano de sobrecarga antes del fallo físico).}
+  {Motor de Alertas --- reglas CEP y modelo de scoring ML.}
+  {Operación normal; el evento ocurre en horario de baja carga administrativa.}
+  {El Motor de Alertas evalúa la lectura contra las reglas de umbral configuradas y el
+   modelo de predicción de fallo. Clasifica el evento como Alerta Crítica Nivel~1 y
+   la envía al Operador del Centro de Control y al Ingeniero de Mantenimiento
+   responsable de la zona.}
+  {Tasa de detección verdadera (recall) mayor al 99,5\% para anomalías de nivel
+   crítico. Tasa de falsos positivos menor al 2\%. Clasificación correcta del nivel de
+   criticidad en más del 98\% de los eventos.}
+
+   % ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 7: ACUERDOS DE LOS ATRIBUTOS DE CALIDAD (SLA)
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Acuerdos de los Atributos de Calidad (SLA)}
+
+Los Acuerdos de Nivel de Servicio formalizan las métricas de calidad que el sistema debe
+cumplir de forma continua y verificable. El equipo técnico monitorea estas métricas mediante
+dashboards de Prometheus y Grafana, generando alertas automáticas ante desviaciones.
+
+\begin{longtable}{
+  C{1.2cm}
+  P{2.2cm}
+  P{2.2cm}
+  P{4.8cm}
+  P{3.3cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.2cm}}{Atributo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.2cm}}{Métrica} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.8cm}}{Acuerdo (SLA)} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.3cm}}{Herramienta de medición} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.2cm}}{ID} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.2cm}}{Atributo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.2cm}}{Métrica} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.8cm}}{Acuerdo (SLA)} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.3cm}}{Herramienta de medición} \\
+\endhead
+
+\rowcolor{grisCl}
+\textbf{SLA-01} & Eficiencia de Desempeño & Latencia de alertas críticas &
+  El 99,9\% de las alertas críticas aparecen en el panel del operador en menos de 3~s
+  desde la detección física en el sensor, medido de extremo a extremo incluyendo
+  transporte y procesamiento. &
+  Prometheus + Grafana con histogramas de latencia percentil p99. \\
+
+\textbf{SLA-02} & Eficiencia de Desempeño & Throughput de ingesta &
+  El sistema ingesta y procesa un mínimo de 50.000 eventos por segundo de forma
+  sostenida. Durante picos extremos (+60\%), el throughput escala a 80.000
+  eventos/s sin rechazar conexiones. &
+  Kafka Consumer Lag Monitor + Flink Dashboard. \\
+
+\rowcolor{grisCl}
+\textbf{SLA-03} & Fiabilidad & Disponibilidad (Uptime) &
+  La plataforma central mantiene una disponibilidad operativa del 99,95\% anual,
+  equivalente a un máximo de 4,38~horas de inactividad acumulada por año, incluyendo
+  mantenimientos programados. &
+  Prometheus Alertmanager + Uptime Robot externo. \\
+
+\textbf{SLA-04} & Fiabilidad & Tiempo de recuperación (RTO) &
+  El sistema restaura la operación completa en la zona secundaria en menos de
+  15~minutos tras una falla catastrófica del centro de datos principal. El RPO
+  (pérdida máxima de datos) es de 30~segundos. &
+  Pruebas de failover trimestrales + métricas de replicación cross-region. \\
+
+\rowcolor{grisCl}
+\textbf{SLA-05} & Fiabilidad & Integridad de datos offline &
+  Cero pérdida de eventos críticos tras un corte de conectividad de hasta 24~horas
+  en nodos edge. Los datos se sincronizan completamente en menos de 15~minutos al
+  restaurar el enlace. &
+  Mecanismo de reconciliación MQTT QoS~2 + alertas de buffer overflow en gateway. \\
+
+\textbf{SLA-06} & Seguridad & Bloqueo de intrusiones &
+  El sistema bloquea el 100\% de las solicitudes con certificado digital inválido o
+  ausente en menos de 50~ms. El WAF bloquea el 99,9\% de ataques conocidos
+  (OWASP Top~10 industrial). &
+  Wazuh SIEM + dashboards de cortafuegos perimetral. \\
+
+\rowcolor{grisCl}
+\textbf{SLA-07} & Seguridad & Tiempo de parcheo &
+  El equipo aplica parches críticos (CVSS $\geq$ 9.0) en todos los nodos en un plazo
+  máximo de 24~horas tras la publicación del CVE. Para severidad alta
+  (CVSS 7.0--8.9), el plazo es 72~horas. &
+  Pipeline CI/CD con OTA Manager + registro de versiones por dispositivo. \\
+
+\textbf{SLA-08} & Compatibilidad & Disponibilidad OPC~UA &
+  La capa de integración con SCADA legados tiene disponibilidad del 99,9\% anual.
+  Los datos se entregan a los sistemas heredados con latencia menor a 1~s. &
+  Monitoring de endpoints OPC~UA + alertas de desconexión de SCADA registrado. \\
+
+\rowcolor{grisCl}
+\textbf{SLA-09} & Mantenibilidad & Lead Time de despliegue &
+  El tiempo desde que un commit llega a la rama principal hasta que está en producción
+  es menor a 2~horas para parches críticos y menor a 24~horas para funcionalidades
+  nuevas. &
+  ArgoCD pipeline metrics + DORA dashboard en Grafana. \\
+
+\textbf{SLA-10} & Almacenamiento & Retención de históricos &
+  Los datos operativos se conservan durante un mínimo de 5~años con integridad
+  verificable. El crecimiento proyectado de 80~TB/año se gestiona automáticamente
+  mediante la política de niveles hot/warm/cold. &
+  InfluxDB retention policies + alertas de capacidad de Object Storage. \\
+
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 8: REGISTROS DE DECISIONES ARQUITECTÓNICAS (ADRs)
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Registros de Decisiones Arquitectónicas (ADRs)}
+
+Los ADRs documentan las decisiones estructurales más importantes de la arquitectura,
+incluyendo el contexto que las motivó, las alternativas consideradas y descartadas,
+la decisión tomada, y las consecuencias positivas y negativas resultantes.
+
+% Macro para uniformizar cada ADR
+\newcommand{\adr}[8]{%
+  \begin{longtable}{P{3.2cm} P{10.5cm}}
+  \rowcolor{azulPUJ}
+  \multicolumn{2}{l}{\textbf{\color{white}#1}} \\
+  \endfirsthead
+  \rowcolor{azulPUJ}
+  \multicolumn{2}{l}{\textbf{\color{white}#1}} \\
+  \endhead
+  \rowcolor{azulClr}  \textbf{Estado}                    & #2 \\
+                      \textbf{Contexto}                   & #3 \\
+  \rowcolor{azulClr}  \textbf{Alternativas consideradas}  & #4 \\
+  \rowcolor{naranCl}  \textbf{Decisión}                   & #5 \\
+  \rowcolor{verdeCl}  \textbf{Consecuencias (+)}          & #6 \\
+  \rowcolor{red!8}    \textbf{Consecuencias (--)}         & #7 \\
+  \rowcolor{azulClr}  \textbf{Cómo validar}               & #8 \\
+  \end{longtable}
+  \vspace{4pt}
+}
+
+% ── ADR-001 ───────────────────────────────────────────────────────────────────
+\adr{ADR-001 \textnormal{---} Arquitectura de Microservicios sobre Kubernetes}
+  {Aprobado}
+  {El sistema procesa 50.000 eventos/s de forma sostenida y sirve paneles en tiempo
+   real a múltiples usuarios simultáneamente. Un fallo en el módulo de alertas no debe
+   afectar la visualización del mapa geoespacial ni el módulo histórico.}
+  {(1)~\textbf{Monolito modular}: simple de desplegar, pero un fallo en cualquier
+   módulo tumba el sistema completo --- inaceptable para el SLA de 99,95\%.
+   (2)~\textbf{SOA con ESB}: mayor overhead de comunicación y punto único de fallo en
+   el bus.
+   (3)~\textbf{Microservicios con Kubernetes}: aislamiento de fallos, escalado
+   independiente por módulo y gestión declarativa del estado.}
+  {Se adopta arquitectura de microservicios empaquetados en contenedores Docker y
+   orquestados con Kubernetes. Cada uno de los cinco módulos funcionales es un servicio
+   independiente con su propio ciclo de despliegue.}
+  {Escalado independiente del Motor de Alertas sin afectar la interfaz web. Despliegues
+   rolling update sin downtime. Aislamiento de fallos por módulo. Kubernetes HPA
+   responde automáticamente a picos de carga.}
+  {Mayor complejidad operativa inicial: requiere herramientas de observabilidad
+   distribuida (Jaeger, Prometheus), service mesh para comunicación segura entre
+    servicios y equipos con experiencia en Kubernetes.}
+    {Prueba de caos y carga: simular la caída del Motor de Alertas en producción
+    controlada y verificar que los demás módulos mantienen operación. Criterio de
+    aceptación: disponibilidad global $\geq$ 99,95\% y recuperación automática de pods
+    en menos de 2 minutos.}
+
+% ── ADR-002 ───────────────────────────────────────────────────────────────────
+\adr{ADR-002 \textnormal{---} Edge Computing --- Gateways Locales en Subestaciones}
+  {Aprobado}
+  {Las subestaciones rurales de Colombia experimentan cortes de Internet frecuentes
+   durante tormentas eléctricas, precisamente cuando más se necesita el monitoreo. La
+   red eléctrica no puede esperar a que se restaure la conectividad para ejecutar
+   acciones de protección.}
+  {(1)~\textbf{Cloud-only sin edge}: toda la lógica en la nube; requiere conectividad
+   constante --- inaceptable para zonas remotas.
+   (2)~\textbf{Edge con lógica mínima (solo buffer)}: almacena pero no actúa; falla
+   ante desconexión prolongada con evento crítico activo.
+   (3)~\textbf{Edge con autonomía completa}: gateway evalúa reglas localmente, actúa
+   y sincroniza después.}
+  {Se instalan gateways ARM en cada subestación con InfluxDB local, motor de reglas
+   CEP simplificado y capacidad de actuación local. Operan en modo autónomo durante
+   desconexiones y sincronizan con la nube mediante MQTT QoS~2 al restaurar
+   conectividad.}
+  {Resiliencia ante cortes de Internet. Reducción de latencia para eventos críticos
+   locales (sin round-trip a la nube). Protección física de la subestación incluso
+   sin conectividad.}
+  {Aumenta la superficie de ataque físico (dispositivos en campo sin vigilancia
+   permanente). Requiere programa de actualización OTA robusto. El modelo de reglas
+    en el edge debe mantenerse sincronizado con el modelo central.}
+    {Ejecutar una prueba de desconexión regional de 24 horas. Criterio de aceptación:
+    cero pérdida de eventos críticos, continuidad de alarmas locales y
+    resincronización completa en menos de 15 minutos tras recuperar conectividad.}
+
+% ── ADR-003 ───────────────────────────────────────────────────────────────────
+\adr{ADR-003 \textnormal{---} Protocolo de Ingesta MQTT~v5 con Apache Kafka}
+  {Aprobado}
+  {La plataforma debe ingestar telemetría de 120.000 sensores simultáneos en redes
+   celulares rurales de bajo ancho de banda (2G/3G en algunas zonas). La capa de
+   ingesta es el punto de entrada de todo el sistema y no puede perder eventos
+   críticos.}
+  {(1)~\textbf{HTTP/REST}: alto overhead por cabeceras en cada mensaje; colapsa redes
+   inestables con 120.000 dispositivos.
+   (2)~\textbf{AMQP}: más robusto que HTTP pero mayor overhead que MQTT; pensado para
+   mensajería empresarial, no IoT a escala.
+   (3)~\textbf{MQTT~v5 + Kafka}: MQTT maneja el transporte ligero con QoS garantizado;
+   Kafka proporciona el buffer de alta durabilidad y distribución a múltiples
+   consumidores.}
+  {MQTT~v5 como protocolo de transporte entre sensores/gateways y el broker. Apache
+   Kafka como bus de eventos central con 24~particiones (1 por región de Colombia) y
+   factor de replicación~3.}
+  {Mínimo consumo de ancho de banda. QoS~2 garantiza entrega exactly-once para eventos
+   críticos. Kafka permite múltiples consumidores independientes (Flink, ML, auditoría)
+   del mismo stream sin acoplamiento.}
+  {Requiere operar un clúster Kafka de alta disponibilidad (mínimo 3~brokers + KRaft).
+    La combinación MQTT+Kafka agrega una capa de infraestructura adicional a monitorear
+    y operar.}
+    {Prueba de estrés de ingesta con 120.000 sensores simulados y picos del 60\%.
+    Criterio de aceptación: throughput sostenido de al menos 50.000 eventos/s,
+    escalamiento a 80.000 eventos/s en picos y lag de consumidores dentro del umbral
+    operativo definido.}
+
+% ── ADR-004 ───────────────────────────────────────────────────────────────────
+\adr{ADR-004 \textnormal{---} Almacenamiento Multi-Tier (InfluxDB + Object Storage)}
+  {Aprobado}
+  {500~TB iniciales con crecimiento de 80~TB/año y obligación de retener datos 5~años.
+   Los costos de mantener toda la telemetría en almacenamiento de alto rendimiento
+   serían prohibitivos. Al mismo tiempo, el mantenimiento predictivo requiere acceso
+   eficiente a años de históricos.}
+  {(1)~\textbf{PostgreSQL + TimescaleDB}: buen soporte de series de tiempo pero no
+   optimizado para el volumen de escritura requerido (50K eventos/s).
+   (2)~\textbf{InfluxDB standalone}: óptimo para escritura pero costoso para retención
+   a 5~años.
+   (3)~\textbf{InfluxDB (hot) + Object Storage comprimido (cold)}: separa el acceso
+   por temperatura de datos --- más eficiente en costo y rendimiento.}
+  {Estrategia de tres niveles: InfluxDB Cluster para datos hot (90~días, acceso
+   frecuente), Object Storage con compresión Parquet para datos warm (91~días --
+   1~año) y cold (1--5~años). PostgreSQL para metadatos transaccionales y datos de
+   usuarios.}
+  {Reducción de costos de almacenamiento estimada en un 70\% respecto a mantener todo
+   en InfluxDB. InfluxDB optimizado para escritura masiva de series de tiempo. Object
+   Storage escala a petabytes sin rediseño arquitectónico.}
+  {Mayor complejidad operativa: dos motores de bases de datos (InfluxDB + PostgreSQL)
+    más gestión de Object Storage. Las consultas que cruzan datos hot y cold requieren
+    federación mediante Apache Spark.}
+    {Benchmark trimestral de costo y rendimiento por tier. Criterio de aceptación:
+    reducción de costo total de almacenamiento frente a estrategia hot-only,
+    cumplimiento de retención de 5 años y tiempos de consulta dentro de los SLA por
+    tipo de dato (hot/warm/cold).}
+
+% ── ADR-005 ───────────────────────────────────────────────────────────────────
+\adr{ADR-005 \textnormal{---} Autenticación Mutua mTLS con Certificados X.509 por Dispositivo}
+  {Aprobado}
+  {La infraestructura eléctrica es objetivo de actores estatales y grupos criminales.
+   Una autenticación débil puede permitir inyectar datos falsos que provoquen apagados
+   innecesarios o que se ignoren anomalías reales.}
+  {(1)~\textbf{Usuario/contraseña}: fácil de comprometer; escala muy mal para 120.000
+   dispositivos.
+   (2)~\textbf{API Keys compartidas}: si una clave se compromete, todos los dispositivos
+   que la comparten quedan expuestos.
+   (3)~\textbf{X.509 único por dispositivo con mTLS}: cada dispositivo tiene su
+   certificado único; la revocación es quirúrgica; cumple NERC~CIP.}
+  {Cada dispositivo físico (sensor, gateway) recibe un certificado X.509 único emitido
+   por la PKI interna. La comunicación usa mTLS en todos los canales. La clave privada
+   se almacena en el TPM~2.0 del hardware, no exportable por software.}
+  {Revocación quirúrgica de dispositivos comprometidos sin afectar a los demás.
+   Cumplimiento de NERC~CIP e ISO~27001 control A.10.1. La clave privada en TPM impide
+   su extracción incluso con acceso físico al dispositivo.}
+  {Requiere implementar y operar una PKI interna completa (CA raíz offline en HSM,
+   CA intermedia online, OCSP responder). El aprovisionamiento inicial de 120.000
+    certificados es operativamente complejo y debe automatizarse.}
+    {Pruebas de seguridad continuas (red team + pruebas de intrusión) y escenarios de
+    certificados revocados. Criterio de aceptación: 100\% de conexiones sin certificado
+    válido bloqueadas, revocación efectiva en tiempo objetivo y trazabilidad completa
+    en SIEM.}
+
+% ── ADR-006 ───────────────────────────────────────────────────────────────────
+\adr{ADR-006 \textnormal{---} Apache Flink como Motor de Stream Processing}
+  {Aprobado}
+  {El SLA de detección de anomalías en menos de 3~s exige un motor de procesamiento
+   streaming de muy baja latencia capaz de manejar 50.000 eventos/s con semántica
+   exactly-once y manejo de eventos fuera de orden por desincronización de reloj.}
+  {(1)~\textbf{Apache Spark Streaming} (micro-batches): latencias de 100~ms -- 1~s por
+   diseño; insuficiente para el SLA de 3~s.
+   (2)~\textbf{Apache Storm}: baja latencia pero sin soporte nativo de estado y
+   semántica exactly-once débil.
+   (3)~\textbf{Apache Flink}: procesamiento de stream verdadero (event-driven),
+   latencia sub-segundo, estado distribuido gestionado, soporte de event time con
+   watermarks para corrección de eventos tardíos.}
+  {Apache Flink como motor principal de stream processing. Se usa event time con
+   watermarks de PTP para manejar desincronización de reloj. Las ventanas de tiempo
+   son de 1~s, 5~s y 1~min para diferentes tipos de detección.}
+  {Latencia de procesamiento sub-segundo. Manejo nativo de eventos tardíos mediante
+   watermarks. Semántica exactly-once para garantizar que ninguna anomalía se detecte
+   dos veces ni se pierda. Escalado horizontal automático con Kubernetes.}
+  {Mayor curva de aprendizaje que Spark para el equipo. La gestión del estado
+   distribuido requiere cuidado especial en actualizaciones de versión. El
+    checkpointing frecuente genera overhead adicional de I/O.}
+    {Pruebas de latencia y exactitud con eventos fuera de orden. Criterio de
+    aceptación: latencia de detección p99,9 menor a 3 segundos, recuperación correcta
+    desde checkpoints y semántica effectively-once en flujos críticos.}
+
+% ── ADR-007 ───────────────────────────────────────────────────────────────────
+\adr{ADR-007 \textnormal{---} Sincronización de Tiempo con PTP IEEE~1588}
+  {Aprobado}
+  {Los 120.000 sensores distribuidos en todo el país tienen relojes internos que se
+   desincronizan con el tiempo, especialmente durante apagones y reinicios. La
+   correlación correcta de eventos entre sensores de distintas regiones requiere
+   timestamps precisos a nivel de microsegundos.}
+  {(1)~\textbf{NTP}: precisión de milisegundos; insuficiente para correlacionar eventos
+   eléctricos que ocurren en microsegundos.
+   (2)~\textbf{GPS por sensor}: precisión sub-microsegundo pero costoso para 120.000
+   dispositivos.
+   (3)~\textbf{PTP IEEE~1588 con Grandmaster Clock por región}: precisión de
+   microsegundos distribuida sin GPS en cada sensor.}
+  {Despliegue de un PTP Grandmaster Clock por región sincronizado con GPS. Los
+   gateways edge actúan como Boundary Clocks que distribuyen la señal de tiempo a los
+   sensores locales. Apache Flink usa los timestamps PTP como event time con watermarks
+   adaptativos.}
+  {Correlación precisa de eventos de múltiples sensores con precisión de microsegundos.
+   Eliminación de inconsistencias temporales en el análisis de apagones en cascada.
+   Cumple el requisito de IEC~61850 para marcas de tiempo de protección.}
+  {Requiere hardware de red compatible con PTP (switches con hardware timestamping) en
+    las subestaciones. El coste inicial de los Grandmaster Clocks y su infraestructura
+    de red asociada es elevado.}
+    {Monitoreo continuo de offset y jitter por región. Criterio de aceptación:
+    desincronización dentro del umbral de microsegundos definido para protección
+    eléctrica y consistencia temporal en correlación de eventos multi-región.}
+
+   % ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 9: ARQUITECTURA DE ALTO NIVEL (HLD)
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Arquitectura de Alto Nivel (HLD)}
+
+La arquitectura se organiza en seis zonas funcionales que reflejan el recorrido completo
+de un evento desde el sensor físico hasta la decisión operativa del centro de control.
+Las zonas se comunican de forma asíncrona a través de un bus de eventos central,
+garantizando el desacoplamiento necesario para que cada componente escale de forma
+independiente. Un plano transversal de seguridad vigila todas las zonas sin interrumpir
+el flujo de datos.
+
+\begin{center}
+  \includegraphics[width=\textwidth]{HLD}
+  \captionof{figure}{Arquitectura de Alto Nivel --- Plataforma IoT de Monitoreo Industrial para
+  Infraestructura Energética}
+  \label{fig:hld}
+\end{center}
+
+\subsection{Zonas de la Arquitectura}
+
+\begin{longtable}{
+  P{2.8cm}
+  P{4.2cm}
+  P{6.7cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Zona} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.2cm}}{Componentes} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{6.7cm}}{Responsabilidad} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{2.8cm}}{Zona} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.2cm}}{Componentes} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{6.7cm}}{Responsabilidad} \\
+\endhead
+
+\rowcolor{azulClr}
+\textbf{Zona de Campo} &
+  Sensores IoT, Nodo Inteligente de Subestación, Centro de Control Heredado &
+  Captura de telemetría física cada 5 segundos. El nodo inteligente procesa alarmas
+  críticas localmente y almacena datos durante cortes de conectividad, garantizando
+  autonomía operativa ante desconexiones prolongadas. \\
+
+\rowcolor{azulClr}
+\textbf{Transporte de Datos} &
+  Receptor de Mensajes IoT, Bus de Eventos, Cola de Reintentos &
+  Recepción masiva de eventos con entrega garantizada. El bus distribuye cada mensaje
+  a todos los consumidores simultáneamente sin acoplamiento entre ellos. La cola de
+  reintentos previene la pérdida de eventos críticos ante fallos transitorios. \\
+
+\rowcolor{azulClr}
+\textbf{Procesamiento Central} &
+  Motor de Tiempo Real, Detector de Anomalías, Motor de Predicción IA,
+  Sincronizador de Tiempo &
+  Análisis de eventos en menos de 3 segundos. Detección de anomalías mediante reglas
+  y modelos de inteligencia artificial. Anticipación de fallas futuras para mantenimiento
+  predictivo. Corrección de desincronización de relojes entre regiones del país. \\
+
+\rowcolor{azulClr}
+\textbf{Memoria del Sistema} &
+  Datos Recientes, Histórico Medio, Archivo Legal, Base de Datos Operacional &
+  Almacenamiento escalonado por temperatura de datos: acceso inmediato para los
+  últimos 90 días, consulta rápida hasta 1 año, y archivo regulatorio hasta 5 años.
+  La base operacional gestiona usuarios, configuraciones y metadatos del sistema. \\
+
+\rowcolor{azulClr}
+\textbf{Servicios al Usuario} &
+  Mapa Nacional, Centro de Notificaciones, Control Remoto Seguro,
+  Exportación de Datos, Panel de Mantenimiento &
+  Cinco puntos de salida adaptados a cada perfil de usuario: visualización geoespacial
+  en tiempo real, alertas omnicanal, actuación remota con doble verificación de
+  identidad, integración con sistemas externos y análisis predictivo para planificación
+  de mantenimiento. \\
+
+\rowcolor{azulClr}
+\textbf{Seguridad Transversal} &
+  Identidad Digital, Vigilancia Cibernética, Registro de Auditoría &
+  Plano horizontal que vigila todas las zonas sin interrumpir el flujo de datos.
+  Verifica la identidad de cada dispositivo y usuario, detecta comportamientos
+  anómalos en tiempo real y mantiene un registro inmutable de todos los eventos
+  del sistema para cumplimiento regulatorio. \\
+
+\end{longtable}
+
+\subsection{Flujo de una Alerta Crítica}
+
+El siguiente diagrama describe el recorrido completo de un evento crítico desde
+su origen físico hasta la actuación del operador, con los tiempos acumulados
+en cada etapa para garantizar el SLA de 3~segundos.
+
+\vspace{6pt}
+
+\begin{longtable}{
+  C{1.0cm}
+  P{3.2cm}
+  P{6.5cm}
+  C{2.0cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.0cm}}{Paso} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.2cm}}{Componente} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{6.5cm}}{Acción} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{2.0cm}}{Latencia acum.} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{1.0cm}}{Paso} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.2cm}}{Componente} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{6.5cm}}{Acción} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{2.0cm}}{Latencia acum.} \\
+\endhead
+
+\cellcolor{azulClr}\textbf{1} & Sensor IoT &
+  Captura lectura anómala y la publica con entrega garantizada y cifrado. &
+  \cellcolor{verdeCl}0 ms \\
+\cellcolor{azulClr}\textbf{2} & Nodo Inteligente &
+  Recibe la señal, evalúa reglas críticas locales y reenvía hacia la nube. &
+  \cellcolor{verdeCl}50--100 ms \\
+\cellcolor{azulClr}\textbf{3} & Receptor + Bus de Eventos &
+  Ingesta el mensaje y lo distribuye al procesamiento central. &
+  \cellcolor{verdeCl}100--200 ms \\
+\cellcolor{azulClr}\textbf{4} & Motor de Tiempo Real &
+  Consume el evento, corrige el timestamp y evalúa ventanas temporales. &
+  \cellcolor{verdeCl}300--800 ms \\
+\cellcolor{azulClr}\textbf{5} & Detector de Anomalías &
+  Clasifica el evento como Alerta Crítica Nivel~1 y lo publica. &
+  \cellcolor{verdeCl}800 ms--1,5 s \\
+\cellcolor{azulClr}\textbf{6} & Centro de Notificaciones &
+  Envía SMS, correo y notificación push al operador responsable de la región. &
+  \cellcolor{verdeCl}1,5--2,5 s \\
+\cellcolor{azulClr}\textbf{7} & Mapa Nacional &
+  Actualiza el marcador del sensor afectado en el panel geoespacial. &
+  \cellcolor{naranCl}2,5--3,0 s \\
+
+\end{longtable}
+
+\subsection{Patrones Arquitectónicos Aplicados}
+
+\begin{longtable}{
+  P{3.5cm}
+  P{4.5cm}
+  P{5.7cm}
+}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Patrón} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.5cm}}{Aplicación en el sistema} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.7cm}}{Beneficio principal} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Patrón} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.5cm}}{Aplicación en el sistema} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.7cm}}{Beneficio principal} \\
+\endhead
+
+\rowcolor{grisCl}
+\textbf{Arquitectura Orientada a Eventos} &
+  Bus central como único canal de comunicación entre zonas. &
+  Desacoplamiento total; cada zona escala sin afectar a las demás. \\
+
+\textbf{Separación Comando / Consulta} &
+  Escrituras de telemetría separadas de las lecturas históricas. &
+  Los análisis pesados no degradan el monitoreo en tiempo real. \\
+
+\rowcolor{grisCl}
+\textbf{Cortocircuito} &
+  El nodo de subestación prioriza eventos críticos durante saturación. &
+  Previene la propagación de fallos en cascada durante picos de carga. \\
+
+\textbf{Estrangulador} &
+  Integración gradual con centros de control heredados sin reemplazarlos. &
+  Migración incremental sin riesgo de interrupción de sistemas existentes. \\
+
+\rowcolor{grisCl}
+\textbf{Mamparo} &
+  Particionamiento del bus por región geográfica del país. &
+  Un fallo en una región no afecta el monitoreo de las demás. \\
+
+\textbf{Almacenar y Reenviar} &
+  El nodo local guarda datos durante desconexiones y los envía al restaurarse. &
+  Garantiza integridad de datos sin pérdida ante cortes de conectividad. \\
+
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 10: DIAGRAMA DE DESPLIEGUE
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Diagrama de Despliegue}
+
+La vista de despliegue describe dónde se ejecuta cada componente, cómo se conectan
+las zonas OT/IT y qué mecanismos permiten continuidad operativa ante fallos
+regionales.
+
+\subsection{Vista de Despliegue Implementada}
+
+\begin{center}
+  \includegraphics[width=\textwidth]{despliegue.png}
+  \captionof{figure}{Diagrama de despliegue de la plataforma IoT para monitoreo
+  industrial de infraestructura energética.}
+  \label{fig:despliegue}
+\end{center}
+
+\subsection{Lectura e Interpretación del Diagrama}
+
+El diagrama \ref{fig:despliegue} representa una arquitectura distribuida en tres
+planos: \textbf{campo (OT)}, \textbf{procesamiento en nube (IT)} y
+\textbf{plataforma de datos históricos}. Esta separación permite aislar
+responsabilidades operativas y escalar cada plano de forma independiente según su
+patrón de carga.
+
+En el plano OT, los gateways edge reciben telemetría de sensores y ejecutan lógica
+crítica local para mantener operación segura cuando la conectividad se degrada. En
+el plano IT, los clústeres regionales activos-activos absorben la ingesta masiva,
+procesan eventos de streaming y publican alertas en tiempo real. Finalmente, el
+plano de datos implementa retención por niveles para equilibrar rendimiento de
+consulta y costo total de almacenamiento.
+
+La integración entre regiones no solo responde a disponibilidad, sino también a
+objetivos de continuidad: ante caída de una región, la segunda mantiene operación
+sin pérdida de funciones críticas. Este comportamiento debe leerse junto con los
+SLA de RTO/RPO y con los ADR de tolerancia a fallos y arquitectura edge.
+
+\subsection{Decisiones de Despliegue y Justificación Técnica}
+
+\begin{longtable}{P{3.7cm} P{4.0cm} P{5.9cm}}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.7cm}}{Decisión} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.0cm}}{Necesidad del caso} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.9cm}}{Efecto esperado} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.7cm}}{Decisión} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{4.0cm}}{Necesidad del caso} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{5.9cm}}{Efecto esperado} \\
+\endhead
+
+\rowcolor{grisCl}
+Edge en subestaciones &
+  Pérdida de conectividad en nodos remotos y eventos climáticos extremos &
+  Continuidad local, protección operativa y envío diferido sin pérdida de eventos críticos. \\
+
+Activa-activa multi-región &
+  Disponibilidad anual de 99,95\% y tolerancia a fallos regionales &
+  Alta disponibilidad, failover automático y reducción de interrupciones de servicio. \\
+
+\rowcolor{grisCl}
+Bus de eventos desacoplado &
+  Throughput masivo y consumidores heterogéneos (alertas, analítica, auditoría) &
+  Escalado horizontal de ingesta y procesamiento sin acoplamiento rígido entre módulos. \\
+
+Almacenamiento por niveles (hot/warm/cold) &
+  Retención regulatoria de 5 años con crecimiento anual de volumen &
+  Balance entre costo y rendimiento, garantizando consulta rápida reciente y archivo legal. \\
+
+\rowcolor{grisCl}
+Seguridad transversal (PKI + SIEM) &
+  Riesgo de ciberataques a infraestructura crítica &
+  Autenticación fuerte, detección temprana de incidentes y trazabilidad auditada de extremo a extremo. \\
+
+\end{longtable}
+
+\subsection{Nodos de Despliegue y Responsabilidades}
+
+\begin{longtable}{P{3.8cm} P{3.8cm} P{2.6cm} P{3.5cm}}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.8cm}}{Nodo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.8cm}}{Componentes} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{2.6cm}}{Zona} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Objetivo de diseño} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.8cm}}{Nodo} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.8cm}}{Componentes} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{2.6cm}}{Zona} &
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{3.5cm}}{Objetivo de diseño} \\
+\endhead
+
+\rowcolor{grisCl}
+Gateway de Subestacion &
+  Buffer local, motor de reglas criticas, cliente MQTT con QoS~2 &
+  OT/Edge &
+  Operacion autonoma ante desconexion y cero perdida de eventos criticos. \\
+
+Cluster Kubernetes Region A &
+  API Gateway, Broker MQTT, Kafka, Flink, servicios de negocio &
+  IT/Cloud &
+  Baja latencia y escalado horizontal para alta carga de eventos. \\
+
+\rowcolor{grisCl}
+Cluster Kubernetes Region B &
+  Misma capacidad de Region A en modo activo-activo &
+  IT/Cloud &
+  Tolerancia a fallos regionales con continuidad de servicio. \\
+
+Plataforma de Datos Historicos &
+  InfluxDB hot, Data Lake warm/cold, almacenamiento WORM &
+  IT/Data &
+  Retencion de 5 anos optimizando costo y rendimiento de consulta. \\
+
+\rowcolor{grisCl}
+Plataforma de Seguridad y Observabilidad &
+  PKI X.509, SIEM, WAF/IDS, trazas y metricas &
+  Transversal &
+  Visibilidad operativa, deteccion temprana de incidentes y cumplimiento. \\
+
+\end{longtable}
+
+% ══════════════════════════════════════════════════════════════════════════════
+% SECCIÓN 11: ENTREGABLES
+% ══════════════════════════════════════════════════════════════════════════════
+\section{Entregables}
+
+\subsection{Documento}
+
+El documento final cumple los elementos solicitados para el caso de estudio:
+
+\begin{longtable}{P{9.5cm} C{4.2cm}}
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{9.5cm}}{Elemento requerido} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{4.2cm}}{Estado} \\
+\endfirsthead
+\rowcolor{azulPUJ}
+\multicolumn{1}{>{\raggedright\arraybackslash\color{white}\bfseries}p{9.5cm}}{Elemento requerido} &
+\multicolumn{1}{>{\centering\arraybackslash\color{white}\bfseries}p{4.2cm}}{Estado} \\
+\endhead
+
+\rowcolor{grisCl}
+Requerimientos (proyecto, dominio y producto) & Completado \\
+Usuarios & Completado \\
+\rowcolor{grisCl}
+Matriz Modulos Funcionales vs Usuarios & Completado \\
+Restricciones y riesgos & Completado \\
+\rowcolor{grisCl}
+Atributos de calidad ISO~25010 (descripcion, prioridad y clasificacion) & Completado \\
+Escenarios de calidad (minimo 1 por subcategoria priorizada) & Completado \\
+\rowcolor{grisCl}
+Acuerdos de atributos de calidad (SLA) & Completado \\
+ADRs de la arquitectura propuesta & Completado \\
+\rowcolor{grisCl}
+Arquitectura de Alto Nivel (HLD) & Completado \\
+Diagrama de despliegue & Completado \\
+
+\end{longtable}
+
+
+\subsection{Lecciones Aprendidas y Conclusiones}
+
+\textbf{Lecciones aprendidas.}
+La estrategia orientada a eventos y despliegue multi-region permite responder al
+throughput exigido sin sacrificar resiliencia. La incorporacion de capacidades
+edge no es opcional en entornos con conectividad intermitente. La seguridad debe
+disenarse de forma transversal desde el inicio para evitar retrabajos costosos.
+
+\textbf{Conclusiones.}
+La arquitectura propuesta satisface los requisitos criticos de latencia,
+disponibilidad y retencion regulatoria, manteniendo control de costos mediante
+almacenamiento por niveles. Los ADRs y SLAs definidos ofrecen trazabilidad tecnica
+y criterios verificables para evolucionar la plataforma en produccion.
+
+\end{document}
