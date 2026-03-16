@@ -1,0 +1,49 @@
+@startuml CasosDeUso_SAD
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor #F0F4FF
+  BorderColor #336699
+  ArrowColor #336699
+}
+
+actor "Organizador\n(Ticketera)" as ORG
+actor "Comprador" as COMP
+actor "Vendedor" as VEND
+actor "Personal del\nEvento" as VERIF
+actor "Admin\nPlataforma" as ADMIN
+
+rectangle "Sistema Stellar Tickets" {
+  usecase "CU-01: Crear evento y\ndesplegar contrato" as CU01
+  usecase "CU-02: Compra primaria\nde ticket" as CU02
+  usecase "CU-03: Listar ticket\npara reventa" as CU03
+  usecase "CU-04: Compra en\nreventa atómica" as CU04
+  usecase "CU-05: Verificar ticket\nen puerta" as CU05
+  usecase "CU-06: Redimir ticket" as CU06
+
+  usecase "Firmar transacción\n(Freighter Wallet)" as FIRMA
+  usecase "Distribuir comisiones\n(Contrato Soroban)" as COMIS
+  usecase "Validación offline\n(sincronización posterior)" as OFFLINE
+}
+
+ORG --> CU01
+ADMIN --> CU01
+
+COMP --> CU02
+COMP --> CU04
+COMP --> CU06
+
+VEND --> CU03
+
+VERIF --> CU05
+
+CU02 ..> FIRMA : <<include>>
+CU03 ..> FIRMA : <<include>>
+CU04 ..> FIRMA : <<include>>
+CU04 ..> COMIS : <<include>>
+CU06 ..> FIRMA : <<include>>
+
+CU05 ..> OFFLINE : <<extend>>
+
+@enduml

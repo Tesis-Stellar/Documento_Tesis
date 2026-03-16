@@ -1,0 +1,647 @@
+%=================================================================
+% SAD - Documento de Arquitectura de Software
+% Proyecto Tickets-NFT B2B (Stellar/Soroban)
+%=================================================================
+\documentclass[12pt,oneside]{article}
+
+% ====== Paquetes y formato ======
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=black,
+  pdfauthor={Grupo 12},
+  pdftitle={SAD - Proyecto Tickets-NFT B2B}
+}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{enumitem}
+\setlist[itemize]{left=0pt,label=--,itemsep=2pt,topsep=4pt}
+\setlist[enumerate]{left=0pt,itemsep=2pt,topsep=4pt}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Configuración de listings para código
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{green!60!black},
+  stringstyle=\color{red!70!black},
+  tabsize=2
+}
+
+% ====== Metadatos del proyecto ======
+\newcommand{\projectname}{Reventa B2B de tickets con NFTs en Stellar (Soroban)}
+\newcommand{\shortname}{Proyecto Tickets-NFT B2B}
+\newcommand{\version}{0.1}
+\newcommand{\docdate}{\today}
+\newcommand{\course}{Trabajo de Grado -- Ingeniería de Sistemas}
+\newcommand{\team}{Grupo 12}
+
+% ====== Documento ======
+\begin{document}
+
+% ====== Portada ======
+\begin{titlepage}
+  \centering
+  {\Large Documento de Arquitectura de Software (SAD)\par}
+  \vspace{1.2cm}
+  {\huge \textbf{\projectname}\par}
+  \vspace{0.3cm}
+  {\Large (\shortname)\par}
+  \vspace{1.2cm}
+  {\large Versión \version\ — \docdate\par}
+  \vspace{0.8cm}
+  \includegraphics[width=4cm]{pontificia-universidad-javeriana-seeklogo.png}\par
+  \vspace{0.4cm}
+  {\Large Pontificia Universidad Javeriana Bogotá\par}
+  \vfill
+  {\large \course\par}
+  \vspace{0.3cm}
+  {\large Director: Rafael Vicente Paéz Méndez, PhD\par}
+  \vspace{0.3cm}
+  {\large Cliente: B.A.F: Blockchain Acceleration Foundation\par}
+  \vfill
+  {\large\textbf{Autores:}\par}
+  {\large
+    Juan Diego Arias Durán\\
+    Santiago Andrés Mesa Niño\\
+    Andrés Felipe Manosalva Garzón\\
+    Juan Camilo Carvajal Rodríguez\par}
+  \vspace{1cm}
+\end{titlepage}
+
+% ====== Preliminares ======
+\pagenumbering{roman}
+
+% ------ Historial de cambios ------
+\section*{Historial de cambios}
+\begin{longtable}{@{}p{2cm} p{3cm} p{7.5cm} p{2.5cm}@{}}
+  \toprule
+  \textbf{Versión} & \textbf{Fecha} & \textbf{Descripción} & \textbf{Autor(es)}\\
+  \midrule
+  \endfirsthead
+  \toprule
+  \textbf{Versión} & \textbf{Fecha} & \textbf{Descripción} & \textbf{Autor(es)}\\
+  \midrule
+  \endhead
+  \bottomrule
+  \endfoot
+  0.1 & \today & Versión inicial del SAD: estructura base del documento. & \team\\
+\end{longtable}
+
+\newpage
+
+% ------ Índices ------
+\tableofcontents
+\newpage
+\listoffigures
+\listoftables
+\clearpage
+
+% ====== Cuerpo ======
+\pagenumbering{arabic}
+
+%===============================================================
+\section{Introducción}
+\label{sec:introduccion}
+%===============================================================
+
+\subsection{Propósito}
+\label{subsec:proposito}
+
+Este documento describe la \textbf{arquitectura de software} del sistema \textbf{\shortname}. Su propósito es:
+
+\begin{itemize}
+  \item Comunicar las decisiones arquitectónicas fundamentales del sistema a todos los interesados.
+  \item Servir como referencia técnica para el equipo de desarrollo durante la implementación.
+  \item Documentar las vistas arquitectónicas que permiten comprender la estructura, comportamiento y despliegue del sistema.
+  \item Justificar las decisiones de diseño y los \textit{trade-offs} realizados.
+\end{itemize}
+
+\subsection{Alcance}
+\label{subsec:alcance}
+
+El SAD abarca la arquitectura del prototipo académico del sistema de reventa B2B de tickets con NFTs sobre Stellar (Soroban), incluyendo:
+
+\begin{itemize}
+  \item El contrato inteligente Soroban (lógica on-chain).
+  \item El backend/API que interactúa con el contrato.
+  \item El frontend web de demostración.
+  \item Las integraciones con la red Stellar (testnet).
+\end{itemize}
+
+\subsection{Definiciones, acrónimos y abreviaturas}
+\label{subsec:definiciones}
+
+\begin{longtable}{@{}p{3.5cm} p{11cm}@{}}
+  \toprule
+  \textbf{Término} & \textbf{Definición}\\
+  \midrule
+  \endhead
+  \bottomrule
+  \endfoot
+  SAD & \textit{Software Architecture Document}. Este documento.\\
+  NFT & \textit{Non-Fungible Token}. Activo digital único que representa un ticket en blockchain.\\
+  Stellar & Red blockchain orientada a pagos y emisión de activos digitales.\\
+  Soroban & Plataforma de contratos inteligentes sobre Stellar, basada en WebAssembly (Wasm).\\
+  WASM & \textit{WebAssembly}. Formato de bytecode al que se compilan los contratos Soroban.\\
+  B2B & \textit{Business to Business}. Modelo de negocio del sistema.\\
+  API & \textit{Application Programming Interface}.\\
+  REST & \textit{Representational State Transfer}. Estilo arquitectónico para APIs web.\\
+  Testnet & Red de pruebas de Stellar sin valor monetario real.\\
+  SRS & \textit{Software Requirements Specification}. Documento de requerimientos del proyecto.\\
+  SPMP & \textit{Software Project Management Plan}. Plan de gestión del proyecto.\\
+\end{longtable}
+
+\subsection{Referencias}
+\label{subsec:referencias}
+
+\begin{enumerate}[leftmargin=*,label={[\arabic*]}]
+  \item IEEE Std 1471-2000: \textit{IEEE Recommended Practice for Architectural Description of Software-Intensive Systems}.
+  \item ISO/IEC/IEEE 42010:2011: \textit{Systems and software engineering — Architecture description}.
+  \item Brown, S. (2018). \textit{The C4 Model for Visualising Software Architecture}. \url{https://c4model.com/}.
+  \item Bass, L., Clements, P., \& Kazman, R. (2012). \textit{Software Architecture in Practice}, 3rd Edition. Addison-Wesley.
+  \item SRS del sistema Tickets-NFT B2B (v0.1).
+  \item SPMP del sistema Tickets-NFT B2B (v1.1).
+  \item Stellar Development Foundation: \textit{Stellar Documentation}, \url{https://developers.stellar.org/}.
+  \item Soroban Documentation: \textit{Smart Contracts on Stellar}, \url{https://soroban.stellar.org/}.
+\end{enumerate}
+
+\newpage
+\subsection{Visión general del documento}
+\label{subsec:vision-general}
+
+El resto del documento se organiza así:
+
+\begin{itemize}
+  \item \textbf{Sección~\ref{sec:representacion}}: describe el modelo arquitectónico utilizado y las vistas que se presentan.
+  \item \textbf{Sección~\ref{sec:objetivos-restricciones}}: enumera los objetivos y restricciones arquitectónicas.
+  \item \textbf{Sección~\ref{sec:vista-casos-uso}}: vista de casos de uso.
+  \item \textbf{Sección~\ref{sec:vista-logica}}: vista lógica (paquetes, clases, capas).
+  \item \textbf{Sección~\ref{sec:vista-procesos}}: vista de procesos (concurrencia, flujos).
+  \item \textbf{Sección~\ref{sec:vista-despliegue}}: vista de despliegue (infraestructura física/virtual).
+  \item \textbf{Sección~\ref{sec:vista-implementacion}}: vista de implementación (componentes, módulos).
+  \item \textbf{Sección~\ref{sec:vista-datos}}: vista de datos (modelo de datos on-chain y off-chain).
+  \item \textbf{Sección~\ref{sec:calidad}}: atributos de calidad y tácticas arquitectónicas.
+  \item \textbf{Sección~\ref{sec:decisiones}}: registro de decisiones arquitectónicas (ADRs).
+\end{itemize}
+
+%===============================================================
+\newpage
+\section{Representación arquitectónica}
+\label{sec:representacion}
+%===============================================================
+
+La arquitectura de Stellar Tickets se describe mediante el modelo \textbf{C4} de Simon Brown, que provee niveles de abstracción progresivos (contexto, contenedores, componentes, código) para comunicar la arquitectura a audiencias con distintos niveles de detalle técnico. Este modelo es especialmente adecuado para sistemas híbridos como el presente, donde la lógica se distribuye entre contratos inteligentes on-chain y servicios convencionales off-chain.
+
+\subsection{Niveles C4 utilizados}
+
+Se utilizan los dos primeros niveles del modelo C4:
+
+\subsubsection{Nivel 1 -- Contexto del sistema}
+
+En el modelo C4, el diagrama de contexto es el nivel de abstracción más alto. Su objetivo es responder a la pregunta: \textit{¿qué es el sistema y quién interactúa con él?} No muestra detalles técnicos internos, sino que ubica al sistema como una caja negra dentro de su entorno, identificando las personas que lo usan y los sistemas externos de los que depende o con los que se comunica.
+
+La Figura~\ref{fig:c4-contexto} presenta el diagrama de contexto de Stellar Tickets.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{contextoSecureTicket.png}
+  \caption{Diagrama C4 Nivel 1 -- Contexto del sistema Stellar Tickets}
+  \label{fig:c4-contexto}
+\end{figure}
+
+\paragraph{Interpretación del diagrama.} El sistema central es el \textbf{Smart Contract} desplegado en Soroban, que gestiona la validación y reventa de tickets. Alrededor de él se identifican cinco actores:
+
+\begin{itemize}
+  \item \textbf{Organizador} (empresa de boletería como TuBoleta o TicketMaster): inicializa el contrato para un evento específico, crea los tickets y los lista para venta. Sus transacciones se envían firmadas a través de la red Stellar.
+  \item \textbf{Comprador} (usuario final): compra, revende y canjea tickets interactuando con el contrato a través del marketplace web. Utiliza una wallet digital no-custodial para firmar cada transacción, garantizando que solo él puede autorizar movimientos de sus activos.
+  \item \textbf{Personal del evento}: consulta y verifica el estado de un ticket en el punto de acceso al evento (puerta), determinando si es válido y no ha sido consumido previamente.
+  \item \textbf{Administradores SecureTicket} (equipo técnico de la plataforma): despliegan los contratos en la red Stellar, configuran las comisiones de la plataforma y mantienen la infraestructura operativa.
+  \item \textbf{Wallet Digital} (Freighter): sistema externo que gestiona las claves privadas de organizadores y compradores. Toda firma de transacciones se realiza en este componente externo, lo que significa que la plataforma nunca tiene acceso a las claves de los usuarios (modelo no-custodial).
+\end{itemize}
+
+En la parte inferior del diagrama se muestra la \textbf{infraestructura blockchain}: el contrato se ejecuta sobre la \textbf{Blockchain Stellar} (red pública descentralizada que almacena el estado de forma inmutable), y los pagos se procesan mediante el \textbf{Token USDC} (moneda digital estable equivalente al dólar, usada como medio de pago del sistema).
+
+El límite del sistema (línea punteada etiquetada \textit{SecureTicket}) define qué está bajo control del equipo de desarrollo y qué es externo: la wallet, la red Stellar y el token USDC son dependencias externas que el sistema consume pero no controla.
+
+\subsubsection{Nivel 2 -- Contenedores}
+
+El diagrama de contenedores es el segundo nivel del modelo C4. Responde a la pregunta: \textit{¿cuáles son las piezas técnicas que componen el sistema y cómo se comunican entre sí?} Un ``contenedor'' en C4 no se refiere a Docker, sino a una unidad desplegable independientemente: una aplicación web, una API, una base de datos, un contrato inteligente, etc.
+
+La Figura~\ref{fig:c4-contenedores} presenta el diagrama de contenedores de Stellar Tickets.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{ContenedoresSecureTicket.png}
+  \caption{Diagrama C4 Nivel 2 -- Contenedores del sistema Stellar Tickets}
+  \label{fig:c4-contenedores}
+\end{figure}
+
+\paragraph{Interpretación del diagrama.} El sistema se descompone en los siguientes contenedores, organizados en cuatro zonas:
+
+\textbf{Zona Cliente} (lo que ejecuta el usuario en su dispositivo):
+\begin{itemize}
+  \item \textbf{Marketplace Web}: aplicación frontend (React/Next.js) que los organizadores, compradores y vendedores utilizan para interactuar con el sistema. Es una interfaz white-label, lo que significa que cada ticketera puede personalizarla con su marca.
+  \item \textbf{App de Escaneo}: aplicación utilizada por el personal del evento para validar tickets mediante lectura de códigos QR. Opera tanto en modo online (consultando al backend en tiempo real) como en modo offline (con validación local y sincronización posterior).
+  \item \textbf{Wallet Digital} (Freighter): componente externo al sistema que firma las transacciones antes de enviarlas a la blockchain.
+\end{itemize}
+
+\textbf{Zona Servidor} (lo que se ejecuta en la infraestructura de la plataforma):
+\begin{itemize}
+  \item \textbf{Nodo RPC Soroban}: punto de acceso a la red Stellar que permite al backend enviar transacciones y consultar el estado de los contratos. Actúa como puente entre el mundo off-chain y la blockchain.
+\end{itemize}
+
+\textbf{Zona Blockchain} (Stellar Testnet, lo que se ejecuta de forma descentralizada):
+\begin{itemize}
+  \item \textbf{Contrato Inteligente}: contrato Soroban desplegado por evento que contiene toda la lógica de negocio on-chain: emisión de tickets como NFTs, transferencia de propiedad, distribución de comisiones y marcado de tickets como usados. Es el componente más crítico del sistema.
+  \item \textbf{Contrato USDC}: contrato externo del token estable utilizado como medio de pago. El contrato inteligente lo invoca para ejecutar las transferencias de fondos durante compras y reventas.
+\end{itemize}
+
+\textbf{Comunicaciones clave} visibles en el diagrama:
+\begin{itemize}
+  \item El Marketplace Web se comunica con el Nodo RPC Soroban para enviar transacciones firmadas y consultar estado.
+  \item El Marketplace Web interactúa con la Wallet Digital para solicitar firmas de transacciones al usuario.
+  \item La App de Escaneo consulta el estado de tickets a través del Nodo RPC o de datos sincronizados localmente.
+  \item El Contrato Inteligente invoca al Contrato USDC para procesar pagos de forma atómica dentro de la misma transacción.
+  \item La Red Stellar subyace como infraestructura que persiste el estado de todos los contratos de forma inmutable y distribuida.
+\end{itemize}
+
+\newpage
+\subsection{Mapeo de vistas a secciones del documento}
+
+Las secciones restantes del SAD profundizan en aspectos específicos de la arquitectura, complementando los diagramas C4:
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}l l X@{}}
+    \toprule
+    \textbf{Vista} & \textbf{Sección} & \textbf{Contenido principal}\\
+    \midrule
+    Casos de uso & \ref{sec:vista-casos-uso} & Casos de uso arquitectónicamente significativos y diagrama C4 de contexto.\\
+    Lógica & \ref{sec:vista-logica} & Descomposición en capas y módulos; diagrama C4 de contenedores; separación on-chain/off-chain.\\
+    Procesos & \ref{sec:vista-procesos} & Flujos de interacción principales: compra primaria, reventa atómica, redención y verificación.\\
+    Despliegue & \ref{sec:vista-despliegue} & Topología de nodos: presentación, servicios, datos y red Stellar testnet.\\
+    Implementación & \ref{sec:vista-implementacion} & Organización del código fuente, artefactos compilados (WASM) y dependencias.\\
+    Datos & \ref{sec:vista-datos} & Modelo de almacenamiento on-chain (Soroban) y off-chain (PostgreSQL).\\
+    \bottomrule
+  \end{tabularx}
+  \caption{Mapeo entre vistas arquitectónicas y secciones del SAD}
+  \label{tab:mapeo-vistas}
+\end{table}
+
+Adicionalmente, el documento incluye una sección de \textbf{atributos de calidad} (Sección~\ref{sec:calidad}) con escenarios y tácticas arquitectónicas, y un \textbf{registro de decisiones arquitectónicas} (Sección~\ref{sec:decisiones}) en formato ADR.
+
+%===============================================================
+\newpage
+\section{Objetivos y restricciones arquitectónicas}
+\label{sec:objetivos-restricciones}
+%===============================================================
+
+Esta sección presenta los \textit{drivers} arquitectónicos: los atributos de calidad prioritarios y las restricciones que condicionan las decisiones de diseño del sistema.
+
+\subsection{Objetivos arquitectónicos}
+\label{subsec:objetivos}
+
+Los siguientes atributos de calidad, derivados del SRS y de las necesidades del modelo B2B, guían las decisiones arquitectónicas:
+
+\begin{enumerate}
+  \item \textbf{Trazabilidad e inmutabilidad.} Cada ticket debe tener un historial de propiedad verificable e inalterable. Esto motiva el uso de blockchain como fuente de verdad para la propiedad y las transferencias, complementado con un indexador off-chain para consultas rápidas.
+
+  \item \textbf{Atomicidad en transacciones de reventa.} La operación de compra en el mercado secundario debe ser atómica: la transferencia del ticket y la distribución de pagos (vendedor, comisión organizador, comisión plataforma) ocurren en una sola transacción o no ocurren en absoluto. Esto elimina estados inconsistentes donde el pago se procesa pero el ticket no se transfiere, o viceversa.
+
+  \item \textbf{Seguridad y autenticidad.} La arquitectura debe garantizar que los tickets no puedan falsificarse ni duplicarse. La custodia de claves es no-custodial (Freighter Wallet), de modo que solo el propietario legítimo puede autorizar transferencias mediante firma criptográfica.
+
+  \item \textbf{Adaptabilidad B2B (multi-ticketera).} El sistema debe permitir que múltiples ticketeras operen de forma independiente, cada una con sus propios eventos, políticas de comisión y configuración. Esto motiva la arquitectura de \textit{contrato por evento} desplegado por un Factory, y un frontend white-label configurable.
+
+  \item \textbf{Disponibilidad de consultas.} Aunque la blockchain garantiza persistencia, su modelo de lectura es limitado. El sistema debe ofrecer consultas rápidas sobre estado de tickets, historial y auditoría sin depender exclusivamente de llamadas on-chain. Esto justifica la capa de indexación y caché off-chain respaldada por PostgreSQL.
+
+  \item \textbf{Verificabilidad en puerta.} La validación de tickets en el punto de acceso al evento debe funcionar tanto en modo online (consulta directa al contrato) como offline (con sincronización posterior), para cubrir escenarios donde la conectividad es limitada.
+\end{enumerate}
+
+\subsection{Restricciones arquitectónicas}
+\label{subsec:restricciones}
+
+\subsubsection{Restricciones tecnológicas}
+
+\begin{itemize}
+  \item \textbf{Stellar y Soroban:} la lógica on-chain debe implementarse como contratos inteligentes Soroban, compilados a WebAssembly (WASM) y escritos en Rust. Esto impone el uso del \texttt{soroban-sdk} y sus limitaciones (modelo de storage basado en claves, sin eventos complejos nativos, tamaño limitado de transacciones).
+  \item \textbf{Testnet:} el prototipo opera exclusivamente sobre la testnet de Stellar, lo que implica que los activos no tienen valor monetario real y que la red puede presentar interrupciones o reinicios periódicos.
+  \item \textbf{Token de pago:} las transacciones de compra y reventa utilizan XLM nativo y, opcionalmente, un token USDC simulado (\texttt{USDC\_SIM}) emitido en testnet mediante el Stellar Asset Contract (SAC).
+  \item \textbf{Wallet no-custodial:} el sistema no almacena claves privadas de los usuarios. La firma de transacciones se delega a Freighter Wallet, lo que requiere que el frontend integre su SDK para la interacción con el usuario.
+\end{itemize}
+
+\subsubsection{Restricciones organizacionales}
+
+\begin{itemize}
+  \item \textbf{Equipo reducido:} 4 desarrolladores con dedicación parcial (proyecto académico), lo que favorece una arquitectura con separación clara de responsabilidades que permita trabajo en paralelo (contrato, backend, frontend, verificación).
+  \item \textbf{Tiempo acotado:} un semestre académico ($\sim$16 semanas), lo que limita el alcance a un prototipo funcional demostrable.
+  \item \textbf{Contexto académico:} el sistema debe ser documentable, demostrable y evaluable por docentes, priorizando claridad arquitectónica sobre optimización de producción.
+\end{itemize}
+
+\subsubsection{Restricciones de integración}
+
+\begin{itemize}
+  \item \textbf{Modelo B2B no invasivo:} el sistema se ofrece como complemento a plataformas de boletería existentes, no como reemplazo. La integración se realiza vía API REST, sin requerir modificaciones en los sistemas internos de la ticketera.
+  \item \textbf{Separación on-chain/off-chain:} las operaciones de escritura que afectan propiedad y pagos ocurren on-chain (fuente de verdad), mientras que las consultas de lectura, auditoría e indexación se resuelven off-chain para rendimiento y usabilidad.
+\end{itemize}
+
+%===============================================================
+\newpage
+\section{Vista de casos de uso}
+\label{sec:vista-casos-uso}
+%===============================================================
+
+Esta sección identifica los casos de uso arquitectónicamente significativos del sistema: aquellos que ejercitan los principales componentes, imponen restricciones de diseño o exponen los atributos de calidad prioritarios descritos en la Sección~\ref{sec:objetivos-restricciones}.
+
+\subsection{Diagrama de casos de uso}
+
+La Figura~\ref{fig:casos-uso} presenta los casos de uso principales del sistema y sus relaciones con los actores identificados en el diagrama C4 de contexto (Figura~\ref{fig:c4-contexto}).
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\textwidth]{CasosDeUso_SAD.png}
+  \caption{Diagrama de casos de uso arquitectónicamente significativos}
+  \label{fig:casos-uso}
+\end{figure}
+
+\subsection{Descripción de casos de uso}
+
+A continuación se describe cada caso de uso, destacando su relevancia arquitectónica.
+
+\subsubsection{CU-01: Crear evento y desplegar contrato}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
+    \toprule
+    \textbf{Actores} & Organizador (Ticketera), Admin Plataforma\\
+    \midrule
+    \textbf{Descripción} & El organizador configura un nuevo evento (nombre, fecha, wallets de comisión, políticas de reventa). La plataforma invoca el Factory para desplegar un contrato Soroban específico para ese evento en la testnet.\\
+    \midrule
+    \textbf{Precondiciones} & El organizador está autenticado y tiene permisos de creación de eventos.\\
+    \midrule
+    \textbf{Flujo principal} &
+      1. El organizador ingresa los datos del evento y configura fees.\newline
+      2. El backend valida los parámetros y registra el evento en PostgreSQL.\newline
+      3. El backend invoca el contrato Factory en Stellar.\newline
+      4. El Factory despliega un nuevo contrato de evento con los parámetros configurados.\newline
+      5. El sistema registra la dirección del contrato desplegado.\\
+    \midrule
+    \textbf{Postcondiciones} & Existe un contrato de evento independiente en la testnet, listo para emitir tickets.\\
+    \midrule
+    \textbf{Relevancia arquitectónica} & Ejerce el patrón Factory, la separación on-chain/off-chain y la adaptabilidad multi-ticketera. Cada evento opera con un contrato aislado, lo que garantiza independencia de configuración y fondos.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{CU-01: Crear evento y desplegar contrato}
+  \label{tab:cu01}
+\end{table}
+
+\subsubsection{CU-02: Compra primaria de ticket}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
+    \toprule
+    \textbf{Actores} & Comprador\\
+    \midrule
+    \textbf{Descripción} & El comprador adquiere un ticket emitido por el organizador. El 100\% del pago se transfiere al organizador.\\
+    \midrule
+    \textbf{Precondiciones} & El evento existe, tiene tickets disponibles y el comprador tiene fondos suficientes en su wallet.\\
+    \midrule
+    \textbf{Flujo principal} &
+      1. El comprador selecciona un ticket disponible en el marketplace.\newline
+      2. El frontend solicita firma de la transacción a Freighter Wallet.\newline
+      3. El contrato de evento transfiere el pago al organizador y asigna el ticket al comprador.\newline
+      4. El indexador registra la operación en PostgreSQL.\\
+    \midrule
+    \textbf{Postcondiciones} & El comprador es el nuevo propietario del ticket. El pago fue transferido al organizador.\\
+    \midrule
+    \textbf{Relevancia arquitectónica} & Ejerce la integración wallet no-custodial (Freighter), el flujo de firma de transacciones y la escritura on-chain con indexación off-chain posterior.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{CU-02: Compra primaria de ticket}
+  \label{tab:cu02}
+\end{table}
+
+\subsubsection{CU-03: Listar ticket para reventa}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
+    \toprule
+    \textbf{Actores} & Vendedor\\
+    \midrule
+    \textbf{Descripción} & El propietario de un ticket lo publica en el marketplace para reventa, estableciendo un precio.\\
+    \midrule
+    \textbf{Precondiciones} & El vendedor es propietario del ticket, el ticket está vigente (no consumido ni invalidado) y el evento permite reventa.\\
+    \midrule
+    \textbf{Flujo principal} &
+      1. El vendedor selecciona un ticket de su inventario y fija precio de reventa.\newline
+      2. El frontend solicita firma a Freighter Wallet.\newline
+      3. El contrato marca el ticket como listado para reventa.\newline
+      4. El marketplace muestra el ticket disponible para compra.\\
+    \midrule
+    \textbf{Postcondiciones} & El ticket está visible en el marketplace con estado \texttt{for\_sale = true}.\\
+    \midrule
+    \textbf{Relevancia arquitectónica} & Ejerce la transición de estados del ticket on-chain y la sincronización con el caché off-chain para consultas del marketplace.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{CU-03: Listar ticket para reventa}
+  \label{tab:cu03}
+\end{table}
+
+\subsubsection{CU-04: Compra en reventa atómica}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
+    \toprule
+    \textbf{Actores} & Comprador\\
+    \midrule
+    \textbf{Descripción} & El comprador adquiere un ticket en el mercado secundario. En una sola transacción atómica se ejecutan: pago al vendedor, comisión al organizador, comisión a la plataforma, burn de la versión anterior y mint de una nueva versión del ticket.\\
+    \midrule
+    \textbf{Precondiciones} & El ticket está listado para reventa, el comprador tiene fondos suficientes y no es el propietario actual.\\
+    \midrule
+    \textbf{Flujo principal} &
+      1. El comprador selecciona un ticket en reventa y confirma la compra.\newline
+      2. Freighter Wallet firma la transacción.\newline
+      3. El contrato ejecuta atómicamente:\newline
+      \hspace{1em}a) Transferencia de comisión al organizador.\newline
+      \hspace{1em}b) Transferencia de comisión a la plataforma.\newline
+      \hspace{1em}c) Transferencia del pago neto al vendedor.\newline
+      \hspace{1em}d) Burn de la versión previa del ticket.\newline
+      \hspace{1em}e) Mint de nueva versión asignada al comprador.\newline
+      4. El contrato emite evento on-chain indexado por \texttt{ticket\_root\_id}.\newline
+      5. El indexador actualiza PostgreSQL.\\
+    \midrule
+    \textbf{Flujo alternativo} & Si cualquier paso falla, toda la transacción se revierte. No existe estado intermedio.\\
+    \midrule
+    \textbf{Postcondiciones} & El comprador posee la nueva versión del ticket. Los pagos y comisiones fueron distribuidos. La versión anterior está invalidada.\\
+    \midrule
+    \textbf{Relevancia arquitectónica} & Es el caso de uso más crítico del sistema. Ejerce la atomicidad transaccional de Soroban, el patrón burn+remint, la distribución de comisiones embebida en el contrato y la trazabilidad por \texttt{ticket\_root\_id}. Valida el driver de atomicidad e inmutabilidad.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{CU-04: Compra en reventa atómica}
+  \label{tab:cu04}
+\end{table}
+
+\subsubsection{CU-05: Verificar ticket en puerta}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
+    \toprule
+    \textbf{Actores} & Personal del Evento\\
+    \midrule
+    \textbf{Descripción} & El verificador escanea el código QR del ticket para validar el acceso al evento. Soporta modo online y offline.\\
+    \midrule
+    \textbf{Precondiciones} & El ticket existe y el evento está en curso o próximo a iniciar.\\
+    \midrule
+    \textbf{Flujo principal (online)} &
+      1. El asistente presenta el QR (contiene ticket ID, versión, firma y expiración).\newline
+      2. La app de verificación consulta el backend.\newline
+      3. El backend valida contra el caché de estado y opcionalmente contra el contrato on-chain.\newline
+      4. Se confirma o deniega el acceso.\newline
+      5. Se registra el check-in en la bitácora.\\
+    \midrule
+    \textbf{Flujo alternativo (offline)} &
+      1. Sin conectividad, la app aplica validación local con datos sincronizados previamente.\newline
+      2. El resultado se marca como provisional.\newline
+      3. Al recuperar conectividad, se sincronizan los consumos pendientes.\newline
+      4. Conflictos se resuelven por política: primer check-in sincronizado gana.\\
+    \midrule
+    \textbf{Postcondiciones} & El ticket queda marcado como consumido (online) o pendiente de sincronización (offline).\\
+    \midrule
+    \textbf{Relevancia arquitectónica} & Ejerce la táctica de resiliencia offline, la cola de sincronización, la resolución de conflictos y la separación entre validación on-chain y caché off-chain. Valida el driver de verificabilidad en puerta.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{CU-05: Verificar ticket en puerta}
+  \label{tab:cu05}
+\end{table}
+
+\subsubsection{CU-06: Redimir ticket}
+
+\begin{table}[H]
+  \centering
+  \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
+    \toprule
+    \textbf{Actores} & Comprador\\
+    \midrule
+    \textbf{Descripción} & El propietario del ticket lo redime, marcándolo como usado de forma irreversible en el contrato.\\
+    \midrule
+    \textbf{Precondiciones} & El ticket está vigente, no está listado para reventa y el actor es el propietario.\\
+    \midrule
+    \textbf{Flujo principal} &
+      1. El comprador solicita la redención del ticket.\newline
+      2. Freighter Wallet firma la transacción.\newline
+      3. El contrato marca el ticket como \texttt{used = true} (irreversible).\newline
+      4. El indexador actualiza el estado en PostgreSQL.\\
+    \midrule
+    \textbf{Postcondiciones} & El ticket no puede ser listado, comprado ni revendido. El estado es terminal.\\
+    \midrule
+    \textbf{Relevancia arquitectónica} & Ejerce la irreversibilidad de estado on-chain y la transición terminal en la máquina de estados del ticket.\\
+    \bottomrule
+  \end{tabularx}
+  \caption{CU-06: Redimir ticket}
+  \label{tab:cu06}
+\end{table}
+
+%===============================================================
+\newpage
+\section{Vista lógica}
+\label{sec:vista-logica}
+%===============================================================
+
+% TODO: Descomposición en capas/paquetes/módulos.
+% Diagramas de clases o componentes lógicos.
+% Separación on-chain (contrato Soroban) vs off-chain (backend, frontend).
+
+%===============================================================
+\newpage
+\section{Vista de procesos}
+\label{sec:vista-procesos}
+%===============================================================
+
+% TODO: Diagramas de secuencia de los flujos principales:
+% - Compra primaria de ticket
+% - Listado para reventa
+% - Compra en reventa (con distribución de comisiones)
+% - Redención de ticket
+% Concurrencia, transacciones atómicas en Soroban.
+
+%===============================================================
+\newpage
+\section{Vista de despliegue}
+\label{sec:vista-despliegue}
+%===============================================================
+
+% TODO: Diagrama de despliegue (nodos físicos/virtuales).
+% Stellar testnet, servidor backend, hosting frontend, base de datos.
+
+%===============================================================
+\newpage
+\section{Vista de implementación}
+\label{sec:vista-implementacion}
+%===============================================================
+
+% TODO: Organización del código fuente, módulos, dependencias.
+% Estructura del repositorio, artefactos compilados (WASM).
+
+%===============================================================
+\newpage
+\section{Vista de datos}
+\label{sec:vista-datos}
+%===============================================================
+
+% TODO: Modelo de datos on-chain (DataKey, Ticket struct, storage).
+% Modelo de datos off-chain (si aplica: PostgreSQL, tablas).
+% Diagrama entidad-relación o equivalente.
+
+%===============================================================
+\newpage
+\section{Atributos de calidad}
+\label{sec:calidad}
+%===============================================================
+
+% TODO: Escenarios de atributos de calidad (seguridad, rendimiento,
+% disponibilidad, modificabilidad, etc.) y tácticas arquitectónicas
+% empleadas para satisfacerlos.
+
+%===============================================================
+\newpage
+\section{Decisiones arquitectónicas}
+\label{sec:decisiones}
+%===============================================================
+
+% TODO: ADRs (Architecture Decision Records).
+% Formato sugerido por decisión:
+% - Contexto
+% - Decisión
+% - Consecuencias
+% Ejemplos: elección de Stellar/Soroban, modelo de storage del contrato,
+% separación on-chain/off-chain, stack de frontend/backend.
+
+%===============================================================
+% Referencias (si se usa bibliografía adicional al final)
+%===============================================================
+
+\end{document}
