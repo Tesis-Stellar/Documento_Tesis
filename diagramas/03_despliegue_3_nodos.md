@@ -4,7 +4,7 @@
 Modela la topología mínima de ejecución para el prototipo académico: nodo web, nodo API y nodo de datos, con integración a Stellar Testnet.
 
 ## Cómo funciona
-1. El nodo web expone portales para comprador, vendedor, verificador y administrador.
+1. El nodo web expone portales para comprador, vendedor, verificador y administrador, accesibles desde navegador de escritorio o móvil.
 2. El nodo API centraliza servicios de reventa, verificación, firma QR e indexación.
 3. El nodo de datos persiste entidades de negocio y bitácora operativa.
 4. Los servicios API interactúan con contratos en testnet y procesan eventos.
@@ -19,6 +19,7 @@ Modela la topología mínima de ejecución para el prototipo académico: nodo we
 - Despliegue distribuido con separación funcional.
 - Escalabilidad inicial por componentes desacoplados.
 - Preparación para validación de métricas por capa.
+- Posibilidad de acceso móvil sin app nativa, usando navegador y wallet compatible.
 
 ## Uso en la tesis
 - Capítulo sugerido: implementación y despliegue.

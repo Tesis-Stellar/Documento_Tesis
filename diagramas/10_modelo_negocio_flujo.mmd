@@ -1,0 +1,72 @@
+flowchart TD
+    %% ─────────────────────────────────────────────
+    %% ACTORES
+    %% ─────────────────────────────────────────────
+    ADMIN["🏢 Administrador de plataforma\n(firma con wallet Stellar)"]
+    ORG["🎪 Organizador del evento\n(firma con wallet Stellar)"]
+    COMP["🧑 Comprador\n(wallet browser/Freighter)"]
+    VERIF["🔍 Verificador\n(tableta en puerta del evento)"]
+
+    %% ─────────────────────────────────────────────
+    %% CAPA ON-CHAIN (blockchain Stellar)
+    %% ─────────────────────────────────────────────
+    subgraph CHAIN["⛓️  Blockchain Stellar (Soroban)"]
+        direction TB
+        FAB["factory_contract\n─────────────\ninicializar(admin)\ncrear_evento_contrato(config)\nobtener_contrato_evento(id)"]
+        EV["event_contract\n(una instancia por evento)\n─────────────────\ninicializar(config)\ncrear_boleto(id_evento, precio)\nlistar_boleto(id, precio)\ncomprar_boleto(id, comprador)\nredimir_boleto(id)"]
+        FAB -- "registra/despliega\n(1 contrato por evento)" --> EV
+    end
+
+    %% ─────────────────────────────────────────────
+    %% CAPA OFF-CHAIN
+    %% ─────────────────────────────────────────────
+    subgraph OFFCHAIN["🖥️  Off-Chain (Node.js / PostgreSQL)"]
+        direction TB
+        IDX["Indexador\n─────────\nEscucha eventos RPC\nEscribe en PostgreSQL"]
+        API["API REST\n─────────\nExpone datos de boletos\ny eventos al frontend"]
+        WEB["Portal Web / App\n─────────\nConecta wallet\nFirma transacciones"]
+        VAPP["App Verificador\n─────────\nEscanea QR\nChecks on-chain + cache"]
+        DB[("PostgreSQL\nBase de datos off-chain")]
+    end
+
+    %% ─────────────────────────────────────────────
+    %% FLUJO PRINCIPAL (numerado)
+    %% ─────────────────────────────────────────────
+
+    ADMIN -- "1 Inicializa factory\n(una sola vez)" --> FAB
+    ORG -- "2 Solicita crear evento\n+ configuración" --> FAB
+    FAB -- "3 Registra contrato evento\nEmite: EventoCreado" --> EV
+    ORG -- "4 Crea boletos\n(precio + capacidad)" --> EV
+
+    EV -- "5 Emite eventos on-chain\nTicketMinted, Listed, Resold,\nRedeemed, Cancelled" --> IDX
+    IDX -- "6 Indexa estado\na base de datos" --> DB
+    DB -- "7 Sirve datos\na la web" --> API
+    API -- "8 Muestra eventos\ny boletos disponibles" --> WEB
+
+    COMP -- "9 Conecta wallet\nFirma compra" --> WEB
+    WEB -- "10 Llama comprar_boleto\nen blockchain" --> EV
+    EV -- "11 Transfiere propiedad\nPago on-chain al organizador" --> EV
+
+    COMP -- "12 Recibe boleto\nQR firmado on-chain" --> VAPP
+    VERIF -- "13 Escanea QR\nen puerta" --> VAPP
+    VAPP -- "14 Verifica estado\nen contrato o cache" --> EV
+    VAPP -- "15 Llama redimir_boleto\n(marca como usado)" --> EV
+
+    %% ─────────────────────────────────────────────
+    %% FLUJO DE DINERO
+    %% ─────────────────────────────────────────────
+    COMP -- "💰 Paga en\ntokens Stellar" --> EV
+    EV -- "💸 Distribuye automáticamente:\nOrganizador + Plataforma" --> ORG
+
+    %% ─────────────────────────────────────────────
+    %% ESTILOS
+    %% ─────────────────────────────────────────────
+    classDef actor fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef chain fill:#fef9c3,stroke:#ca8a04,color:#713f12
+    classDef offchain fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef db fill:#f3e8ff,stroke:#9333ea,color:#3b0764
+
+    class ADMIN,ORG,COMP,VERIF actor
+    class FAB,EV chain
+    class IDX,API,WEB,VAPP offchain
+    class DB db

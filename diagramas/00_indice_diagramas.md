@@ -17,10 +17,11 @@ Cada diagrama tiene dos archivos:
 7. `07_bpmn_b2b2c_reventa.mmd` + `07_bpmn_b2b2c_reventa.md`
 8. `08_erd_datos_soporte.mmd` + `08_erd_datos_soporte.md`
 9. `09_historias_usuario_mapa.mmd` + `09_historias_usuario_mapa.md`
+10. `10_modelo_negocio_flujo.mmd` + `10_modelo_negocio_flujo.md`
 
 ## Mapeo sugerido a capítulos de tesis
-- `marco_teorico.tex`: 01, 02.
-- `solucion.tex`: 01, 02, 04, 06.
+- `marco_teorico.tex`: 01, 02, 10.
+- `solucion.tex`: 01, 02, 04, 06, 10.
 - `sistema de arquitectura.tex`: 03, 05, 08.
 - `requerimientos.tex` o sección equivalente: 09.
 - `evaluacion y resultados.tex`: 05 y métricas derivadas de 04/08.
