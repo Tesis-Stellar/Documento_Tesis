@@ -62,13 +62,13 @@
 % ====== Portada ======
 \begin{titlepage}
   \centering
-  {\Large Documento de Arquitectura de Software (SAD)\par}
+  {\Large Documento de Especificación del Diseño\par}
   \vspace{1.2cm}
   {\huge \textbf{\projectname}\par}
   \vspace{0.3cm}
   {\Large (\shortname)\par}
   \vspace{1.2cm}
-  {\large Versión 0.3 — \docdate\par}
+  {\large Versión 0.4 — \docdate\par}
   \vspace{0.8cm}
   \includegraphics[width=4cm]{pontificia-universidad-javeriana-seeklogo.png}\par
   \vspace{0.4cm}
@@ -108,6 +108,7 @@
   0.1 & 10/03/2026 & Versión inicial del SAD: estructura base del documento. & \team\\
   0.2 & 13/03/2026 & Desarrollo de las secciones 1 (Introducción), 2 (Representación arquitectónica) y 3 (Objetivos y restricciones arquitectónicas). & \team\\
   0.3 & 15/03/2026 & Desarrollo de las secciones 4 (Vista de casos de uso), 5 (Vista lógica) y 6 (Vista de procesos). & \team\\
+  0.4 & 24/03/2026 & Actualización integral: alineación con la implementación real de los contratos (nombres en español, versionado burn/remint, sistema de verificadores, invalidación on-chain), corrección de la arquitectura Frontend$\rightarrow$Backend$\rightarrow$Blockchain, eliminación de App de Escaneo y modo offline no implementados, actualización de diagramas C4. & \team\\
 \end{longtable}
 
 \newpage
@@ -232,19 +233,18 @@ La Figura~\ref{fig:c4-contexto} presenta el diagrama de contexto de Stellar Tick
   \label{fig:c4-contexto}
 \end{figure}
 
-\paragraph{Interpretación del diagrama.} El sistema central es el \textbf{Smart Contract} desplegado en Soroban, que gestiona la validación y reventa de tickets. Alrededor de él se identifican cinco actores:
+\paragraph{Interpretación del diagrama.} El sistema central es la \textbf{plataforma Stellar Tickets}, compuesta por un frontend web (TuTicket), un backend API (NestJS) y los contratos inteligentes Soroban. Alrededor se identifican los siguientes actores y sistemas externos:
 
 \begin{itemize}
-  \item \textbf{Organizador} (empresa de boletería como TuBoleta o TicketMaster): inicializa el contrato para un evento específico, crea los tickets y los lista para venta. Sus transacciones se envían firmadas a través de la red Stellar.
-  \item \textbf{Comprador} (usuario final): compra, revende y canjea tickets interactuando con el contrato a través del marketplace web. Utiliza una wallet digital no-custodial para firmar cada transacción, garantizando que solo él puede autorizar movimientos de sus activos.
-  \item \textbf{Personal del evento}: consulta y verifica el estado de un ticket en el punto de acceso al evento (puerta), determinando si es válido y no ha sido consumido previamente.
-  \item \textbf{Administradores SecureTicket} (equipo técnico de la plataforma): despliegan los contratos en la red Stellar, configuran las comisiones de la plataforma y mantienen la infraestructura operativa.
-  \item \textbf{Wallet Digital} (Freighter): sistema externo que gestiona las claves privadas de organizadores y compradores. Toda firma de transacciones se realiza en este componente externo, lo que significa que la plataforma nunca tiene acceso a las claves de los usuarios (modelo no-custodial).
+  \item \textbf{Organizador} (empresa de boletería): configura eventos, define comisiones y gestiona boletos a través del panel de administración web. Sus operaciones on-chain son orquestadas por el backend.
+  \item \textbf{Comprador} (usuario final): navega eventos, compra boletos en venta primaria o reventa, y gestiona su inventario de boletos a través de la aplicación web TuTicket.
+  \item \textbf{Verificador} (personal del evento): persona autorizada por el organizador para validar boletos en la puerta del evento. Utiliza la funcionalidad de verificación del sistema para marcar boletos como redimidos on-chain.
+  \item \textbf{Administrador de la plataforma} (equipo técnico): despliega los contratos en la red Stellar mediante el Factory, configura el WASM hash y mantiene la infraestructura operativa.
+  \item \textbf{Blockchain Stellar}: red pública descentralizada que almacena el estado de los contratos de forma inmutable. Los contratos se ejecutan sobre Soroban (motor de smart contracts basado en WASM).
+  \item \textbf{Token USDC}: contrato externo de token estable utilizado como medio de pago. El contrato de evento lo invoca para ejecutar transferencias atómicas durante compras y reventas.
 \end{itemize}
 
-En la parte inferior del diagrama se muestra la \textbf{infraestructura blockchain}: el contrato se ejecuta sobre la \textbf{Blockchain Stellar} (red pública descentralizada que almacena el estado de forma inmutable), y los pagos se procesan mediante el \textbf{Token USDC} (moneda digital estable equivalente al dólar, usada como medio de pago del sistema).
-
-El límite del sistema (línea punteada etiquetada \textit{SecureTicket}) define qué está bajo control del equipo de desarrollo y qué es externo: la wallet, la red Stellar y el token USDC son dependencias externas que el sistema consume pero no controla.
+El límite del sistema define qué está bajo control del equipo de desarrollo (frontend, backend, contratos) y qué es externo (red Stellar, token USDC).
 
 \subsubsection{Nivel 2 -- Contenedores}
 
@@ -254,7 +254,7 @@ La Figura~\ref{fig:c4-contenedores} presenta el diagrama de contenedores de Stel
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.7\textwidth]{ContenedoresSecureTicket.png}
+  \includegraphics[width=0.6\textwidth]{ContenedoresSecureTicket.png}
   \caption{Diagrama C4 Nivel 2 -- Contenedores del sistema Stellar Tickets}
   \label{fig:c4-contenedores}
 \end{figure}
@@ -263,30 +263,32 @@ La Figura~\ref{fig:c4-contenedores} presenta el diagrama de contenedores de Stel
 
 \textbf{Zona Cliente} (lo que ejecuta el usuario en su dispositivo):
 \begin{itemize}
-  \item \textbf{Marketplace Web}: aplicación frontend (React/Next.js) que los organizadores, compradores y vendedores utilizan para interactuar con el sistema. Es una interfaz white-label, lo que significa que cada ticketera puede personalizarla con su marca.
-  \item \textbf{App de Escaneo}: aplicación utilizada por el personal del evento para validar tickets mediante lectura de códigos QR. Opera tanto en modo online (consultando al backend en tiempo real) como en modo offline (con validación local y sincronización posterior).
-  \item \textbf{Wallet Digital} (Freighter): componente externo al sistema que firma las transacciones antes de enviarlas a la blockchain.
+  \item \textbf{Aplicación Web TuTicket}: aplicación frontend (React + Vite + TypeScript) que permite a compradores navegar eventos, comprar boletos, gestionar su inventario y realizar reventas. Incluye un panel de administración para organizadores. Se comunica exclusivamente con el Backend API mediante llamadas REST.
 \end{itemize}
 
 \textbf{Zona Servidor} (lo que se ejecuta en la infraestructura de la plataforma):
 \begin{itemize}
+  \item \textbf{Backend API}: servidor NestJS que implementa la lógica de negocio off-chain: autenticación JWT, gestión de eventos, carrito de compras con reserva temporal de asientos (\textit{seat holds}), checkout, emisión de tickets y consultas. Expone una API REST consumida por el frontend. Actúa como orquestador entre el mundo off-chain (PostgreSQL) y la blockchain (Soroban).
+  \item \textbf{PostgreSQL}: base de datos relacional que persiste usuarios, eventos, sedes, boletos, órdenes y pagos. Es la fuente de datos para consultas del frontend y reportes.
   \item \textbf{Nodo RPC Soroban}: punto de acceso a la red Stellar que permite al backend enviar transacciones y consultar el estado de los contratos. Actúa como puente entre el mundo off-chain y la blockchain.
 \end{itemize}
 
 \textbf{Zona Blockchain} (Stellar Testnet, lo que se ejecuta de forma descentralizada):
 \begin{itemize}
-  \item \textbf{Contrato Inteligente}: contrato Soroban desplegado por evento que contiene toda la lógica de negocio on-chain: emisión de tickets como NFTs, transferencia de propiedad, distribución de comisiones y marcado de tickets como usados. Es el componente más crítico del sistema.
-  \item \textbf{Contrato USDC}: contrato externo del token estable utilizado como medio de pago. El contrato inteligente lo invoca para ejecutar las transferencias de fondos durante compras y reventas.
+  \item \textbf{Contrato Factory} (\texttt{FabricaBoletos}): contrato Soroban que despliega un contrato de evento independiente por cada evento. Garantiza aislamiento de configuración y fondos entre eventos.
+  \item \textbf{Contrato de Evento} (\texttt{ContratoEvento}): contrato Soroban desplegado por evento que contiene toda la lógica de negocio on-chain: creación de boletos, venta primaria, reventa atómica con burn/remint, verificación en puerta y distribución de comisiones. Es el componente más crítico del sistema.
+  \item \textbf{Contrato USDC}: contrato externo del token estable utilizado como medio de pago. El contrato de evento lo invoca mediante \texttt{ClienteToken} para ejecutar transferencias atómicas.
 \end{itemize}
 
-\textbf{Comunicaciones clave} visibles en el diagrama:
+\textbf{Comunicaciones clave}:
 \begin{itemize}
-  \item El Marketplace Web se comunica con el Nodo RPC Soroban para enviar transacciones firmadas y consultar estado.
-  \item El Marketplace Web interactúa con la Wallet Digital para solicitar firmas de transacciones al usuario.
-  \item La App de Escaneo consulta el estado de tickets a través del Nodo RPC o de datos sincronizados localmente.
-  \item El Contrato Inteligente invoca al Contrato USDC para procesar pagos de forma atómica dentro de la misma transacción.
+  \item La Aplicación Web TuTicket se comunica con el Backend API mediante REST/JSON para todas las operaciones (autenticación, navegación, compra, gestión de boletos).
+  \item El Backend API interactúa con PostgreSQL para persistencia off-chain y con el Nodo RPC Soroban para operaciones on-chain.
+  \item El Contrato de Evento invoca al Contrato USDC para procesar pagos de forma atómica dentro de la misma transacción.
   \item La Red Stellar subyace como infraestructura que persiste el estado de todos los contratos de forma inmutable y distribuida.
 \end{itemize}
+
+\textbf{Nota sobre el estado actual de integración:} la conexión Backend API $\leftrightarrow$ Soroban está diseñada pero aún no implementada. En la versión actual del prototipo, el backend simula los pagos y la emisión de boletos off-chain. La integración con los contratos inteligentes es el siguiente hito de desarrollo.
 
 \newpage
 \subsection{Mapeo de vistas a secciones del documento}
@@ -333,11 +335,11 @@ Los siguientes atributos de calidad, derivados del SRS y de las necesidades del 
 
   \item \textbf{Seguridad y autenticidad.} La arquitectura debe garantizar que los tickets no puedan falsificarse ni duplicarse. La custodia de claves es no-custodial (Freighter Wallet), de modo que solo el propietario legítimo puede autorizar transferencias mediante firma criptográfica.
 
-  \item \textbf{Adaptabilidad B2B (multi-ticketera).} El sistema debe permitir que múltiples ticketeras operen de forma independiente, cada una con sus propios eventos, políticas de comisión y configuración. Esto motiva la arquitectura de \textit{contrato por evento} desplegado por un Factory, y un frontend white-label configurable.
+  \item \textbf{Adaptabilidad B2B (multi-ticketera).} El sistema debe permitir que múltiples ticketeras operen de forma independiente, cada una con sus propios eventos, políticas de comisión y configuración. Esto motiva la arquitectura de \textit{contrato por evento} desplegado por un Factory. El frontend TuTicket simula una ticketera cliente de la plataforma.
 
   \item \textbf{Disponibilidad de consultas.} Aunque la blockchain garantiza persistencia, su modelo de lectura es limitado. El sistema debe ofrecer consultas rápidas sobre estado de tickets, historial y auditoría sin depender exclusivamente de llamadas on-chain. Esto justifica la capa de indexación y caché off-chain respaldada por PostgreSQL.
 
-  \item \textbf{Verificabilidad en puerta.} La validación de tickets en el punto de acceso al evento debe funcionar tanto en modo online (consulta directa al contrato) como offline (con sincronización posterior), para cubrir escenarios donde la conectividad es limitada.
+  \item \textbf{Verificabilidad en puerta.} La validación de boletos en el punto de acceso al evento se realiza mediante verificadores autorizados por el organizador. El contrato Soroban implementa un registro de verificadores (\texttt{Verificador(Address)}) que restringe quién puede marcar un boleto como redimido, garantizando que la redención represente un hecho físico de asistencia.
 \end{enumerate}
 
 \subsection{Restricciones arquitectónicas}
@@ -349,7 +351,7 @@ Los siguientes atributos de calidad, derivados del SRS y de las necesidades del 
   \item \textbf{Stellar y Soroban:} la lógica on-chain debe implementarse como contratos inteligentes Soroban, compilados a WebAssembly (WASM) y escritos en Rust. Esto impone el uso del \texttt{soroban-sdk} y sus limitaciones (modelo de storage basado en claves, sin eventos complejos nativos, tamaño limitado de transacciones).
   \item \textbf{Testnet:} el prototipo opera exclusivamente sobre la testnet de Stellar, lo que implica que los activos no tienen valor monetario real y que la red puede presentar interrupciones o reinicios periódicos.
   \item \textbf{Token de pago:} las transacciones de compra y reventa utilizan XLM nativo y, opcionalmente, un token USDC simulado (\texttt{USDC\_SIM}) emitido en testnet mediante el Stellar Asset Contract (SAC).
-  \item \textbf{Wallet no-custodial:} el sistema no almacena claves privadas de los usuarios. La firma de transacciones se delega a Freighter Wallet, lo que requiere que el frontend integre su SDK para la interacción con el usuario.
+  \item \textbf{Firma de transacciones:} las operaciones on-chain requieren firma criptográfica. En la arquitectura objetivo, el backend construye las transacciones Soroban y las envía a la red Stellar. La integración con wallets no-custodiales (como Freighter) queda como extensión futura para escenarios donde el usuario final firme directamente.
 \end{itemize}
 
 \subsubsection{Restricciones organizacionales}
@@ -431,14 +433,15 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
     \textbf{Precondiciones} & El evento existe, tiene tickets disponibles y el comprador tiene fondos suficientes en su wallet.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El comprador selecciona un ticket disponible en el marketplace.\newline
-      2. El frontend solicita firma de la transacción a Freighter Wallet.\newline
-      3. El contrato de evento transfiere el pago al organizador y asigna el ticket al comprador.\newline
-      4. El indexador registra la operación en PostgreSQL.\\
+      1. El comprador selecciona un boleto disponible en la aplicación web TuTicket.\newline
+      2. El frontend envía la solicitud de compra al Backend API.\newline
+      3. El backend orquesta la invocación de \texttt{comprar\_boleto} en el contrato de evento.\newline
+      4. El contrato transfiere el 100\% del pago al organizador mediante \texttt{ClienteToken} y asigna el boleto al comprador, marcando \texttt{es\_reventa = true}.\newline
+      5. El backend registra la operación en PostgreSQL.\\
     \midrule
-    \textbf{Postcondiciones} & El comprador es el nuevo propietario del ticket. El pago fue transferido al organizador.\\
+    \textbf{Postcondiciones} & El comprador es el nuevo propietario del boleto. El pago fue transferido al organizador. Futuras ventas de este boleto serán tratadas como reventa (con comisiones y burn/remint).\\
     \midrule
-    \textbf{Relevancia arquitectónica} & Ejerce la integración wallet no-custodial (Freighter), el flujo de firma de transacciones y la escritura on-chain con indexación off-chain posterior.\\
+    \textbf{Relevancia arquitectónica} & Ejerce la orquestación Backend$\rightarrow$Soroban, la escritura on-chain con registro off-chain posterior, y la transición \texttt{es\_reventa = false $\rightarrow$ true} que determina el comportamiento de todas las transacciones futuras sobre ese boleto.\\
     \bottomrule
   \end{tabularx}
   \caption{CU-02: Compra primaria de ticket}
@@ -458,12 +461,12 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
     \textbf{Precondiciones} & El vendedor es propietario del ticket, el ticket está vigente (no consumido ni invalidado) y el evento permite reventa.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El vendedor selecciona un ticket de su inventario y fija precio de reventa.\newline
-      2. El frontend solicita firma a Freighter Wallet.\newline
-      3. El contrato marca el ticket como listado para reventa.\newline
-      4. El marketplace muestra el ticket disponible para compra.\\
+      1. El vendedor selecciona un boleto de su inventario y fija precio de reventa.\newline
+      2. El frontend envía la solicitud al Backend API.\newline
+      3. El backend invoca \texttt{listar\_boleto} en el contrato de evento, que marca \texttt{en\_venta = true} y actualiza el precio.\newline
+      4. El marketplace muestra el boleto disponible para compra.\\
     \midrule
-    \textbf{Postcondiciones} & El ticket está visible en el marketplace con estado \texttt{for\_sale = true}.\\
+    \textbf{Postcondiciones} & El boleto está visible en el marketplace con estado \texttt{en\_venta = true}.\\
     \midrule
     \textbf{Relevancia arquitectónica} & Ejerce la transición de estados del ticket on-chain y la sincronización con el caché off-chain para consultas del marketplace.\\
     \bottomrule
@@ -485,16 +488,16 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
     \textbf{Precondiciones} & El ticket está listado para reventa, el comprador tiene fondos suficientes y no es el propietario actual.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El comprador selecciona un ticket en reventa y confirma la compra.\newline
-      2. Freighter Wallet firma la transacción.\newline
-      3. El contrato ejecuta atómicamente:\newline
-      \hspace{1em}a) Transferencia de comisión al organizador.\newline
-      \hspace{1em}b) Transferencia de comisión a la plataforma.\newline
+      1. El comprador selecciona un boleto en reventa y confirma la compra.\newline
+      2. El frontend envía la solicitud al Backend API.\newline
+      3. El backend invoca \texttt{comprar\_boleto} en el contrato de evento, que ejecuta atómicamente:\newline
+      \hspace{1em}a) Transferencia de comisión al organizador (\texttt{ComisionOrganizador\%}).\newline
+      \hspace{1em}b) Transferencia de comisión a la plataforma (\texttt{ComisionPlataforma\%}).\newline
       \hspace{1em}c) Transferencia del pago neto al vendedor.\newline
-      \hspace{1em}d) Burn de la versión previa del ticket.\newline
-      \hspace{1em}e) Mint de nueva versión asignada al comprador.\newline
-      4. El contrato emite evento on-chain indexado por \texttt{ticket\_root\_id}.\newline
-      5. El indexador actualiza PostgreSQL.\\
+      \hspace{1em}d) Burn: la versión actual se marca como \texttt{invalidado = true}.\newline
+      \hspace{1em}e) Remint: se crea nueva versión (\texttt{version + 1}) asignada al comprador.\newline
+      4. El contrato emite evento \texttt{BoletoRevendido} on-chain indexado por \texttt{ticket\_root\_id}.\newline
+      5. El backend actualiza PostgreSQL.\\
     \midrule
     \textbf{Flujo alternativo} & Si cualquier paso falla, toda la transacción se revierte. No existe estado intermedio.\\
     \midrule
@@ -515,56 +518,52 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
     \toprule
     \textbf{Actores} & Personal del Evento\\
     \midrule
-    \textbf{Descripción} & El verificador escanea el código QR del ticket para validar el acceso al evento. Soporta modo online y offline.\\
+    \textbf{Descripción} & Un verificador autorizado por el organizador valida el boleto del asistente en la puerta del evento y lo marca como redimido de forma irreversible en el contrato.\\
     \midrule
-    \textbf{Precondiciones} & El ticket existe y el evento está en curso o próximo a iniciar.\\
+    \textbf{Precondiciones} & El boleto existe, no está invalidado, no ha sido redimido previamente, y el verificador está registrado como autorizado en el contrato (\texttt{es\_verificador = true}).\\
     \midrule
-    \textbf{Flujo principal (online)} &
-      1. El asistente presenta el QR (contiene ticket ID, versión, firma y expiración).\newline
-      2. La app de verificación consulta el backend.\newline
-      3. El backend valida contra el caché de estado y opcionalmente contra el contrato on-chain.\newline
-      4. Se confirma o deniega el acceso.\newline
-      5. Se registra el check-in en la bitácora.\\
+    \textbf{Flujo principal} &
+      1. El asistente presenta su boleto (código QR o identificador).\newline
+      2. El verificador consulta el estado del boleto a través del sistema.\newline
+      3. El backend valida contra PostgreSQL y opcionalmente contra el contrato on-chain.\newline
+      4. Si el boleto es válido, el backend invoca \texttt{redimir\_boleto} en el contrato, pasando el \texttt{ticket\_root\_id} y la dirección del verificador.\newline
+      5. El contrato marca el boleto como \texttt{usado = true} (irreversible) y emite evento \texttt{BoletoRedimido}.\newline
+      6. Se confirma el acceso al asistente.\\
     \midrule
-    \textbf{Flujo alternativo (offline)} &
-      1. Sin conectividad, la app aplica validación local con datos sincronizados previamente.\newline
-      2. El resultado se marca como provisional.\newline
-      3. Al recuperar conectividad, se sincronizan los consumos pendientes.\newline
-      4. Conflictos se resuelven por política: primer check-in sincronizado gana.\\
+    \textbf{Postcondiciones} & El boleto queda marcado como consumido on-chain. No puede ser listado, comprado ni revendido.\\
     \midrule
-    \textbf{Postcondiciones} & El ticket queda marcado como consumido (online) o pendiente de sincronización (offline).\\
-    \midrule
-    \textbf{Relevancia arquitectónica} & Ejerce la táctica de resiliencia offline, la cola de sincronización, la resolución de conflictos y la separación entre validación on-chain y caché off-chain. Valida el driver de verificabilidad en puerta.\\
+    \textbf{Relevancia arquitectónica} & Ejerce el modelo de autorización por verificadores (separación entre propietario y verificador), la irreversibilidad de estado on-chain y la validación Backend$\rightarrow$Soroban. La restricción de que solo verificadores autorizados pueden redimir garantiza que la redención represente un hecho físico de asistencia.\\
     \bottomrule
   \end{tabularx}
   \caption{CU-05: Verificar ticket en puerta}
   \label{tab:cu05}
 \end{table}
 
-\subsubsection{CU-06: Redimir ticket}
+\subsubsection{CU-06: Invalidar boleto}
 
 \begin{table}[H]
   \centering
   \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
     \toprule
-    \textbf{Actores} & Comprador\\
+    \textbf{Actores} & Organizador\\
     \midrule
-    \textbf{Descripción} & El propietario del ticket lo redime, marcándolo como usado de forma irreversible en el contrato.\\
+    \textbf{Descripción} & El organizador invalida un boleto de forma administrativa (evento cancelado, error de emisión, etc.), marcándolo como \texttt{invalidado = true} on-chain.\\
     \midrule
-    \textbf{Precondiciones} & El ticket está vigente, no está listado para reventa y el actor es el propietario.\\
+    \textbf{Precondiciones} & El boleto existe y no ha sido invalidado previamente. El actor es el organizador del evento.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El comprador solicita la redención del ticket.\newline
-      2. Freighter Wallet firma la transacción.\newline
-      3. El contrato marca el ticket como \texttt{used = true} (irreversible).\newline
-      4. El indexador actualiza el estado en PostgreSQL.\\
+      1. El organizador solicita la invalidación del boleto desde el panel de administración.\newline
+      2. El backend invoca \texttt{invalidar\_boleto} en el contrato de evento.\newline
+      3. El contrato marca el boleto como \texttt{invalidado = true}, \texttt{en\_venta = false} (irreversible).\newline
+      4. El contrato emite evento \texttt{BoletoInvalidadoEvt}.\newline
+      5. El backend actualiza el estado en PostgreSQL.\\
     \midrule
-    \textbf{Postcondiciones} & El ticket no puede ser listado, comprado ni revendido. El estado es terminal.\\
+    \textbf{Postcondiciones} & El boleto no puede ser listado, comprado, revendido ni redimido. El estado es terminal.\\
     \midrule
-    \textbf{Relevancia arquitectónica} & Ejerce la irreversibilidad de estado on-chain y la transición terminal en la máquina de estados del ticket.\\
+    \textbf{Relevancia arquitectónica} & Ejerce la invalidación on-chain (a diferencia de versiones anteriores donde se manejaba solo off-chain), la irreversibilidad de estado y la autorización exclusiva del organizador para operaciones administrativas.\\
     \bottomrule
   \end{tabularx}
-  \caption{CU-06: Redimir ticket}
+  \caption{CU-06: Invalidar boleto}
   \label{tab:cu06}
 \end{table}
 
@@ -593,10 +592,10 @@ El sistema se organiza en cuatro capas lógicas, cada una con responsabilidades 
     \toprule
     \textbf{Capa} & \textbf{Contenedores} & \textbf{Responsabilidad}\\
     \midrule
-    Presentación & Marketplace Web, App de Escaneo & Renderizar interfaces, capturar acciones del usuario, solicitar firma de transacciones a Freighter.\\
-    Servicios & API REST, Módulo Auth, Módulo Reventa, Módulo Verificación QR, Indexador, Cola de sincronización & Autenticar usuarios, orquestar operaciones de negocio, indexar eventos on-chain, gestionar verificación online/offline.\\
-    Datos & PostgreSQL, Bitácora de auditoría, Caché de estado de tickets & Persistir entidades de negocio, historial de transacciones, estado cacheado de tickets para consultas rápidas.\\
-    Blockchain & Contrato Factory, Contrato por Evento, SAC XLM, Token USDC\_SIM & Emitir tickets (NFTs), transferir propiedad, distribuir comisiones, marcar tickets como usados. Fuente de verdad inmutable.\\
+    Presentación & Aplicación Web TuTicket (React/Vite) & Renderizar interfaces, capturar acciones del usuario, comunicarse con el Backend API.\\
+    Servicios & Backend API (NestJS): módulos auth, events, cart, checkout, orders, tickets, admin, users, venues & Autenticar usuarios (JWT), orquestar operaciones de negocio, gestionar carrito con seat holds, procesar checkout, exponer API REST. Futuro: orquestar transacciones Soroban.\\
+    Datos & PostgreSQL (schemas: public, ticketing) & Persistir usuarios, eventos, sedes, boletos, órdenes, pagos y auditoría. Fuente de datos para consultas del frontend.\\
+    Blockchain & Contrato Factory (\texttt{FabricaBoletos}), Contrato por Evento (\texttt{ContratoEvento}), Token USDC & Crear boletos, transferir propiedad, distribuir comisiones, redimir y invalidar boletos. Fuente de verdad inmutable.\\
     \bottomrule
   \end{tabularx}
   \caption{Descomposición en capas lógicas}
@@ -605,119 +604,174 @@ El sistema se organiza en cuatro capas lógicas, cada una con responsabilidades 
 
 \subsection{Capa de presentación}
 
-La capa de presentación se compone de dos aplicaciones cliente:
+La capa de presentación consiste en una aplicación web:
 
-\subsubsection{Marketplace Web (React/Next.js)}
+\subsubsection{Aplicación Web TuTicket (React + Vite + TypeScript)}
 
-Aplicación web white-label que permite a cada ticketera personalizar la experiencia de marca. Expone las siguientes funcionalidades según el rol del usuario:
-
-\begin{itemize}
-  \item \textbf{Organizador}: creación de eventos, configuración de wallets de comisión y políticas de reventa, consulta de reportes.
-  \item \textbf{Comprador/Vendedor}: visualización de tickets propios, publicación en el marketplace, compra de tickets en venta primaria o reventa, consulta de trazabilidad.
-  \item \textbf{Admin Plataforma}: configuración de comisiones de la plataforma y monitoreo general.
-\end{itemize}
-
-La comunicación con la blockchain no es directa: el frontend solicita firma de transacciones a \textbf{Freighter Wallet} (SDK integrado) y envía las transacciones firmadas a través del Nodo RPC Soroban.
-
-\subsubsection{App de Escaneo (Verificador)}
-
-Aplicación dedicada al personal del evento para validar tickets mediante lectura de códigos QR. Soporta dos modos de operación:
+Aplicación SPA (\textit{Single Page Application}) que simula una ticketera cliente de la plataforma. Utiliza React 18 con Vite como bundler, TypeScript, Tailwind CSS para estilos y shadcn/ui (basado en Radix UI) como librería de componentes. Expone las siguientes funcionalidades:
 
 \begin{itemize}
-  \item \textbf{Modo online}: consulta al backend en tiempo real, que valida contra el caché y opcionalmente contra el estado on-chain.
-  \item \textbf{Modo offline}: validación local con datos pre-sincronizados. Los resultados se marcan como provisionales y se sincronizan cuando se recupera la conectividad (ventana máxima de 30 minutos).
+  \item \textbf{Comprador}: navegación de eventos por categoría, búsqueda, selección de boletos y asientos, carrito de compras, checkout en 3 pasos (datos del comprador $\rightarrow$ método de pago $\rightarrow$ confirmación), historial de compras y gestión de boletos propios.
+  \item \textbf{Administrador}: panel de administración para gestión de eventos, creación de tipos de boletos, consulta de estadísticas de ventas y ocupación.
 \end{itemize}
+
+La comunicación con la blockchain \textbf{no es directa}: el frontend se comunica exclusivamente con el Backend API mediante llamadas REST/JSON autenticadas con JWT. El backend es el responsable de orquestar las operaciones on-chain.
+
+\textbf{Rutas principales}: \texttt{/} (inicio), \texttt{/eventos} (catálogo), \texttt{/evento/:id} (detalle), \texttt{/evento/:id/boletas} (selección), \texttt{/carrito}, \texttt{/checkout}, \texttt{/confirmacion}, \texttt{/login}, \texttt{/registro}, \texttt{/mi-cuenta/*} (perfil, entradas, compras).
 
 \subsection{Capa de servicios (Backend)}
 
-El backend centraliza la lógica de negocio off-chain y se organiza en los siguientes módulos:
+El backend es una aplicación NestJS 11 (TypeScript) que centraliza la lógica de negocio off-chain. Se organiza en módulos independientes siguiendo el patrón modular de NestJS, donde cada módulo encapsula controladores, servicios y DTOs:
 
-\subsubsection{API REST}
+\subsubsection{Módulo Auth}
 
-Punto de entrada principal para el frontend y para integraciones B2B con ticketeras externas. Expone endpoints para:
+Gestiona registro, login y autenticación JWT con Passport.js. Define dos roles: \texttt{CUSTOMER} y \texttt{ADMIN}. Proporciona decoradores \texttt{@Public()} (rutas sin auth), \texttt{@Roles()} (restricción por rol) y \texttt{@CurrentUser()} (inyección del usuario autenticado). Las contraseñas se almacenan con hash bcrypt.
 
-\begin{itemize}
-  \item Gestión de usuarios y eventos.
-  \item Consulta de tickets, listados de reventa e historial.
-  \item Operaciones de compra y verificación.
-\end{itemize}
+\subsubsection{Módulo Events}
 
-\subsubsection{Módulo de Autenticación y Roles}
+Expone endpoints públicos para consultar eventos: listado con filtros, detalle por slug, eventos destacados, categorías, tipos de boletos, disponibilidad y mapa de asientos.
 
-Gestiona la identidad de los usuarios y el control de acceso basado en roles (organizador, comprador/vendedor, verificador, admin plataforma). Se integra con PostgreSQL para persistir sesiones y permisos.
+\subsubsection{Módulo Cart}
 
-\subsubsection{Módulo de Reventa}
+Gestiona el carrito de compras con reserva temporal de asientos (\textit{seat holds}) de 10 minutos de duración. Permite agregar, actualizar y remover ítems del carrito.
 
-Orquesta las operaciones de listado y compra de tickets. En la compra, coordina la construcción de la transacción Soroban que se envía al usuario para firma. No ejecuta la transacción directamente: la firma es responsabilidad del usuario a través de su wallet.
+\subsubsection{Módulo Checkout}
 
-\subsubsection{Módulo de Verificación QR}
+Implementa el flujo de compra: previsualización del pedido (validación de carrito y cálculo de totales) y confirmación (creación de orden, registro de pago y emisión de boletos). Utiliza transacciones de base de datos (\texttt{\$transaction()}) para garantizar atomicidad.
 
-Procesa las solicitudes de validación de la App de Escaneo. En modo online, consulta el caché de estado de tickets y opcionalmente el contrato on-chain. Gestiona la cola de sincronización para consumos realizados en modo offline.
+\textbf{Nota:} en la versión actual, el pago se simula (se marca inmediatamente como \texttt{PAID}). La integración con los contratos Soroban para pagos reales on-chain es el siguiente hito de desarrollo.
 
-\subsubsection{Indexador de Eventos Stellar}
+\subsubsection{Módulo Tickets}
 
-Proceso que consume eventos emitidos por los contratos en la red Stellar y los persiste en PostgreSQL. Permite ofrecer consultas de historial, trazabilidad y auditoría sin depender de llamadas directas a la blockchain, resolviendo la limitación de lectura de Soroban.
+Gestiona los boletos emitidos: consulta de boletos del usuario, detalle individual y generación de payload QR (placeholder).
+
+\subsubsection{Módulo Admin}
+
+Panel de administración protegido por \texttt{@Roles(ADMIN)}: dashboard con estadísticas de ventas y ocupación, CRUD de eventos, creación de tipos de boletos.
+
+\subsubsection{Módulos de soporte}
+
+\texttt{Users} (perfil de usuario), \texttt{Venues} (sedes y secciones), \texttt{Seatmaps} (visualización de mapas de asientos), \texttt{Catalog} (servicio de catálogo).
 
 \subsection{Capa de datos (Off-chain)}
 
-La capa de datos off-chain se compone de:
+La capa de datos off-chain se compone de una base de datos PostgreSQL 16 gestionada mediante Prisma ORM, organizada en dos schemas:
 
 \begin{itemize}
-  \item \textbf{PostgreSQL}: almacena entidades de negocio (usuarios, ticketeras, eventos), versiones de tickets (\texttt{TICKET\_ROOT} y \texttt{TICKET\_VERSION}), transacciones de reventa, listados y check-ins. Es la fuente de datos para las consultas del frontend y los reportes.
-  \item \textbf{Bitácora de auditoría}: registro de eventos del negocio con referencias a transacciones on-chain (\texttt{tx\_hash}), utilizado para reconciliación y trazabilidad.
-  \item \textbf{Caché de estado de tickets}: almacén de acceso rápido con el estado actual de los tickets, actualizado por el indexador. Permite validaciones en puerta sin latencia de consulta a la blockchain.
+  \item \textbf{Schema \texttt{public}}: entidades de negocio principales: \texttt{users} (con roles CUSTOMER/ADMIN), \texttt{events}, \texttt{event\_categories}, \texttt{organizers}, \texttt{cities}, \texttt{venues}, \texttt{venue\_sections}, \texttt{seats}.
+  \item \textbf{Schema \texttt{ticketing}}: entidades transaccionales: \texttt{event\_ticket\_types} (tipos de boleto con precios y ventanas de venta), \texttt{event\_seat\_inventory} (estados AVAILABLE/HELD/SOLD/BLOCKED), \texttt{carts}, \texttt{cart\_items}, \texttt{seat\_holds} (reservas temporales de 10 min), \texttt{orders}, \texttt{order\_items}, \texttt{payments} (con campo \texttt{provider\_reference} reservado para tx hash blockchain), \texttt{tickets} (con estados ACTIVE/USED/CANCELLED y campo \texttt{qr\_payload}).
 \end{itemize}
+
+PostgreSQL es la fuente de datos para todas las consultas del frontend y los reportes. Cuando se complete la integración con Soroban, los datos on-chain se sincronizarán como copia indexada en estas tablas.
 
 \subsection{Capa blockchain (On-chain)}
 
-La capa on-chain es la fuente de verdad del sistema para la propiedad de tickets y la ejecución de pagos. Se compone de:
+La capa on-chain es la fuente de verdad del sistema para la propiedad de boletos y la ejecución de pagos. Todo el código de los contratos está escrito en español (nombres de structs, funciones, variables y errores). Se compone de:
 
-\subsubsection{Contrato Factory}
+\subsubsection{Contrato Factory (\texttt{FabricaBoletos})}
 
-Contrato Soroban responsable de desplegar un contrato independiente por cada evento. Esta decisión arquitectónica garantiza que cada evento opera con su propia configuración (comisiones, wallets de pago) y su propio espacio de almacenamiento, aislando completamente los fondos y políticas entre eventos y entre ticketeras.
+Contrato Soroban responsable de desplegar un contrato independiente por cada evento. Implementa el patrón Factory para garantizar aislamiento de configuración, storage y fondos entre eventos.
 
-\subsubsection{Contrato por Evento (\texttt{SecureTicketContract})}
+\paragraph{Modelo de datos.} Claves de storage (\texttt{ClaveDato}): \texttt{Administrador}, \texttt{ContadorEventos}, \texttt{HashWasmEvento} (hash del WASM compilado del \texttt{ContratoEvento}), \texttt{ContratoEvento(u32)} (mapeo \texttt{id\_evento} $\rightarrow$ dirección), \texttt{ContratoRegistrado(Address)} (mapeo inverso para evitar duplicados).
+
+\paragraph{Configuración de evento.} El struct \texttt{ConfiguracionEvento} empaqueta: \texttt{id\_evento}, \texttt{organizador}, \texttt{token\_pago}, \texttt{comision\_organizador} (u32, 0--99), \texttt{comision\_plataforma} (u32, 0--99), \texttt{wallet\_organizador}, \texttt{wallet\_plataforma}, \texttt{capacidad\_total}.
+
+\paragraph{Funciones públicas:}
+\begin{itemize}
+  \item \texttt{inicializar(administrador)}: setup único de la factory. Requiere auth del administrador.
+  \item \texttt{configurar\_wasm\_evento(hash)}: almacena el hash WASM del \texttt{ContratoEvento}. Requiere auth del administrador.
+  \item \texttt{crear\_evento\_contrato(config, dir\_prueba)} $\rightarrow$ \texttt{Address}: despliega e inicializa un nuevo contrato de evento. Requiere \textbf{doble autorización}: administrador y organizador. Valida comisiones $<$ 100\%, capacidad $>$ 0, id\_evento no duplicado.
+  \item \texttt{obtener\_contrato\_evento(id\_evento)} $\rightarrow$ \texttt{Address}: consulta la dirección del contrato de un evento.
+  \item \texttt{obtener\_contador\_eventos()} $\rightarrow$ \texttt{u32}: total de eventos creados.
+\end{itemize}
+
+\paragraph{Deploy programático.} En producción, usa \texttt{deployer().with\_current\_contract(salt).deploy\_v2(hash, ())} para crear contratos en la blockchain con dirección determinista derivada del \texttt{id\_evento}. En tests, usa una dirección pre-registrada (Soroban testutils no soporta deploy real).
+
+\subsubsection{Contrato por Evento (\texttt{ContratoEvento})}
 
 Contrato Soroban que implementa toda la lógica de negocio on-chain para un evento específico. Su estructura interna se organiza de la siguiente forma:
 
-\paragraph{Modelo de datos (Storage).} El contrato utiliza un almacenamiento basado en claves (\texttt{DataKey}) con los siguientes elementos:
+\paragraph{Modelo de datos (Storage).} El contrato utiliza un almacenamiento basado en claves (\texttt{ClaveDato}) con los siguientes elementos:
 
 \begin{itemize}
-  \item \texttt{Ticket(u32)}: almacena el struct \texttt{Ticket} por ID. Cada ticket contiene: \texttt{id}, \texttt{event\_id}, \texttt{owner} (dirección del propietario), \texttt{price}, \texttt{for\_sale} (si está listado), \texttt{is\_resale} (si ya fue revendido al menos una vez) y \texttt{used} (si fue canjeado).
-  \item \texttt{TicketCount}: contador autoincremental de tickets emitidos.
-  \item \texttt{Organizer}, \texttt{Platform}: direcciones de la ticketera y de la plataforma SecureTicket.
-  \item \texttt{Token}: dirección del contrato de token de pago (USDC).
-  \item \texttt{OrgFee}, \texttt{PlatFee}: porcentajes de comisión para organizador y plataforma.
+  \item \texttt{Boleto(u32, u32)}: almacena el struct \texttt{Boleto} por \texttt{(ticket\_root\_id, version)}. Cada boleto contiene: \texttt{ticket\_root\_id} (ID estable que no cambia entre reventas), \texttt{version} (se incrementa con cada reventa: 0, 1, 2\ldots), \texttt{id\_evento}, \texttt{propietario} (Address), \texttt{precio} (i128), \texttt{en\_venta}, \texttt{es\_reventa}, \texttt{usado}, \texttt{invalidado}.
+  \item \texttt{VersionActual(u32)}: puntero a la versión vigente de un boleto. Se actualiza en cada reventa.
+  \item \texttt{ContadorBoletos}: contador autoincremental que asigna el próximo \texttt{ticket\_root\_id}.
+  \item \texttt{Organizador}, \texttt{Plataforma}: direcciones de la ticketera y de la plataforma.
+  \item \texttt{TokenPago}: dirección del contrato de token de pago (USDC).
+  \item \texttt{ComisionOrganizador}, \texttt{ComisionPlataforma}: porcentajes de comisión (i128, base 100).
+  \item \texttt{Verificador(Address)}: registra si una dirección tiene permiso para redimir boletos en puerta.
 \end{itemize}
 
 \paragraph{Funciones de escritura (state-changing).} Cada función está protegida por \texttt{require\_auth()} que verifica la firma del actor autorizado:
 
 \begin{itemize}
-  \item \texttt{initialize}: configura el contrato con las direcciones, token de pago y porcentajes de comisión. Solo puede ejecutarse una vez (guarda de re-inicialización). Requiere auth del organizador.
-  \item \texttt{create\_ticket}: emite un nuevo ticket asignado al organizador. Requiere auth del organizador.
-  \item \texttt{list\_ticket}: marca un ticket como en venta y actualiza su precio. Requiere auth del owner. Valida que el ticket no esté ya en venta ni haya sido usado.
-  \item \texttt{cancel\_sale}: retira un ticket del marketplace. Requiere auth del owner.
-  \item \texttt{buy\_ticket}: ejecuta la compra de un ticket. Implementa dos flujos en una sola transacción atómica:
+  \item \texttt{inicializar}: configura el contrato con las direcciones, token de pago y porcentajes de comisión. Solo puede ejecutarse una vez (guarda de re-inicialización). Requiere auth del organizador.
+  \item \texttt{crear\_boleto(id\_evento, precio)} $\rightarrow$ \texttt{u32}: emite un nuevo boleto (version 0) asignado al organizador. Requiere auth del organizador. Emite evento \texttt{BoletoCreado}.
+  \item \texttt{listar\_boleto(ticket\_root\_id, nuevo\_precio)}: marca un boleto como en venta y actualiza su precio. Requiere auth del propietario. Valida que no esté ya en venta, ni usado, ni invalidado. Emite evento \texttt{BoletoListado}.
+  \item \texttt{cancelar\_venta(ticket\_root\_id)}: retira un boleto del marketplace. Requiere auth del propietario. Emite evento \texttt{VentaCancelada}.
+  \item \texttt{comprar\_boleto(ticket\_root\_id, comprador)} $\rightarrow$ \texttt{u32}: ejecuta la compra. Implementa dos flujos en una sola transacción atómica:
     \begin{itemize}
-      \item \textit{Compra primaria} (\texttt{is\_resale = false}): el 100\% del pago se transfiere al organizador mediante el \texttt{TokenClient}. Después de la primera compra, el ticket se marca como \texttt{is\_resale = true}.
-      \item \textit{Reventa} (\texttt{is\_resale = true}): el pago se distribuye en tres transferencias atómicas: comisión al organizador (\texttt{OrgFee\%}), comisión a la plataforma (\texttt{PlatFee\%}) y el remanente al vendedor.
+      \item \textit{Venta primaria} (\texttt{es\_reventa = false}): el 100\% del pago se transfiere al organizador mediante \texttt{ClienteToken}. El boleto se actualiza in-place: nuevo propietario, \texttt{es\_reventa = true}. Retorna la versión actual. Emite evento \texttt{BoletoCompradoPrimario}.
+      \item \textit{Reventa} (\texttt{es\_reventa = true}): el pago se distribuye en tres transferencias atómicas: comisión al organizador, comisión a la plataforma y remanente al vendedor. Luego se ejecuta \textbf{burn/remint}: la versión actual se marca como \texttt{invalidado = true}, se crea una nueva versión (\texttt{version + 1}) asignada al comprador, y se actualiza el puntero \texttt{VersionActual}. Retorna la nueva versión. Emite evento \texttt{BoletoRevendido}.
     \end{itemize}
-    Requiere auth del comprador. Valida que el comprador no sea el propietario actual.
-  \item \texttt{redeem\_ticket}: marca el ticket como \texttt{used = true} de forma irreversible. Requiere auth del owner. Un ticket usado no puede listarse ni comprarse.
+    Requiere auth del comprador. Valida que el comprador no sea el propietario actual (\texttt{AutoCompra}).
+  \item \texttt{agregar\_verificador(address)}: registra un verificador autorizado. Requiere auth del organizador. Emite evento \texttt{VerificadorAgregado}.
+  \item \texttt{remover\_verificador(address)}: desautoriza un verificador. Requiere auth del organizador. Emite evento \texttt{VerificadorRemovido}.
+  \item \texttt{redimir\_boleto(ticket\_root\_id, verificador)}: marca el boleto como \texttt{usado = true} (irreversible). \textbf{Solo verificadores autorizados} pueden invocarla (no el propietario). Requiere auth del verificador. Emite evento \texttt{BoletoRedimido}.
+  \item \texttt{invalidar\_boleto(ticket\_root\_id)}: cancela un boleto administrativamente (\texttt{invalidado = true}). Requiere auth del organizador. Emite evento \texttt{BoletoInvalidadoEvt}.
 \end{itemize}
 
 \paragraph{Funciones de lectura (views).} No requieren autorización:
 
 \begin{itemize}
-  \item \texttt{get\_ticket}: retorna el struct completo de un ticket por ID.
-  \item \texttt{get\_owner}: retorna la dirección del propietario de un ticket.
-  \item \texttt{get\_resale\_tickets}: retorna todos los tickets en reventa (\texttt{for\_sale = true} y \texttt{is\_resale = true}).
-  \item \texttt{get\_event\_tickets}: retorna todos los tickets de un evento específico.
+  \item \texttt{obtener\_boleto(ticket\_root\_id)}: retorna el struct \texttt{Boleto} de la versión vigente.
+  \item \texttt{obtener\_boleto\_version(ticket\_root\_id, version)}: retorna una versión específica (historial).
+  \item \texttt{obtener\_version\_vigente(ticket\_root\_id)}: retorna el número de versión actual.
+  \item \texttt{obtener\_propietario(ticket\_root\_id)}: retorna la dirección del propietario actual.
+  \item \texttt{obtener\_boletos\_reventa()}: retorna todos los boletos en reventa activa (O(n), usar indexador off-chain en producción).
+  \item \texttt{obtener\_boletos\_evento(id\_evento)}: retorna todos los boletos de un evento (O(n)).
+  \item \texttt{es\_verificador(address)}: consulta si una dirección es verificador autorizado.
 \end{itemize}
 
-\subsubsection{Contratos de token (SAC XLM y USDC\_SIM)}
+\paragraph{Errores tipados (\texttt{ErrorContrato}).} El contrato define 16 errores tipados como enum con \texttt{\#[contracterror]} y \texttt{\#[repr(u32)]}, lo que permite manejo programático off-chain sin parsear strings:
 
-Contratos externos que implementan el estándar de token de Stellar. El contrato de evento los invoca mediante \texttt{TokenClient} para ejecutar las transferencias de pago. El sistema soporta XLM nativo y opcionalmente un token USDC simulado en testnet.
+\begin{table}[H]
+  \centering
+  \small
+  \begin{tabularx}{\textwidth}{@{}c l X@{}}
+    \toprule
+    \textbf{Código} & \textbf{Nombre} & \textbf{Significado}\\
+    \midrule
+    1 & YaInicializado & Doble inicialización del contrato\\
+    2 & ComisionesMuyAltas & Suma de comisiones $\geq$ 100\%\\
+    3 & ComisionesNegativas & Comisión menor a 0\\
+    4 & PrecioInvalido & Precio $\leq$ 0\\
+    5 & YaEnVenta & Boleto ya listado\\
+    6 & BoletoUsado & Boleto ya redimido\\
+    7 & NoEnVenta & Boleto no está en venta\\
+    8 & AutoCompra & Comprador = propietario\\
+    9 & YaUsado & Segundo intento de redención\\
+    10 & BoletoNoEncontrado & ID o versión inexistente\\
+    11 & NoAutorizado & Sin permisos para la acción\\
+    12 & VersionInvalida & Versión no existe\\
+    13 & BoletoInvalidado & Boleto cancelado/burned\\
+    14 & NoInicializado & Contrato sin inicializar\\
+    15 & VerificadorYaExiste & Dirección ya es verificador\\
+    16 & VerificadorNoEncontrado & Dirección no es verificador\\
+    \bottomrule
+  \end{tabularx}
+  \caption{Errores tipados del \texttt{ContratoEvento}}
+  \label{tab:errores-contrato}
+\end{table}
+
+\paragraph{Eventos on-chain.} El contrato emite eventos tipados con \texttt{\#[contractevent]} para indexación off-chain. Cada evento tiene hasta 4 topics indexados:
+
+\texttt{BoletoCreado}, \texttt{BoletoListado}, \texttt{VentaCancelada}, \texttt{BoletoCompradoPrimario}, \texttt{BoletoRevendido}, \texttt{BoletoRedimido}, \texttt{BoletoInvalidadoEvt}, \texttt{VerificadorAgregado}, \texttt{VerificadorRemovido}.
+
+\subsubsection{Contrato de token (USDC)}
+
+Contrato externo que implementa el estándar de token de Stellar. El contrato de evento lo invoca mediante \texttt{ClienteToken} (alias de \texttt{soroban\_sdk::token::Client}) para ejecutar las transferencias de pago. En testnet se utiliza un token USDC simulado.
 
 \subsection{Separación on-chain / off-chain}
 
@@ -729,15 +783,18 @@ La siguiente tabla resume el criterio de distribución de responsabilidades entr
     \toprule
     \textbf{Responsabilidad} & \textbf{On-chain} & \textbf{Off-chain}\\
     \midrule
-    Propiedad de tickets (quién es dueño) & \checkmark & Copia indexada\\
-    Ejecución de pagos y comisiones & \checkmark & ---\\
-    Emisión de tickets (mint) & \checkmark & Registro indexado\\
+    Propiedad de boletos (quién es dueño) & \checkmark & Copia indexada\\
+    Ejecución de pagos y comisiones & \checkmark & Simulado (actual)\\
+    Creación de boletos (mint) & \checkmark & Registro en PostgreSQL\\
     Redención (marcar como usado) & \checkmark & Copia indexada\\
-    Historial de transacciones detallado & Eventos mínimos & \checkmark\\
+    Invalidación administrativa & \checkmark & Copia indexada\\
+    Gestión de verificadores autorizados & \checkmark & ---\\
+    Historial de versiones (burn/remint) & \checkmark & Consulta indexada\\
+    Despliegue de contratos por evento & \checkmark (Factory) & ---\\
     Consultas de búsqueda y filtrado & --- & \checkmark\\
     Autenticación y roles de usuario & --- & \checkmark\\
-    Auditoría y bitácora operativa & Referencia (tx\_hash) & \checkmark\\
-    Verificación de acceso (check-in) & Consulta opcional & \checkmark\\
+    Carrito y seat holds & --- & \checkmark\\
+    Gestión de eventos, sedes y asientos & --- & \checkmark\\
     \bottomrule
   \end{tabularx}
   \caption{Distribución de responsabilidades on-chain vs. off-chain}
@@ -757,20 +814,19 @@ Esta sección describe los flujos de interacción principales del sistema, enfoc
 % ---- Flujo 1: Compra primaria ----
 \subsection{Flujo de compra primaria}
 
-La compra primaria es el primer flujo que ocurre sobre un ticket recién creado. Involucra al comprador, el frontend, el contrato de evento y el token de pago.
+La compra primaria es el primer flujo que ocurre sobre un boleto recién creado. Involucra al comprador, el frontend TuTicket, el Backend API, el contrato de evento y el token de pago.
 
 \begin{enumerate}
-  \item El organizador ha creado previamente el evento y emitido tickets mediante \texttt{create\_ticket}. Cada ticket queda asignado al organizador con \texttt{for\_sale = false} y \texttt{is\_resale = false}.
-  \item El organizador lista el ticket para venta primaria invocando \texttt{list\_ticket}, que establece \texttt{for\_sale = true} y el precio.
-  \item El comprador visualiza el ticket en el Marketplace Web y selecciona la compra.
-  \item El frontend construye la transacción Soroban (\texttt{buy\_ticket}) y solicita firma a Freighter Wallet.
-  \item El comprador firma y la transacción se envía a la red Stellar.
-  \item El contrato de evento ejecuta la lógica de compra primaria: como \texttt{is\_resale = false}, el 100\% del pago se transfiere al organizador mediante el \texttt{TokenClient}.
-  \item El contrato actualiza el ticket: \texttt{owner = comprador}, \texttt{for\_sale = false}, \texttt{is\_resale = true} (todas las ventas futuras serán reventas).
-  \item El indexador detecta la transacción on-chain y registra la operación en PostgreSQL.
+  \item El organizador ha creado previamente el evento y emitido boletos mediante \texttt{crear\_boleto}. Cada boleto queda asignado al organizador con \texttt{en\_venta = false} y \texttt{es\_reventa = false}.
+  \item El organizador lista el boleto para venta primaria invocando \texttt{listar\_boleto}, que establece \texttt{en\_venta = true} y el precio.
+  \item El comprador visualiza el boleto en la aplicación web TuTicket y selecciona la compra.
+  \item El frontend envía la solicitud al Backend API, que orquesta la invocación de \texttt{comprar\_boleto} en el contrato de evento.
+  \item El contrato ejecuta la lógica de compra primaria: como \texttt{es\_reventa = false}, el 100\% del pago se transfiere al organizador mediante \texttt{ClienteToken}.
+  \item El contrato actualiza el boleto: \texttt{propietario = comprador}, \texttt{en\_venta = false}, \texttt{es\_reventa = true} (todas las ventas futuras serán reventas). Emite evento \texttt{BoletoCompradoPrimario}.
+  \item El backend registra la operación en PostgreSQL.
 \end{enumerate}
 
-\textbf{Aspecto arquitectónico clave:} la compra primaria establece la transición de \texttt{is\_resale = false} a \texttt{true}, lo que determina el comportamiento de todas las transacciones futuras sobre ese ticket (activación del split de comisiones).
+\textbf{Aspecto arquitectónico clave:} la compra primaria establece la transición de \texttt{es\_reventa = false} a \texttt{true}, lo que determina el comportamiento de todas las transacciones futuras sobre ese boleto (activación del split de comisiones y del mecanismo burn/remint).
 
 % ---- Flujo 2: Reventa atómica ----
 \subsection{Flujo de reventa atómica}
@@ -784,62 +840,47 @@ La Figura~\ref{fig:seq-reventa} presenta el diagrama de secuencia completo de es
   \label{fig:seq-reventa}
 \end{figure}
 
-Este es el flujo más crítico del sistema desde el punto de vista arquitectónico. La reventa debe ser \textbf{atómica}: todas las operaciones (distribución de pagos y transferencia de propiedad) ocurren en una sola transacción de Soroban, o ninguna ocurre. No existe estado intermedio.
+Este es el flujo más crítico del sistema desde el punto de vista arquitectónico. La reventa debe ser \textbf{atómica}: todas las operaciones (distribución de pagos, burn de la versión anterior y remint de nueva versión) ocurren en una sola transacción de Soroban, o ninguna ocurre. No existe estado intermedio.
 
 \begin{enumerate}
-  \item \textbf{Publicación:} el vendedor (propietario actual) invoca \texttt{list\_ticket} con el nuevo precio. El contrato verifica que el vendedor es el owner (\texttt{require\_auth}), que el ticket no está ya en venta y que no ha sido usado. El ticket queda con \texttt{for\_sale = true}.
-  \item \textbf{Compra:} el comprador selecciona el ticket en el marketplace e inicia la compra. El frontend construye la transacción \texttt{buy\_ticket} y la envía a Freighter para firma.
-  \item \textbf{Ejecución atómica en el contrato:} como \texttt{is\_resale = true}, el contrato ejecuta la distribución de comisiones en una sola transacción:
+  \item \textbf{Publicación:} el vendedor (propietario actual) invoca \texttt{listar\_boleto} con el nuevo precio. El contrato verifica que el vendedor es el propietario (\texttt{require\_auth}), que el boleto no está ya en venta, ni usado, ni invalidado. El boleto queda con \texttt{en\_venta = true}. El contrato emite evento \texttt{BoletoListado}.
+  \item \textbf{Compra:} el comprador selecciona el boleto en el marketplace e inicia la compra. El frontend envía la solicitud al Backend API, que orquesta la invocación de \texttt{comprar\_boleto}.
+  \item \textbf{Ejecución atómica en el contrato:} como \texttt{es\_reventa = true}, el contrato ejecuta la distribución de comisiones y el burn/remint en una sola transacción:
     \begin{enumerate}[label=\alph*)]
-      \item Calcula la comisión del organizador: \texttt{precio $\times$ OrgFee / 100}.
-      \item Calcula la comisión de la plataforma: \texttt{precio $\times$ PlatFee / 100}.
+      \item Calcula la comisión del organizador: \texttt{precio $\times$ ComisionOrganizador / 100}.
+      \item Calcula la comisión de la plataforma: \texttt{precio $\times$ ComisionPlataforma / 100}.
       \item Calcula el pago neto al vendedor: \texttt{precio $-$ comisión\_org $-$ comisión\_plat}.
-      \item Ejecuta tres transferencias mediante \texttt{TokenClient}: al organizador, a la plataforma y al vendedor.
-      \item Actualiza el ticket: \texttt{owner = comprador}, \texttt{for\_sale = false}.
+      \item Ejecuta tres transferencias mediante \texttt{ClienteToken}: al organizador, a la plataforma y al vendedor.
+      \item \textbf{Burn:} marca la versión actual del boleto como \texttt{invalidado = true}, \texttt{en\_venta = false}.
+      \item \textbf{Remint:} crea nueva versión (\texttt{version + 1}) con \texttt{propietario = comprador}, \texttt{en\_venta = false}, \texttt{es\_reventa = true}.
+      \item Actualiza el puntero \texttt{VersionActual} a la nueva versión.
     \end{enumerate}
-  \item \textbf{Indexación:} el indexador registra la transacción en PostgreSQL con el \texttt{tx\_hash} correspondiente.
-  \item \textbf{Notificación:} el frontend muestra al comprador su nuevo ticket y notifica al vendedor que la venta se completó.
+  \item \textbf{Evento on-chain:} el contrato emite \texttt{BoletoRevendido} con \texttt{ticket\_root\_id}, \texttt{vendedor}, \texttt{comprador}, \texttt{precio}, \texttt{version\_anterior} y \texttt{version\_nueva}.
+  \item \textbf{Registro off-chain:} el backend registra la transacción en PostgreSQL.
+  \item \textbf{Notificación:} el frontend muestra al comprador su nuevo boleto y notifica al vendedor que la venta se completó.
 \end{enumerate}
 
-\textbf{Garantía de atomicidad:} si cualquiera de las transferencias de pago falla (por ejemplo, fondos insuficientes del comprador), toda la transacción se revierte automáticamente por el runtime de Soroban. Esto elimina por diseño los estados inconsistentes donde el pago se procesa pero el ticket no se transfiere, o viceversa. No se requiere lógica de compensación ni rollback manual.
+\textbf{Garantía de atomicidad:} si cualquiera de las transferencias de pago falla (por ejemplo, fondos insuficientes del comprador), toda la transacción se revierte automáticamente por el runtime de Soroban. Esto elimina por diseño los estados inconsistentes donde el pago se procesa pero el boleto no se transfiere, o viceversa. No se requiere lógica de compensación ni rollback manual.
 
-% ---- Flujo 3: Verificación en puerta ----
-\subsection{Flujo de verificación en puerta}
+\textbf{Trazabilidad por versionado:} la combinación \texttt{(ticket\_root\_id, version)} permite reconstruir el historial completo de propiedad de un boleto consultando todas sus versiones. Las versiones anteriores quedan como registros históricos inmutables con \texttt{invalidado = true}.
 
-La verificación de acceso al evento es el flujo que ejerce la táctica de resiliencia offline del sistema. Soporta dos modos de operación según la disponibilidad de conectividad. La Figura~\ref{fig:seq-verificacion} presenta el diagrama de secuencia de ambos modos.
+% ---- Flujo 3: Verificación y redención en puerta ----
+\subsection{Flujo de verificación y redención en puerta}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{05_secuencia_verificacion_online_offline.png}
-  \caption{Diagrama de secuencia -- Verificación de ticket en puerta (online y offline)}
-  \label{fig:seq-verificacion}
-\end{figure}
-
-\subsubsection{Modo online}
+La verificación de acceso al evento involucra a un verificador autorizado que valida el boleto del asistente y lo marca como redimido on-chain.
 
 \begin{enumerate}
-  \item El asistente presenta un código QR que contiene: \texttt{ticket\_id}, versión, firma criptográfica y timestamp de expiración.
-  \item El dispositivo verificador (App de Escaneo) envía el payload al backend de verificación.
-  \item El backend consulta el caché de estado de tickets en PostgreSQL para una respuesta rápida.
-  \item Opcionalmente, el backend verifica directamente contra el contrato on-chain (consultando \texttt{owner}, versión y \texttt{used}).
-  \item El backend persiste el check-in en la bitácora de auditoría y responde al verificador con ACEPTADO o RECHAZADO.
-  \item Si se acepta, el ticket puede marcarse como consumido mediante \texttt{redeem\_ticket} en el contrato.
+  \item El organizador ha registrado previamente uno o más verificadores autorizados invocando \texttt{agregar\_verificador(address)} en el contrato de evento.
+  \item El asistente presenta su boleto (código QR o identificador) en la puerta del evento.
+  \item El verificador consulta el estado del boleto a través del sistema (Backend API).
+  \item El backend valida contra PostgreSQL: verifica que el boleto existe, pertenece al evento correcto, no ha sido usado ni invalidado.
+  \item Si el boleto es válido, el backend invoca \texttt{redimir\_boleto(ticket\_root\_id, verificador)} en el contrato de evento.
+  \item El contrato verifica que la dirección es un verificador autorizado (\texttt{Verificador(address)}), que el boleto no ha sido usado ni invalidado, y lo marca como \texttt{usado = true}, \texttt{en\_venta = false}.
+  \item El contrato emite evento \texttt{BoletoRedimido} con \texttt{ticket\_root\_id}, \texttt{id\_evento}, \texttt{propietario}, \texttt{verificador} y \texttt{version}.
+  \item El backend actualiza el estado en PostgreSQL y confirma el acceso al asistente.
 \end{enumerate}
 
-\subsubsection{Modo offline}
-
-En escenarios de conectividad limitada (eventos masivos, locaciones con cobertura deficiente), la App de Escaneo opera con datos pre-sincronizados:
-
-\begin{enumerate}
-  \item El dispositivo verificador valida localmente: verifica la firma criptográfica del QR, comprueba que no haya expirado y contrasta contra la lista local de tickets ya consumidos.
-  \item El resultado se marca como \textbf{provisional} y se almacena localmente en el dispositivo.
-  \item La ventana máxima de operación offline es de \textbf{30 minutos}. Después de este período, el dispositivo debe sincronizarse para seguir operando.
-  \item Al recuperar conectividad, el dispositivo envía todos los check-ins pendientes al backend.
-  \item El backend resuelve conflictos (por ejemplo, dos dispositivos aceptaron el mismo ticket en offline) aplicando la política: \textbf{primer check-in sincronizado gana}.
-  \item Los conflictos resueltos se registran en la bitácora de auditoría para revisión posterior.
-\end{enumerate}
-
-\textbf{Aspecto arquitectónico clave:} la cola de sincronización y la política de resolución de conflictos son las tácticas que permiten al sistema operar en condiciones degradadas sin sacrificar la integridad. La autoridad de verificación es compartida entre el verificador (validación local provisional) y el backend (confirmación definitiva).
+\textbf{Aspecto arquitectónico clave:} la separación entre propietario y verificador es una decisión de diseño que garantiza que la redención represente un hecho físico de asistencia. El propietario tiene custodia del boleto, pero no puede auto-redimirlo remotamente. Solo un verificador autorizado por el organizador (registrado on-chain) puede ejecutar la redención, proporcionando trazabilidad de quién verificó y cuándo.
 
 % ---- Máquina de estados ----
 \subsection{Máquina de estados del ticket}
@@ -861,14 +902,14 @@ El ciclo de vida de un ticket está gobernado por una máquina de estados que de
     \toprule
     \textbf{Estado} & \textbf{Descripción}\\
     \midrule
-    \textbf{Emitido} & El ticket acaba de ser creado por el organizador (\texttt{create\_ticket}). Está asignado al organizador, con \texttt{for\_sale = false}, \texttt{is\_resale = false}, \texttt{used = false}.\\
-    \textbf{En venta} & El ticket ha sido listado para venta o reventa (\texttt{list\_ticket}). \texttt{for\_sale = true}. Visible en el marketplace.\\
-    \textbf{Asignado} & El ticket tiene un propietario (comprador) y no está en venta. \texttt{for\_sale = false}. El propietario puede listarlo para reventa o asistir al evento.\\
-    \textbf{Consumido} & El ticket fue redimido (\texttt{redeem\_ticket}). \texttt{used = true}. Estado terminal e irreversible. No puede listarse ni comprarse.\\
-    \textbf{Invalidado} & El ticket fue cancelado por política del organizador o por cancelación del evento. Estado terminal (manejado off-chain en la versión actual del prototipo).\\
+    \textbf{Emitido} & El boleto acaba de ser creado por el organizador (\texttt{crear\_boleto}). Está asignado al organizador, con \texttt{en\_venta = false}, \texttt{es\_reventa = false}, \texttt{usado = false}, \texttt{invalidado = false}.\\
+    \textbf{En venta} & El boleto ha sido listado para venta o reventa (\texttt{listar\_boleto}). \texttt{en\_venta = true}. Visible en el marketplace.\\
+    \textbf{Asignado} & El boleto tiene un propietario (comprador) y no está en venta. \texttt{en\_venta = false}. El propietario puede listarlo para reventa o presentarlo en la puerta del evento.\\
+    \textbf{Consumido} & El boleto fue redimido por un verificador autorizado (\texttt{redimir\_boleto}). \texttt{usado = true}. Estado terminal e irreversible. No puede listarse, comprarse ni revenderse.\\
+    \textbf{Invalidado} & El boleto fue cancelado administrativamente por el organizador (\texttt{invalidar\_boleto}) o fue ``quemado'' (\textit{burned}) durante una reventa para crear la nueva versión. \texttt{invalidado = true}. Estado terminal on-chain.\\
     \bottomrule
   \end{tabularx}
-  \caption{Estados del ciclo de vida de un ticket}
+  \caption{Estados del ciclo de vida de un boleto}
   \label{tab:estados-ticket}
 \end{table}
 
@@ -876,20 +917,21 @@ El ciclo de vida de un ticket está gobernado por una máquina de estados que de
 
 \begin{table}[H]
   \centering
-  \begin{tabularx}{\textwidth}{@{}p{3cm} p{3cm} p{3.5cm} X@{}}
+  \begin{tabularx}{\textwidth}{@{}p{2.5cm} p{2.5cm} p{3.5cm} X@{}}
     \toprule
     \textbf{Desde} & \textbf{Hacia} & \textbf{Acción} & \textbf{Condiciones}\\
     \midrule
-    Emitido & En venta & \texttt{list\_ticket} & El organizador (owner) lista el ticket para venta primaria.\\
-    En venta & Asignado & \texttt{buy\_ticket} & Un comprador adquiere el ticket. En venta primaria, \texttt{is\_resale} pasa a \texttt{true}.\\
-    Asignado & En venta & \texttt{list\_ticket} & El propietario lista el ticket para reventa. El ticket debe no estar usado.\\
-    En venta & Asignado & \texttt{cancel\_sale} & El propietario retira el ticket del marketplace.\\
-    En venta & Asignado & \texttt{buy\_ticket} & En reventa: se ejecuta distribución de comisiones y transferencia de propiedad.\\
-    Asignado & Consumido & \texttt{redeem\_ticket} & El propietario redime el ticket. Transición irreversible (\texttt{used = true}).\\
-    Cualquiera & Invalidado & Política off-chain & Cancelación del evento o decisión del organizador. Gestionado por el backend.\\
+    Emitido & En venta & \texttt{listar\_boleto} & El organizador (propietario) lista el boleto para venta primaria.\\
+    En venta & Asignado & \texttt{comprar\_boleto} & Venta primaria: 100\% al organizador, \texttt{es\_reventa} pasa a \texttt{true}. Update in-place.\\
+    Asignado & En venta & \texttt{listar\_boleto} & El propietario lista el boleto para reventa. No debe estar usado ni invalidado.\\
+    En venta & Asignado & \texttt{cancelar\_venta} & El propietario retira el boleto del marketplace.\\
+    En venta & Asignado (nueva versión) & \texttt{comprar\_boleto} & Reventa: distribución de comisiones + burn versión actual + remint nueva versión.\\
+    Asignado & Consumido & \texttt{redimir\_boleto} & Un verificador autorizado redime el boleto. Irreversible (\texttt{usado = true}).\\
+    No invalidado & Invalidado & \texttt{invalidar\_boleto} & El organizador cancela el boleto on-chain. Irreversible (\texttt{invalidado = true}).\\
+    En venta (reventa) & Invalidado & \texttt{comprar\_boleto} & La versión previa se invalida (burn) como parte del flujo de reventa.\\
     \bottomrule
   \end{tabularx}
-  \caption{Transiciones válidas entre estados del ticket}
+  \caption{Transiciones válidas entre estados del boleto}
   \label{tab:transiciones-ticket}
 \end{table}
 
@@ -898,12 +940,14 @@ El ciclo de vida de un ticket está gobernado por una máquina de estados que de
 Las siguientes reglas son impuestas por el contrato y no pueden ser violadas:
 
 \begin{itemize}
-  \item Un ticket con \texttt{used = true} no puede cambiar a ningún otro estado. La redención es \textbf{irreversible}.
-  \item Un ticket con \texttt{for\_sale = true} no puede ser redimido (debe cancelarse la venta primero).
-  \item Solo el \texttt{owner} actual puede invocar \texttt{list\_ticket}, \texttt{cancel\_sale} y \texttt{redeem\_ticket} (verificado por \texttt{require\_auth}).
-  \item Un propietario no puede comprarse su propio ticket (\texttt{self\_buy} está prohibido).
-  \item El contrato solo puede inicializarse una vez (guarda de re-inicialización).
-  \item Las comisiones de organizador y plataforma no pueden sumar 100\% o más del precio.
+  \item Un boleto con \texttt{usado = true} no puede cambiar a ningún otro estado. La redención es \textbf{irreversible}.
+  \item Un boleto con \texttt{invalidado = true} no puede venderse, comprarse, listarse ni redimirse. La invalidación es \textbf{irreversible}.
+  \item Solo el \texttt{propietario} actual puede invocar \texttt{listar\_boleto} y \texttt{cancelar\_venta} (verificado por \texttt{require\_auth}).
+  \item Solo un \textbf{verificador autorizado} (registrado on-chain) puede invocar \texttt{redimir\_boleto}. El propietario no puede auto-redimirse.
+  \item Un propietario no puede comprarse su propio boleto (\texttt{AutoCompra} está prohibido).
+  \item El contrato solo puede inicializarse una vez (error \texttt{YaInicializado}).
+  \item Las comisiones de organizador y plataforma no pueden sumar 100\% o más (\texttt{ComisionesMuyAltas}).
+  \item Cada versión de un boleto es inmutable una vez invalidada: las versiones anteriores quedan como registro histórico en el storage.
 \end{itemize}
 
 %===============================================================
@@ -912,8 +956,58 @@ Las siguientes reglas son impuestas por el contrato y no pueden ser violadas:
 \label{sec:vista-despliegue}
 %===============================================================
 
-% TODO: Diagrama de despliegue (nodos físicos/virtuales).
-% Stellar testnet, servidor backend, hosting frontend, base de datos.
+El sistema se despliega en cuatro nodos lógicos que pueden residir en infraestructura compartida o independiente.
+
+\begin{table}[H]
+\centering
+\caption{Nodos de despliegue}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Nodo} & \textbf{Tecnología} & \textbf{Componentes} \\
+\midrule
+Cliente & Navegador web & Aplicación React (TuTicket) servida como SPA estática. \\
+Servidor de aplicación & Node.js 20 & Backend NestJS, servidor Vite de desarrollo (o archivos estáticos en producción). \\
+Servidor de datos & PostgreSQL 16 & Esquemas \texttt{public} (autenticación, usuarios) y \texttt{ticketing} (eventos, boletos, carritos). \\
+Blockchain & Stellar / Soroban & Contratos \texttt{FabricaBoletos} y \texttt{ContratoEvento} desplegados en Testnet. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Configuración de contenedores}
+
+El backend utiliza Docker Compose para orquestar los servicios en desarrollo:
+
+\begin{itemize}
+  \item \textbf{PostgreSQL 16}: contenedor oficial \texttt{postgres:16}, puerto 5432, volumen persistente para datos.
+  \item \textbf{Backend NestJS}: ejecutado con \texttt{npm run start:dev} (modo watch). Conecta a PostgreSQL vía Prisma.
+  \item \textbf{Frontend Vite}: ejecutado con \texttt{npm run dev}, proxy configurado hacia el backend en desarrollo.
+\end{itemize}
+
+\subsection{Variables de entorno relevantes}
+
+\begin{table}[H]
+\centering
+\caption{Variables de entorno principales}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Variable} & \textbf{Servicio} & \textbf{Descripción} \\
+\midrule
+\texttt{DATABASE\_URL} & Backend & Cadena de conexión PostgreSQL (Prisma). \\
+\texttt{JWT\_SECRET} & Backend & Secreto para firma de tokens JWT. \\
+\texttt{SOROBAN\_RPC\_URL} & Backend & URL del nodo RPC de Soroban (futuro). \\
+\texttt{FACTORY\_CONTRACT\_ID} & Backend & ID del contrato \texttt{FabricaBoletos} desplegado (futuro). \\
+\texttt{VITE\_API\_URL} & Frontend & URL base del backend API. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% Diagrama de despliegue (compilar externamente e incluir como imagen)
+% \begin{figure}[H]
+%   \centering
+%   \includegraphics[width=0.95\textwidth]{despliegue.png}
+%   \caption{Diagrama de despliegue UML}
+%   \label{fig:despliegue}
+% \end{figure}
 
 %===============================================================
 \newpage
@@ -921,8 +1015,91 @@ Las siguientes reglas son impuestas por el contrato y no pueden ser violadas:
 \label{sec:vista-implementacion}
 %===============================================================
 
-% TODO: Organización del código fuente, módulos, dependencias.
-% Estructura del repositorio, artefactos compilados (WASM).
+\subsection{Organización de repositorios}
+
+El proyecto se distribuye en cuatro repositorios Git independientes:
+
+\begin{table}[H]
+\centering
+\caption{Repositorios del proyecto}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Repositorio} & \textbf{Ruta local} & \textbf{Contenido} \\
+\midrule
+\texttt{main\_contract} & \texttt{codigo/main\_contract/} & Contratos inteligentes Soroban (Rust). \\
+\texttt{Tu-Ticket-Frontend} & \texttt{codigo/Tu-Ticket-Frontend/} & Aplicación web React + Vite + TypeScript. \\
+\texttt{Tu-Ticket-Backend} & \texttt{codigo/Tu-Ticket-Backend/} & API REST NestJS + Prisma + PostgreSQL. \\
+\texttt{Documento\_Tesis} & \texttt{Documentos/Documento\_Tesis/} & Documentación LaTeX del proyecto. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Estructura del workspace de contratos}
+
+El repositorio de contratos utiliza un workspace de Cargo con dos crates:
+
+\begin{verbatim}
+contracts/
++-- Cargo.toml              # Workspace raiz
++-- contracts/
+    +-- event_contract/
+    |   +-- src/
+    |       +-- lib.rs       # ContratoEvento (~1140 lineas)
+    |       +-- test.rs      # Suite de tests
+    +-- factory_contract/
+        +-- src/
+            +-- lib.rs       # FabricaBoletos (~430 lineas)
+            +-- test.rs      # Suite de tests
+\end{verbatim}
+
+Dependencia: \texttt{factory\_contract} depende de \texttt{event\_contract} (importa \texttt{ContratoEventoClient} para inicializar contratos hijos).
+
+\subsection{Estructura del backend}
+
+\begin{verbatim}
+src/
++-- app.module.ts            # Modulo raiz
++-- auth/                    # Autenticacion JWT (registro, login, guards)
++-- users/                   # Gestion de usuarios y perfiles
++-- events/                  # CRUD de eventos
++-- tickets/                 # Gestion de boletos y disponibilidad
++-- cart/                    # Carrito de compras (sesion)
++-- checkout/                # Procesamiento de compras (simulado)
++-- admin/                   # Panel de administracion
++-- prisma/                  # Servicio Prisma y migraciones
++-- common/                  # Guards, decoradores, DTOs compartidos
+\end{verbatim}
+
+\subsection{Estructura del frontend}
+
+\begin{verbatim}
+src/
++-- main.tsx                 # Entry point
++-- App.tsx                  # Router principal
++-- components/              # Componentes reutilizables (shadcn/ui)
++-- pages/                   # Vistas por ruta
++-- services/                # Llamadas HTTP al backend (Axios)
++-- context/                 # React Context (auth, carrito)
++-- hooks/                   # Custom hooks
++-- types/                   # Interfaces TypeScript
+\end{verbatim}
+
+\subsection{Artefactos compilados y comandos de build}
+
+\begin{table}[H]
+\centering
+\caption{Comandos de compilación y artefactos}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Componente} & \textbf{Comando} & \textbf{Artefacto} \\
+\midrule
+Contratos & \texttt{make build} & \texttt{target/wasm32-.../\{event,factory\}\_contract.wasm} \\
+Backend & \texttt{npm run build} & \texttt{dist/} (JavaScript transpilado) \\
+Frontend & \texttt{npm run build} & \texttt{dist/} (SPA estática optimizada) \\
+Tests contratos & \texttt{make test} & Ejecución de \texttt{cargo test} \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 %===============================================================
 \newpage
@@ -930,9 +1107,114 @@ Las siguientes reglas son impuestas por el contrato y no pueden ser violadas:
 \label{sec:vista-datos}
 %===============================================================
 
-% TODO: Modelo de datos on-chain (DataKey, Ticket struct, storage).
-% Modelo de datos off-chain (si aplica: PostgreSQL, tablas).
-% Diagrama entidad-relación o equivalente.
+El sistema mantiene dos modelos de datos complementarios: on-chain (inmutable, en los contratos Soroban) y off-chain (relacional, en PostgreSQL).
+
+\subsection{Modelo de datos on-chain: ContratoEvento}
+
+\subsubsection{Claves de storage (\texttt{ClaveDato})}
+
+\begin{table}[H]
+\centering
+\caption{Claves de storage del \texttt{ContratoEvento}}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Clave} & \textbf{Tipo de valor} & \textbf{Descripción} \\
+\midrule
+\texttt{Organizador} & \texttt{Address} & Dirección del organizador del evento. \\
+\texttt{Plataforma} & \texttt{Address} & Wallet de la plataforma para comisiones. \\
+\texttt{TokenPago} & \texttt{Address} & Contrato del token usado para pagos. \\
+\texttt{ComisionOrganizador} & \texttt{i128} & Porcentaje de comisión del organizador. \\
+\texttt{ComisionPlataforma} & \texttt{i128} & Porcentaje de comisión de la plataforma. \\
+\texttt{ContadorBoletos} & \texttt{u32} & ID incremental para nuevos boletos. \\
+\texttt{Boleto(u32)} & \texttt{Boleto} & Datos de un boleto por su ID compuesto. \\
+\texttt{VersionActual(u32)} & \texttt{u32} & Versión vigente de un \texttt{ticket\_root\_id}. \\
+\texttt{EsVerificador(Address)} & \texttt{bool} & Indica si una dirección es verificador autorizado. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Estructura del boleto (\texttt{Boleto})}
+
+\begin{table}[H]
+\centering
+\caption{Campos del struct \texttt{Boleto}}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Campo} & \textbf{Tipo} & \textbf{Descripción} \\
+\midrule
+\texttt{ticket\_root\_id} & \texttt{u32} & Identificador raíz (invariante entre versiones). \\
+\texttt{version} & \texttt{u32} & Número de versión (incrementa con cada reventa). \\
+\texttt{id\_evento} & \texttt{u32} & ID del evento al que pertenece. \\
+\texttt{propietario} & \texttt{Address} & Dirección del dueño actual. \\
+\texttt{precio} & \texttt{i128} & Precio en unidades del token de pago. \\
+\texttt{en\_venta} & \texttt{bool} & Si está listado para reventa. \\
+\texttt{es\_reventa} & \texttt{bool} & \texttt{true} después de la primera compra. \\
+\texttt{usado} & \texttt{bool} & Si fue redimido (irreversible). \\
+\texttt{invalidado} & \texttt{bool} & Si fue invalidado por el organizador (irreversible). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Modelo de datos on-chain: FabricaBoletos}
+
+\begin{table}[H]
+\centering
+\caption{Claves de storage de \texttt{FabricaBoletos}}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Clave} & \textbf{Tipo de valor} & \textbf{Descripción} \\
+\midrule
+\texttt{Administrador} & \texttt{Address} & Admin de la factory. \\
+\texttt{ContadorEventos} & \texttt{u32} & Total de eventos creados. \\
+\texttt{HashWasmEvento} & \texttt{BytesN<32>} & Hash del WASM del \texttt{ContratoEvento}. \\
+\texttt{ContratoEvento(u32)} & \texttt{Address} & Mapeo id\_evento → dirección del contrato. \\
+\texttt{ContratoRegistrado(Address)} & \texttt{bool} & Mapeo inverso para evitar duplicados. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Modelo de datos off-chain: PostgreSQL}
+
+La base de datos relacional utiliza dos esquemas Prisma que mapean a PostgreSQL 16:
+
+\subsubsection{Esquema \texttt{public} (autenticación)}
+
+\begin{itemize}
+  \item \texttt{User}: id, email (único), password (hash bcrypt), nombre, rol (\texttt{USER} | \texttt{ADMIN}), timestamps.
+  \item \texttt{RefreshToken}: id, token, userId (FK), expiresAt.
+\end{itemize}
+
+\subsubsection{Esquema \texttt{ticketing} (dominio de negocio)}
+
+\begin{itemize}
+  \item \texttt{Event}: id, nombre, descripción, fecha, lugar, capacidad, precio base, organizadorId (FK), estado, imágenes, timestamps.
+  \item \texttt{Ticket}: id, eventId (FK), userId (FK), estado (\texttt{AVAILABLE} | \texttt{SOLD} | \texttt{USED} | \texttt{CANCELLED}), precio, asiento, timestamps.
+  \item \texttt{Cart}: id, userId (FK), estado, expiresAt, timestamps.
+  \item \texttt{CartItem}: id, cartId (FK), ticketId (FK), precio, timestamps.
+  \item \texttt{Purchase}: id, userId (FK), total, estado, transactionRef, timestamps.
+  \item \texttt{PurchaseItem}: id, purchaseId (FK), ticketId (FK), precio.
+\end{itemize}
+
+\subsubsection{Correspondencia on-chain / off-chain}
+
+\begin{table}[H]
+\centering
+\caption{Correspondencia entre datos on-chain y off-chain}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\textbf{Concepto} & \textbf{On-chain} & \textbf{Off-chain} \\
+\midrule
+Evento & \texttt{ContratoEvento} (contrato hijo) & Tabla \texttt{Event} \\
+Boleto & \texttt{Boleto} struct en storage & Tabla \texttt{Ticket} \\
+Propietario & \texttt{propietario} (Address Stellar) & \texttt{userId} (FK a User) \\
+Estado de uso & \texttt{usado} / \texttt{invalidado} (bool) & \texttt{estado} (enum) \\
+Compra & Transferencia atómica de tokens & Tabla \texttt{Purchase} \\
+Comisiones & Split automático en \texttt{comprar\_boleto} & No almacenado (derivable) \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Nota:} En el estado actual del desarrollo, la integración Soroban no está implementada. Los pagos se simulan en el backend. La correspondencia on-chain/off-chain se materializará cuando se conecte el backend con los contratos desplegados en Testnet.
 
 %===============================================================
 \newpage
@@ -940,9 +1222,98 @@ Las siguientes reglas son impuestas por el contrato y no pueden ser violadas:
 \label{sec:calidad}
 %===============================================================
 
-% TODO: Escenarios de atributos de calidad (seguridad, rendimiento,
-% disponibilidad, modificabilidad, etc.) y tácticas arquitectónicas
-% empleadas para satisfacerlos.
+Los siguientes escenarios de calidad guían las decisiones arquitectónicas del sistema.
+
+\subsection{QA-01: Seguridad — Autorización por rol}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Aspecto} & \textbf{Descripción} \\
+\midrule
+Estímulo & Un usuario intenta ejecutar una operación para la cual no tiene permisos. \\
+Fuente & Actor externo (usuario, contrato, llamada API). \\
+Artefacto & Contratos Soroban + Backend NestJS. \\
+Respuesta & La operación es rechazada sin modificar el estado. \\
+Medida & 100\% de las funciones que mutan estado validan autorización. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Táctica:} On-chain, cada función pública usa \texttt{require\_auth()} sobre la dirección correspondiente (organizador, propietario, verificador, admin). Off-chain, NestJS usa guards JWT con decorador \texttt{@Roles()} y middleware de autenticación.
+
+\subsection{QA-02: Integridad — Atomicidad en reventa}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Aspecto} & \textbf{Descripción} \\
+\midrule
+Estímulo & Un comprador invoca \texttt{comprar\_boleto} sobre un boleto en reventa. \\
+Artefacto & \texttt{ContratoEvento}: función \texttt{comprar\_boleto}. \\
+Respuesta & Se transfieren tokens (vendedor + comisiones) y se crea nueva versión del boleto en una sola transacción atómica. Si cualquier paso falla, toda la transacción se revierte. \\
+Medida & Cero estados intermedios observables: o se completa todo, o no se modifica nada. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Táctica:} Soroban garantiza atomicidad transaccional nativa. El patrón burn/remint invalida la versión anterior y crea la nueva en la misma invocación, eliminando la posibilidad de doble gasto.
+
+\subsection{QA-03: Trazabilidad — Historial de versiones}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Aspecto} & \textbf{Descripción} \\
+\midrule
+Estímulo & Un auditor desea rastrear la cadena de propiedad de un boleto. \\
+Artefacto & Storage on-chain del \texttt{ContratoEvento}. \\
+Respuesta & Se puede reconstruir el historial completo consultando todas las versiones desde \texttt{(ticket\_root\_id, 0)} hasta \texttt{VersionActual}. \\
+Medida & Cada transferencia de propiedad genera una versión inmutable con evento on-chain (\texttt{BoletoRevendido}). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Táctica:} El \texttt{ticket\_root\_id} se mantiene constante a través de todas las versiones. Las versiones anteriores permanecen en el storage como registros históricos inmutables. Los eventos on-chain proporcionan un log de auditoría adicional.
+
+\subsection{QA-04: Modificabilidad — Separación on-chain/off-chain}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Aspecto} & \textbf{Descripción} \\
+\midrule
+Estímulo & Se requiere cambiar la interfaz de usuario o agregar un nuevo módulo al backend. \\
+Artefacto & Frontend React, Backend NestJS. \\
+Respuesta & El cambio se realiza sin modificar los contratos inteligentes. \\
+Medida & Los contratos definen reglas de negocio invariantes; la lógica de presentación y orquestación vive off-chain y es modificable independientemente. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Táctica:} Arquitectura en capas con separación estricta. El backend actúa como intermediario y puede evolucionar sin requerir un redeploy de los contratos. El patrón Factory permite desplegar nuevas versiones del \texttt{ContratoEvento} sin afectar los contratos existentes.
+
+\subsection{QA-05: Disponibilidad — Resiliencia del backend}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{l X}
+\toprule
+\textbf{Aspecto} & \textbf{Descripción} \\
+\midrule
+Estímulo & El servidor backend se reinicia o pierde conexión temporalmente. \\
+Artefacto & Backend NestJS + PostgreSQL. \\
+Respuesta & Los datos transaccionales persisten en PostgreSQL. Los contratos on-chain siguen operativos independientemente. Al recuperarse el backend, retoma operación normal. \\
+Medida & Pérdida de datos cero para transacciones confirmadas en PostgreSQL. Los contratos on-chain tienen disponibilidad inherente de la red Stellar. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Táctica:} PostgreSQL provee durabilidad ACID. La blockchain Stellar tiene alta disponibilidad intrínseca (consenso federado, sin downtime planificado). El backend es stateless (sesiones en JWT) y puede reiniciarse sin pérdida de contexto.
 
 %===============================================================
 \newpage
@@ -950,13 +1321,53 @@ Las siguientes reglas son impuestas por el contrato y no pueden ser violadas:
 \label{sec:decisiones}
 %===============================================================
 
-% TODO: ADRs (Architecture Decision Records).
-% Formato sugerido por decisión:
-% - Contexto
-% - Decisión
-% - Consecuencias
-% Ejemplos: elección de Stellar/Soroban, modelo de storage del contrato,
-% separación on-chain/off-chain, stack de frontend/backend.
+\subsection{ADR-01: Selección de Stellar/Soroban como plataforma blockchain}
+
+\textbf{Contexto:} Se necesita una plataforma blockchain que soporte contratos inteligentes con costos de transacción bajos, finalidad rápida y un ecosistema maduro de tokens.
+
+\textbf{Decisión:} Se selecciona Stellar con Soroban (contratos inteligentes en Rust compilados a WASM) por: transacciones con finalidad en ~5 segundos, costos de gas del orden de fracciones de centavo, soporte nativo de tokens (Stellar Asset Contract), y atomicidad transaccional garantizada.
+
+\textbf{Consecuencias:} El equipo debe aprender Rust y el SDK de Soroban. El ecosistema de herramientas es más joven que el de Ethereum/Solidity, pero suficiente para el alcance del proyecto. Las pruebas se ejecutan con el entorno simulado de Soroban SDK.
+
+\subsection{ADR-02: Patrón Factory para contratos de evento}
+
+\textbf{Contexto:} El sistema debe soportar múltiples eventos, cada uno con su propia configuración de comisiones, token de pago y organizador.
+
+\textbf{Decisión:} Se implementa un contrato \texttt{FabricaBoletos} que despliega instancias independientes de \texttt{ContratoEvento} mediante \texttt{deploy\_v2}. Cada evento tiene su propio contrato con storage aislado.
+
+\textbf{Consecuencias:} Aislamiento total entre eventos (un bug en un contrato no afecta a otros). El storage de Soroban tiene límites por contrato, y este patrón evita cuellos de botella. La factory mantiene un registro de todos los contratos desplegados para descubrimiento. El costo es un deploy adicional por evento.
+
+\subsection{ADR-03: Patrón Burn/Remint para reventa}
+
+\textbf{Contexto:} Al revender un boleto, se necesita transferir propiedad manteniendo trazabilidad completa del historial.
+
+\textbf{Decisión:} En lugar de mutar el propietario del boleto existente, se invalida la versión actual (\texttt{invalidado = true}) y se crea una nueva versión con \texttt{version + 1}, nuevo propietario y nuevo precio. El \texttt{ticket\_root\_id} se mantiene constante.
+
+\textbf{Consecuencias:} Trazabilidad completa: cada versión anterior permanece como registro histórico inmutable en el storage. Se puede reconstruir toda la cadena de propiedad. El costo es mayor uso de storage (una entrada por versión), pero el beneficio en auditoría y prevención de fraude justifica el trade-off.
+
+\subsection{ADR-04: Separación on-chain/off-chain}
+
+\textbf{Contexto:} No toda la lógica del sistema necesita vivir en la blockchain. El almacenamiento on-chain es costoso y las operaciones son lentas comparadas con una base de datos tradicional.
+
+\textbf{Decisión:} Se mantiene on-chain únicamente la lógica crítica de negocio (propiedad, transferencias, comisiones, redención). La gestión de usuarios, catálogo de eventos, carrito de compras, y lógica de presentación vive off-chain en NestJS + PostgreSQL.
+
+\textbf{Consecuencias:} Mejor experiencia de usuario (operaciones off-chain son instantáneas). Menor costo de gas. Complejidad adicional para mantener consistencia entre ambos mundos (se resolverá con indexación de eventos on-chain cuando se complete la integración).
+
+\subsection{ADR-05: Stack tecnológico web}
+
+\textbf{Contexto:} Se necesita un frontend y backend web para la aplicación cliente TuTicket.
+
+\textbf{Decisión:} Frontend con React 18 + Vite + TypeScript + Tailwind CSS + shadcn/ui. Backend con NestJS 11 + TypeScript + Prisma ORM + PostgreSQL 16. Autenticación con JWT (access + refresh tokens).
+
+\textbf{Consecuencias:} TypeScript compartido entre frontend y backend reduce el cambio de contexto. Prisma proporciona migraciones type-safe y genera tipos automáticamente. shadcn/ui acelera el desarrollo de UI con componentes accesibles. NestJS ofrece arquitectura modular que escala bien con la complejidad del dominio.
+
+\subsection{ADR-06: Verificadores autorizados para redención}
+
+\textbf{Contexto:} Se necesita un mecanismo para redimir boletos en la puerta del evento que sea seguro y no dependa de que el propietario auto-redima su boleto (lo cual podría ser manipulado).
+
+\textbf{Decisión:} El organizador registra direcciones de verificadores autorizados on-chain (\texttt{agregar\_verificador}). Solo estos verificadores pueden invocar \texttt{redimir\_boleto}. El propietario del boleto no puede auto-redimirse.
+
+\textbf{Consecuencias:} Separación de responsabilidades clara: el propietario posee el boleto, pero no controla su redención. Previene fraudes donde un propietario podría intentar redimir y luego reclamar que no lo hizo. Los verificadores son gestionables (agregar/remover) por el organizador.
 
 %===============================================================
 % Referencias (si se usa bibliografía adicional al final)
