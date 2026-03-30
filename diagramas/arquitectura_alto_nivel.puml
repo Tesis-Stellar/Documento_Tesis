@@ -1,0 +1,136 @@
+@startuml arquitectura_alto_nivel
+!theme plain
+skinparam backgroundColor #FEFEFE
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam roundCorner 10
+skinparam shadowing false
+skinparam padding 4
+skinparam nodesep 40
+skinparam ranksep 40
+
+' ─── Estilos ───
+skinparam rectangle {
+  BackgroundColor<<frontend>> #FFF3E0
+  BorderColor<<frontend>> #E65100
+  BackgroundColor<<backend>> #E8F5E9
+  BorderColor<<backend>> #2E7D32
+  BackgroundColor<<wallet>> #E0F7FA
+  BorderColor<<wallet>> #00838F
+  BackgroundColor<<contract>> #FFFDE7
+  BorderColor<<contract>> #F57F17
+  BackgroundColor<<token>> #FCE4EC
+  BorderColor<<token>> #C62828
+}
+
+skinparam cloud {
+  BackgroundColor #FFF8E1
+  BorderColor #F9A825
+}
+
+skinparam database {
+  BackgroundColor #F3E5F5
+  BorderColor #6A1B9A
+}
+
+title **TuTicket — Arquitectura de Alto Nivel**\nBoletería Digital con Blockchain (Stellar/Soroban)
+
+' ═══════════════════════════════════════
+' ACTORES
+' ═══════════════════════════════════════
+
+actor "Comprador" as comprador
+actor "Organizador" as organizador
+actor "Verificador\n(Puerta)" as verificador
+actor "Admin" as admin
+
+' ═══════════════════════════════════════
+' CAPA OFF-CHAIN
+' ═══════════════════════════════════════
+
+package "Off-Chain" #F5F5F5 {
+
+  rectangle "**Frontend (SPA)**\nSimula la ticketera. \nMuestra la opcion de reventa" as frontend <<frontend>>
+
+  rectangle "**Wallet**\nFirma de transacciones\nConexión a Stellar" as wallet <<wallet>>
+
+  rectangle "**Backend (API REST)**\nLlama los smart contract (On-Chain). \nManeja los llamados a la bd PostgreSQL (Off-Chain)" as backend <<backend>>
+
+  database "**PostgreSQL**\nSupabase\n \nAlmacenara toda la informacion \nque los smart contract no manejen. \n(Reduce complejidad de los contratos)" as db
+
+}
+
+' ═══════════════════════════════════════
+' CAPA ON-CHAIN
+' ═══════════════════════════════════════
+
+cloud "On-Chain — **Red Stellar (Soroban)**" {
+
+  rectangle "**Factory Contract**\nDespliega 1 contrato\nindependiente por evento" as factory <<contract>>
+
+  rectangle "**Event Contract ×N**\n\nVenta primaria (100% → organizador)\nReventa atómica (burn + remint + comisiones)\nVerificación en puerta (solo autorizados)\nConsultas (propietario, historial, reventa)" as event_contract <<contract>>
+
+  rectangle "**Token de Pago**\nSoroban Token Contract\nTransferencias atómicas" as token <<token>>
+
+}
+
+' ═══════════════════════════════════════
+' RELACIONES — Actores → Sistema
+' ═══════════════════════════════════════
+
+comprador -down-> frontend : Navega, compra\ny ve boletos
+organizador -down-> frontend : Gestiona\neventos
+admin -down-> frontend : Administra\nplataforma
+verificador -down-> frontend : Escanea QR
+
+' ═══════════════════════════════════════
+' RELACIONES — Off-Chain internas
+' ═══════════════════════════════════════
+
+frontend -right-> wallet : Solicita firma\n(transparente al usuario)
+frontend -down-> backend : API REST
+backend -down-> db : consulta
+
+' ═══════════════════════════════════════
+' RELACIONES — Off-Chain ↔ On-Chain
+' ═══════════════════════════════════════
+
+backend -down-> event_contract : Orquesta compras
+backend -down-> factory : Despliega contratos\nde eventos nuevos
+
+' ═══════════════════════════════════════
+' RELACIONES — On-Chain internas
+' ═══════════════════════════════════════
+
+factory -down-> event_contract : Inicializar
+event_contract -right-> token : Distribución\nde pagos
+
+' ═══════════════════════════════════════
+' RELACIONES — Indexer (on-chain → off-chain)
+' ═══════════════════════════════════════
+
+event_contract -left-> db #C62828 : **Localiza**\nEventos on-chain
+
+' ═══════════════════════════════════════
+' LEYENDA
+' ═══════════════════════════════════════
+
+legend bottom left
+  |= Color |= Componente |
+  |<#FFF3E0> | Frontend (React SPA) |
+  |<#E8F5E9> | Backend (NestJS API) |
+  |<#F3E5F5> | Base de Datos (PostgreSQL) |
+  |<#FFFDE7> | Smart Contracts (Soroban/Rust) |
+  |<#FCE4EC> | Token de Pago (Stellar) |
+  |<#E0F7FA> | Wallet (Freighter) |
+endlegend
+
+note bottom of event_contract
+  **Modelo de boleto:** ticket_root_id (fijo) + version (incrementa)
+  Cada reventa quema la versión vieja y crea una nueva
+  → Trazabilidad completa de propiedad
+end note
+
+
+
+@enduml
