@@ -3,72 +3,124 @@
 
 \subsection{Actores, roles y límites de confianza (ticketera, vendedor, comprador, verificador)}
 
-La arquitectura considera una plataforma de ticketing como actor B2B principal, junto con vendedores, compradores y verificadores en puerta. Los límites de confianza se definen entre operaciones on-chain verificables y componentes off-chain responsables de interfaz, persistencia y analítica.
+El sistema define cinco actores principales, cada uno con un rol acotado y verificado por el contrato a través de \texttt{require\_auth()} sobre la dirección Stellar correspondiente:
+
+\begin{itemize}
+    \item \textbf{Administrador del Factory:} dirección autorizada a desplegar nuevos contratos de evento mediante el contrato \texttt{factory\_contract}. En el prototipo desplegado en testnet la dirección utilizada es \walletkey{GBM6N2SUCK3Y6I5DHQKULZD3W27EYMU37VYHNKWLVBNS6VYZHRJPWJBT}.
+    \item \textbf{Organizador del evento (ticketera B2B):} dirección registrada como organizador en el contrato del evento. Es la única autorizada a invocar \texttt{crear\_boleto} y a registrar verificadores. En testnet: \walletkey{GC2X5T6HTLJJ7P2EASP4PK64ZD24KDN57F6B4XEDA3AF4YX5PTGQKJSS}.
+    \item \textbf{Plataforma:} dirección receptora de la comisión de plataforma en cada operación de reventa. En testnet: \walletkey{GBMFIYOGHHNXJGUVWXTDUMLZJ2IRO3T2OOPG5CQPBEVLA2OO3SYPK2B2}.
+    \item \textbf{Verificador en puerta:} dirección autorizada por el organizador para invocar \texttt{redimir\_boleto} en el momento del ingreso al evento. En testnet: \walletkey{GBJOI4X22GZY26YZASKHV7ZWYEZVU7ZN77EXZFE7WOCMAGQHLR26EMBZ2}.
+    \item \textbf{Vendedor y comprador:} usuarios finales del mercado secundario. El propietario actual firma las operaciones \texttt{listar\_boleto} y \texttt{cancelar\_venta}; el comprador firma \texttt{comprar\_boleto} desde su billetera personal (Freighter) sin que la llave privada salga del navegador.
+\end{itemize}
+
+Los límites de confianza separan dos planos: el plano on-chain, en el que los actores actúan exclusivamente a través de firmas digitales validadas por el SCP, y el plano off-chain, conformado por el backend, el indexador y la base de datos relacional. El backend opera bajo un modelo \textit{stateless XDR proxy}: construye transacciones sin firmar (XDR) cuando el firmante es el comprador, y firma con la llave del organizador únicamente las operaciones que corresponden a su rol (\texttt{crear\_boleto}, \texttt{listar\_boleto}, \texttt{cancelar\_venta}). En ningún momento el backend almacena llaves privadas de usuarios finales.
 
 \subsection{Modelo del ticket NFT (unicidad, autenticidad y trazabilidad)}
 
-Cada ticket se representa como un activo no fungible con identidad única y metadatos validados por hash. La propiedad y transferencias se rastrean mediante eventos de contrato e indexación en base de datos.
+Cada boleto se modela en el contrato \texttt{event\_contract} mediante la estructura \texttt{Boleto}, con los siguientes campos: \texttt{ticket\_root\_id} (identificador estable, \texttt{u32}), \texttt{version} (incrementable en reventa, \texttt{u32}), \texttt{id\_evento} (\texttt{u32}), \texttt{propietario} (\texttt{Address}), \texttt{precio} (\texttt{i128} en stroops), \texttt{en\_venta} (\texttt{bool}), \texttt{es\_reventa} (\texttt{bool}), \texttt{usado} (\texttt{bool}) e \texttt{invalidado} (\texttt{bool}).
+
+La unicidad se garantiza por la clave de almacenamiento \texttt{Boleto(ticket\_root\_id, version)} y por el contador \texttt{ContadorBoletos} que asigna identificadores monotónicamente crecientes en la operación de emisión. La autenticidad se valida mediante la firma del organizador en el momento de la emisión y por la firma del propietario en cada operación posterior. La trazabilidad queda garantizada por la emisión de eventos on-chain que el indexador persiste en PostgreSQL para análisis histórico.
 
 \subsubsection{Identificador único y hash de metadatos (sin exponer datos sensibles)}
 
-El diseño separa datos operativos públicos y datos sensibles de usuario. En on-chain se almacena la referencia mínima para verificar integridad, mientras el detalle extendido permanece en persistencia off-chain.
+La separación de datos sensibles y operacionales se implementa de la siguiente manera: el contrato almacena exclusivamente datos operacionales públicos (identificadores, propietario, precio, estados booleanos); los datos personales del comprador (nombre, documento, correo) se almacenan en la base de datos relacional off-chain bajo el esquema \texttt{ticketing}, asociados al usuario por su \texttt{user\_id} y nunca por su llave privada. La vinculación entre el plano on-chain y el plano off-chain se realiza por la dirección Stellar (\texttt{wallet\_address}) que el usuario asocia voluntariamente a su cuenta en el momento de conectar Freighter.
 
-\subsubsection{Estados del ticket (VALIDO/USADO/CANCELADO) y no-burn en v1}
+\subsubsection{Estados del ticket (VALIDO/USADO/CANCELADO) y patrón burn/remint}
 
-En la versión inicial, la redención marca el ticket como USADO sin quemar el activo, con el fin de conservar trazabilidad completa del ciclo de vida para evaluación y auditoría.
+El ciclo de vida del boleto se modela mediante los estados \texttt{ACTIVE} (\texttt{usado=false}, \texttt{invalidado=false}), \texttt{USED} (\texttt{usado=true}) y \texttt{CANCELLED} (\texttt{invalidado=true}). El estado \texttt{ACTIVE} admite operaciones de listado, cancelación de listado y compra; el estado \texttt{USED} se alcanza por invocación de \texttt{redimir\_boleto} por parte de un verificador autorizado; el estado \texttt{CANCELLED} se alcanza por invocación de \texttt{invalidar\_boleto} por parte del organizador.
+
+En cada operación de reventa el contrato aplica el patrón \textit{burn/remint}: la versión vigente se marca como \texttt{invalidado=true} y se almacena bajo \texttt{Boleto(ticket\_root\_id, version)}; simultáneamente se inserta una nueva entrada \texttt{Boleto(ticket\_root\_id, version+1)} con el comprador como propietario, y se actualiza el índice \texttt{VersionActual(ticket\_root\_id)} para que las consultas de propiedad apunten a la nueva versión. Este patrón conserva el historial completo de propietarios anteriores y elimina la posibilidad de coexistencia de dos copias válidas del mismo activo.
 
 \subsection{Diseño de contratos inteligentes (Soroban)}
 
-La lógica de negocio crítica se implementa en contratos Soroban para garantizar consistencia transaccional en operaciones de reventa.
+El sistema utiliza dos contratos Soroban con responsabilidades acotadas: \texttt{factory\_contract} y \texttt{event\_contract}. Esta separación responde al principio de aislamiento de fallos: el estado de cada evento queda confinado en su propio contrato, lo que evita que una falla en un evento afecte la operación de los demás.
 
-\subsubsection{Funciones: mint/list/buy/transfer/redeem}
+\subsubsection{Contrato factory\_contract}
 
-El conjunto funcional mínimo contempla emisión, listado de reventa, compra, transferencia de propiedad y redención del ticket.
+El contrato \texttt{factory\_contract} implementa el patrón Factory para el despliegue de un \texttt{event\_contract} independiente por cada evento. Su estructura \texttt{ConfiguracionEvento} agrupa los parámetros del despliegue: \texttt{id\_evento}, \texttt{organizador}, \texttt{token\_pago}, \texttt{comision\_organizador} (\texttt{u32}), \texttt{comision\_plataforma} (\texttt{u32}), \texttt{wallet\_organizador}, \texttt{wallet\_plataforma} y \texttt{capacidad\_total}. La función \texttt{crear\_evento\_contrato} requiere doble autenticación (administrador del factory y organizador del evento) y emite el evento \texttt{EventoCreado(id, organizador, contrato, capacidad)}.
+
+El despliegue en producción se realiza mediante \texttt{deployer().with\_current\_contract(salt).deploy\_v2(hash, ())}, donde \texttt{salt} se compone de \texttt{id\_evento} (4 bytes en \textit{big endian}) seguido de relleno en cero. El hash del módulo WASM utilizado en testnet es \walletkey{32fbb9bf4e7f803c1e5caf3c2744e1efedb51975fd2775ebdfe1475e999bb0ef}. Al momento del cierre de esta tesis, el factory tiene desplegados 11 contratos de evento sobre testnet.
+
+\subsubsection{Contrato event\_contract: funciones mint/list/buy/transfer/redeem}
+
+El contrato \texttt{event\_contract} expone el siguiente conjunto funcional, con todas las identidades en español por trazabilidad académica:
+
+\begin{itemize}
+    \item \texttt{inicializar(organizador, plataforma, token\_pago, comision\_org, comision\_plat)}: configuración única, rechazada con error \texttt{YaInicializado} (1) si se invoca dos veces.
+    \item \texttt{crear\_boleto(id\_evento, precio) -> u32}: emite un boleto con \texttt{version=1} y devuelve el \texttt{ticket\_root\_id}. Solo el organizador puede invocarla.
+    \item \texttt{listar\_boleto(ticket\_root\_id, nuevo\_precio)} y \texttt{cancelar\_venta(ticket\_root\_id)}: requieren firma del propietario actual; rechazadas si el boleto está \texttt{usado} (6) o \texttt{invalidado} (13).
+    \item \texttt{comprar\_boleto(ticket\_root\_id, comprador) -> u32}: aplica dos flujos diferenciados según el valor de \texttt{es\_reventa} (ver subsección siguiente).
+    \item \texttt{agregar\_verificador / remover\_verificador / es\_verificador}: gestión del rol verificador por parte del organizador.
+    \item \texttt{redimir\_boleto(ticket\_root\_id, verificador)}: solo direcciones registradas como verificadoras.
+    \item \texttt{invalidar\_boleto(ticket\_root\_id)}: cancelación administrativa por parte del organizador.
+    \item Consultas de solo lectura: \texttt{obtener\_boleto}, \texttt{obtener\_boleto\_version}, \texttt{obtener\_version\_vigente}, \texttt{obtener\_propietario}, \texttt{obtener\_boletos\_reventa}, \texttt{obtener\_boletos\_evento}.
+\end{itemize}
 
 \subsubsection{Compra atómica (pago + comisiones + transferencia)}
 
-La operación de compra integra pago, reparto de comisiones y cambio de titularidad en una única ejecución para evitar estados parciales.
+La función \texttt{comprar\_boleto} aplica dos flujos según el estado del boleto:
 
-\subsubsection{Política de comisiones (10\% ticketera, 5\% plataforma)}
+\begin{itemize}
+    \item \textbf{Venta primaria} (\texttt{es\_reventa=false}): el 100\,\% del precio se transfiere a la dirección del organizador. La operación actualiza el registro existente in-place y marca \texttt{es\_reventa=true} para todas las operaciones futuras del mismo \texttt{ticket\_root\_id}.
+    \item \textbf{Reventa} (\texttt{es\_reventa=true}): el contrato calcula tres montos a partir del precio listado: \texttt{comision\_organizador} (5\,\%), \texttt{comision\_plataforma} (3\,\%) y \texttt{monto\_vendedor} (92\,\%). Las tres transferencias y el cambio de propiedad se ejecutan en la misma invocación; si cualquier paso falla, la transacción completa se revierte por la semántica atómica del ledger Stellar.
+\end{itemize}
 
-El modelo de negocio adopta una política de distribución porcentual parametrizable en el contrato para facilitar trazabilidad de recaudo.
+La constante \texttt{BASE\_PORCENTAJE} se fija en 100 (\texttt{i128}) para permitir aritmética entera exacta sin pérdida por redondeo. Las comisiones se validan en \texttt{inicializar} para que su suma no supere el 100\,\%, rechazando configuraciones inválidas con los errores \texttt{ComisionesMuyAltas} (2) y \texttt{ComisionesNegativas} (3).
+
+\subsubsection{Política de comisiones (5\,\% organizador, 3\,\% plataforma)}
+
+La política de comisiones del prototipo en testnet aplica un 5\,\% al organizador y un 3\,\% a la plataforma sobre cada operación de reventa, con el 92\,\% restante destinado al vendedor. Estos valores son parámetros del contrato y se establecen en la operación \texttt{inicializar}; pueden modificarse por contrato sin requerir cambios en el código fuente. La política no aplica en venta primaria, donde el 100\,\% se transfiere al organizador.
+
+\subsubsection{Errores tipados y eventos on-chain}
+
+El contrato define un enum \texttt{ErrorContrato} con dieciséis códigos enteros que cubren las condiciones de fallo del ciclo de vida: 1 \texttt{YaInicializado}, 2 \texttt{ComisionesMuyAltas}, 3 \texttt{ComisionesNegativas}, 4 \texttt{PrecioInvalido}, 5 \texttt{YaEnVenta}, 6 \texttt{BoletoUsado}, 7 \texttt{NoEnVenta}, 8 \texttt{AutoCompra}, 9 \texttt{YaUsado}, 10 \texttt{BoletoNoEncontrado}, 11 \texttt{NoAutorizado}, 12 \texttt{VersionInvalida}, 13 \texttt{BoletoInvalidado}, 14 \texttt{NoInicializado}, 15 \texttt{VerificadorYaExiste}, 16 \texttt{VerificadorNoEncontrado}.
+
+Los siete eventos on-chain emitidos son: \texttt{boleto\_creado}, \texttt{boleto\_listado}, \texttt{venta\_cancelada}, \texttt{boleto\_comprado\_primario}, \texttt{boleto\_revendido}, \texttt{boleto\_redimido} y \texttt{boleto\_invalidado\_evt}. El indexador suscribe a estos eventos y mantiene la coherencia entre el estado on-chain y la base de datos relacional.
 
 \subsection{Arquitectura distribuida (3 nodos)}
 
-El prototipo se despliega en tres nodos lógicos para separar responsabilidades y mejorar observabilidad del sistema.
+El prototipo se despliega en tres nodos lógicos con responsabilidades diferenciadas. Esta separación permite escalar de forma independiente cada plano y aislar fallos por dominio.
 
 \subsubsection{Nodo Web (UI ticketera)}
 
-Gestiona la interacción de usuarios con catálogos, listados y flujo de compra/reventa.
+El frontend está implementado en React 18 con Vite, TypeScript, Tailwind CSS y la librería de componentes shadcn/ui (sobre Radix). La integración Web3 utiliza \texttt{@stellar/freighter-api} versión 6.0.1 para la firma del comprador y \texttt{@stellar/stellar-sdk} versión 14.6.1 para la construcción local de transacciones de validación. La aplicación expone 23 rutas y cubre el flujo completo de e-commerce (catálogo, carrito, checkout, cuenta, mis entradas, mis ventas P2P) y los flujos administrativos (panel administrador y escáner QR de redención). El servidor de desarrollo opera en el puerto 8080.
 
 \subsubsection{Nodo API (Node.js)}
 
-Orquesta autenticación, reglas de negocio off-chain, integración con contratos y endpoints para verificación.
+El backend se implementa en Node.js con Express y TypeScript, sobre Prisma como ORM contra PostgreSQL. Su módulo de autenticación utiliza \texttt{bcryptjs} (factor 10) para el hash de contraseñas y \texttt{jsonwebtoken} para la emisión de tokens JWT con vigencia de 7 días. La integración con Stellar se realiza mediante \texttt{@stellar/stellar-sdk} versión 14.4.1 (versión fijada para garantizar reproducibilidad en el entorno de despliegue).
+
+El backend expone tres familias de endpoints: (i) catálogo público con caché en memoria de TTL 30–60 s para reducir el tiempo de respuesta a Supabase; (ii) flujo de autenticación, carrito y checkout fiat, transaccional y atómico (creación de \texttt{orders}, \texttt{order\_items}, \texttt{tickets} y \texttt{payments} en una sola operación de base de datos); (iii) integración Soroban, que incluye los endpoints \texttt{secure-ticket} (firma server-side de \texttt{crear\_boleto}), \texttt{list-ticket}, \texttt{cancel-listing}, \texttt{build-buy-xdr} (construye XDR sin firmar para el comprador), \texttt{submit} (recibe el XDR firmado por Freighter y lo retransmite al RPC), y la cadena de coleccionable Stellar Classic (\texttt{mint-collectible}, \texttt{transfer-collectible}, \texttt{build-trust-xdr}, \texttt{submit-classic}).
 
 \subsubsection{Nodo Datos (PostgreSQL + Indexer)}
 
-Consolida historial, auditoría y analítica mediante persistencia relacional e ingestión de eventos de blockchain.
+La persistencia se gestiona en PostgreSQL hospedado en Supabase, con esquema \texttt{ticketing} y un \texttt{connection\_limit} de 5 para soportar el acceso concurrente del API y el indexador. El esquema relacional comprende los modelos del dominio Web2 (\texttt{users}, \texttt{events}, \texttt{organizers}, \texttt{venues}, \texttt{venue\_sections}, \texttt{seats}, \texttt{event\_ticket\_types}, \texttt{event\_seat\_inventory}, \texttt{carts}, \texttt{cart\_items}, \texttt{seat\_holds}, \texttt{orders}, \texttt{order\_items}, \texttt{payments}, \texttt{tickets}) y los campos Web3 añadidos al modelo \texttt{tickets}: \texttt{contract\_address}, \texttt{ticket\_root\_id}, \texttt{version}, \texttt{is\_for\_sale}, \texttt{resale\_price} (\texttt{BigInt} en stroops), \texttt{owner\_wallet} y \texttt{asset\_code} (identificador único del coleccionable Stellar Classic). La unicidad on-chain queda reflejada off-chain mediante el índice único \((\texttt{contract\_address}, \texttt{ticket\_root\_id}, \texttt{version})\).
+
+El indexador es un proceso de larga duración que poll-ea Soroban RPC cada 5 segundos. Mantiene un cursor en la tabla \texttt{indexer\_state.last\_ledger}; si el ledger inicial cae fuera de la ventana de retención del RPC público, parsea el error de rango y ajusta el cursor automáticamente al mínimo permitido. Procesa los siete eventos on-chain con la siguiente semántica:
+
+\begin{itemize}
+    \item \texttt{boleto\_creado}: crea el registro \texttt{tickets} si no existe.
+    \item \texttt{boleto\_listado}: \texttt{is\_for\_sale=true}.
+    \item \texttt{venta\_cancelada}: \texttt{is\_for\_sale=false}.
+    \item \texttt{boleto\_comprado\_primario}: si la operación tiene \texttt{resale\_price} (caso de venta P2P), cancela el registro del vendedor y crea el registro del comprador con \texttt{version+1}; en caso contrario actualiza la propiedad in-place.
+    \item \texttt{boleto\_revendido}: cancela la versión anterior preservando el \texttt{resale\_price}, crea la nueva versión con verificación de existencia previa para garantizar idempotencia.
+    \item \texttt{boleto\_redimido}: \texttt{status=USED}.
+    \item \texttt{boleto\_invalidado\_evt}: \texttt{status=CANCELLED}.
+\end{itemize}
+
+\subsection{Coleccionable Stellar Classic (NFT visible en billetera)}
+
+Como capa adicional sobre el modelo de boleto Soroban, el sistema emite un activo Stellar Classic asociado a cada boleto, con código único de 12 caracteres (\texttt{T} + 11 caracteres hex derivados del UUID del ticket). El emisor del activo es la dirección del organizador, configurada con los flags \texttt{AUTH\_REVOCABLE} y \texttt{AUTH\_CLAWBACK\_ENABLED} para habilitar la transferencia automática durante la reventa.
+
+El flujo de emisión y transferencia opera mediante cuatro endpoints: (i) \texttt{build-trust-xdr} construye una operación \texttt{CHANGE\_TRUST} con \texttt{limit=1} para que el comprador pueda recibir el activo; (ii) \texttt{submit-classic} retransmite la operación clásica firmada vía Horizon (las operaciones clásicas no se enrutan por Soroban RPC); (iii) \texttt{mint-collectible} firma server-side la operación \texttt{PAYMENT} de una unidad del activo desde el organizador hacia el comprador, con semántica idempotente; (iv) \texttt{transfer-collectible} aplica un \texttt{CLAWBACK} sobre la dirección del vendedor anterior y un \texttt{PAYMENT} hacia el nuevo comprador en una sola transacción firmada por el organizador.
 
 \subsection{Indexación y auditoría (eventos on-chain hacia Postgres)}
 
-La trazabilidad histórica se logra consumiendo eventos de contrato y almacenándolos en tablas de auditoría para consultas por ticket, usuario y transacción.
+La indexación es el componente que cierra el ciclo de auditoría del sistema. Su función no es replicar el estado on-chain (que ya es la fuente de verdad) sino habilitar consultas operacionales sobre el historial sin pagar el costo de tiempo y dinero de invocar el RPC. Las consultas que el frontend ejecuta de forma intensiva (\texttt{GET /api/tickets}, \texttt{GET /api/tickets/sold}, listados de mercado secundario) se resuelven contra PostgreSQL con tiempos del orden de la decena de milisegundos, mientras que la verificación de propiedad on-chain se reserva para los puntos críticos del flujo (compra y redención).
 
 \subsubsection{Ventana de retención de getEvents y necesidad de ingesta}
 
-Debido a restricciones de retención en consultas RPC, el indexador se considera un componente obligatorio para mantener historia completa del sistema.
+El método \texttt{getEvents} de Soroban RPC retiene un rango limitado de ledgers (en el caso del RPC público de testnet, del orden de algunos miles de ledgers correspondientes a varios días). Para mantener un historial completo durante toda la duración del prototipo y de la evaluación experimental, el indexador persiste cada evento procesado en PostgreSQL en el momento de su ocurrencia, lo que elimina la dependencia del RPC para consultas sobre eventos antiguos.
 
 \subsection{Mapeo normativo simulado (Ley 1493/2011 en diseño, solo documental)}
 
-El diseño incorpora un mapeo documental de reglas de fiscalización como referencia académica, sin declarar implementación legal productiva.
-
-
- 
-
-
-
-
-
-
-
-
-
+La trazabilidad de cada operación de venta primaria y reventa, junto con el precio efectivo registrado on-chain y persistido en \texttt{tickets.resale\_price}, habilita el cálculo determinístico de la contribución parafiscal del 10\,\% establecida por la Ley 1493 de 2011. El cálculo se obtiene como una agregación SQL sobre el historial de eventos \texttt{boleto\_comprado\_primario} y \texttt{boleto\_revendido} cuyo precio supera el umbral legal de 3 UVT. Este mapeo se incluye como referencia académica del diseño y no constituye una declaración de cumplimiento regulatorio del prototipo.

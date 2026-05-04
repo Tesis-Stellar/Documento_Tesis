@@ -94,3 +94,10 @@
 
 \usepackage[backend=biber, style=ieee]{biblatex}
 \addbibresource{bibliography.bib}
+
+% Permite cortar cadenas largas (direcciones Stellar, hashes, contract IDs) en cualquier carácter para evitar desbordes de margen.
+\usepackage{seqsplit}
+\newcommand{\walletkey}[1]{{\small\texttt{\seqsplit{#1}}}}
+
+% Espacio visible entre párrafos sin sangría inicial.
+\usepackage{parskip}

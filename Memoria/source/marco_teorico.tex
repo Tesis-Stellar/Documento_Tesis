@@ -3,57 +3,82 @@
 
 \subsection{Blockchain y contratos inteligentes}
 
-Blockchain es una estructura de datos distribuida que permite registrar transacciones de forma verificable entre múltiples participantes sin una autoridad única de control. Sobre esta infraestructura, los contratos inteligentes se modelan como programas que ejecutan reglas de negocio de manera determinística, facilitando automatización y trazabilidad en flujos de intercambio digital.
+Una cadena de bloques es una estructura de datos distribuida, ordenada y enlazada criptográficamente, en la que un conjunto de nodos mantiene una réplica del registro y aplica un protocolo de consenso para acordar el orden y validez de las transacciones. Cada bloque contiene un encabezado con la referencia al hash del bloque anterior, una raíz de Merkle de las transacciones y metadatos del consenso, lo que permite la detección determinística de cualquier alteración posterior al registro.
+
+Sobre esta infraestructura, los contratos inteligentes son programas con estado persistente y ejecución determinística cuyas transiciones se validan en cada nodo bajo el mismo conjunto de reglas. En el contexto de este trabajo, los contratos inteligentes se utilizan como mecanismo de coordinación entre la ticketera, los compradores y la plataforma de reventa, transfiriendo al protocolo la verificación de propiedad, la unicidad del activo y la distribución de comisiones, sin requerir confianza unilateral en un intermediario.
 
 \subsection{Red Stellar}
 
-Stellar es una red orientada a pagos y transferencia de valor digital que combina tiempos de confirmación reducidos con comisiones de bajo costo. Su arquitectura permite integrar activos tokenizados y lógica contractual para casos de uso de mercado secundario.
+Stellar es una red pública orientada a la transferencia de valor digital y a la emisión de activos tokenizados. La red opera bajo el Stellar Consensus Protocol (SCP) e integra desde el protocolo 20 una capa de contratos inteligentes denominada Soroban. Sus parámetros operacionales relevantes para este trabajo son los siguientes:
+
+\begin{itemize}
+    \item \textbf{Capacidad de procesamiento:} la documentación oficial reporta una capacidad de entre 1\,000 y 3\,000 transacciones por segundo (TPS) dependiendo del tipo de operación. Como punto de comparación, Ethereum en su modelo previo a la transición a Proof of Stake operaba en el rango de 15 a 30 TPS, lo que implica una diferencia de capacidad teórica del orden de 100x a favor de Stellar.
+    \item \textbf{Tiempo de liquidación:} cada cierre de ledger en Stellar ocurre en un intervalo de aproximadamente 5 segundos, lo que define el tiempo de finalidad de una transacción entre 3 y 5 segundos. En contraste, las transferencias bancarias internacionales y las liquidaciones de pasarelas tradicionales se ejecutan en ventanas de 72 a 120 horas hábiles.
+    \item \textbf{Costo por operación:} el costo base por operación en Stellar es de 100 stroops, equivalentes a 0{,}00001 XLM. Las pasarelas de pago tradicionales aplican comisiones porcentuales en el rango del 1{,}5\,\% al 3{,}5\,\% sobre el monto, sumadas a una tarifa fija por transacción.
+    \item \textbf{Eficiencia energética:} el SCP no utiliza minería ni Proof of Work; las decisiones de consenso se alcanzan mediante intercambio de mensajes firmados entre nodos, lo que elimina el costo energético asociado al cómputo intensivo de redes basadas en PoW.
+\end{itemize}
+
+Estos parámetros se utilizan en el presente trabajo como referencia objetiva para la evaluación del prototipo en testnet y para el contraste con esquemas tradicionales de reventa.
 
 \subsubsection{Modelo de transacciones/operaciones y comisiones}
 
-El modelo de Stellar diferencia transacciones y operaciones, permitiendo agrupar acciones dentro de una misma ejecución. Este enfoque es relevante para el diseño de compra atómica en reventa, donde pago, comisiones y transferencia del ticket deben validarse en una sola interacción.
+Stellar diferencia los conceptos de \textit{transacción} y \textit{operación}. Una transacción es la unidad atómica firmada y enviada al ledger; cada transacción puede contener hasta 100 operaciones, todas las cuales se aplican en un único cierre de ledger o ninguna se aplica en caso de fallo. Esta semántica de \textit{todo o nada} es relevante para el diseño de la compra de reventa, en la cual el pago al vendedor, la distribución de comisiones al organizador y a la plataforma, y la transferencia de propiedad del ticket deben ejecutarse de manera indivisible.
+
+La comisión por transacción se calcula como \textit{base fee} (100 stroops por defecto) multiplicada por el número de operaciones contenidas. En condiciones de saturación del ledger, la red aplica un mecanismo de \textit{surge pricing} que selecciona transacciones según la comisión ofertada, lo que constituye el único canal por el cual el costo nominal puede incrementarse durante la operación.
 
 \subsubsection{Componentes de interacción (RPC, indexación de eventos)}
 
-La interacción con contratos se realiza mediante servicios RPC y herramientas de indexación. La estrategia de ingestión de eventos hacia una base de datos off-chain resulta clave para conservar historial de largo plazo y soportar auditoría de transferencias.
+La interacción entre aplicaciones cliente y la red se realiza a través de dos componentes principales: \textit{Horizon}, que expone operaciones clásicas (pagos, change\_trust, manejo de activos), y \textit{Soroban RPC}, que expone simulación, envío y consulta de transacciones de contratos inteligentes. Ambas interfaces operan sobre HTTP/JSON-RPC y se invocan desde el SDK oficial \texttt{@stellar/stellar-sdk}.
+
+Soroban RPC ofrece consulta de eventos emitidos por contratos a través del método \texttt{getEvents}. Esta consulta tiene una ventana de retención limitada, lo que obliga a las aplicaciones que requieren historial completo a implementar un componente indexador que consuma eventos en intervalos cortos y los persista en una base de datos off-chain. En el prototipo, este patrón es implementado por el módulo \texttt{indexer} del backend, que consulta el RPC cada 5 segundos y procesa los siete tipos de eventos definidos por el contrato (\texttt{boleto\_creado}, \texttt{boleto\_listado}, \texttt{venta\_cancelada}, \texttt{boleto\_comprado\_primario}, \texttt{boleto\_revendido}, \texttt{boleto\_redimido}, \texttt{boleto\_invalidado\_evt}).
 
 \subsection{Protocolo de Consenso Stellar (SCP)}
 
-SCP se basa en Federated Byzantine Agreement y define mecanismos de acuerdo entre nodos mediante quórums y quorum slices. Este modelo permite analizar garantías de seguridad del estado del ledger bajo supuestos distribuidos.
+El SCP es una instancia del paradigma de Federated Byzantine Agreement (FBA) en la que el conjunto de nodos participantes y la composición de los quórums no están definidos por una autoridad central, sino que cada nodo declara su propia configuración de confianza. Esta característica diferencia al SCP de los algoritmos clásicos de consenso bizantino con membresía fija, así como de los protocolos de Proof of Work y Proof of Stake.
 
-\subsubsection{Federated Byzantine Agreement: quorums y quorum slices (base teórica)}
+\subsubsection{Federated Byzantine Agreement: quórums y quorum slices (base teórica)}
 
-En FBA cada nodo define subconjuntos de confianza y participa en decisiones de consenso a partir de intersección de quórums. El diseño de confianza federada condiciona robustez y disponibilidad de la red.
+En el modelo FBA, cada nodo \(v\) define un conjunto de \textit{quorum slices}, donde cada slice es un subconjunto de nodos cuya colaboración es suficiente para que \(v\) acepte un valor como acordado. Un \textit{quórum} es un conjunto de nodos que contiene al menos un quorum slice de cada uno de sus miembros. La propiedad clave del modelo es la \textit{intersección de quórums}: si todo par de quórums comparte al menos un nodo correcto, el sistema mantiene safety incluso ante nodos bizantinos, sin requerir un acuerdo global previo sobre la membresía total.
 
 \subsubsection{Propiedades: safety vs liveness (según documentación oficial)}
 
-El análisis de SCP distingue propiedades de safety y liveness para caracterizar comportamiento del sistema ante fallos, particiones y escenarios de red adversos.
+El SCP distingue dos propiedades fundamentales del consenso:
+
+\begin{itemize}
+    \item \textbf{Safety:} ningún par de nodos correctos puede acordar valores incompatibles para el mismo slot del ledger. Esta propiedad se preserva siempre que se cumpla la intersección de quórums entre nodos correctos.
+    \item \textbf{Liveness:} los nodos correctos eventualmente acuerdan un valor para cada slot. Esta propiedad puede degradarse temporalmente bajo particiones de red o configuraciones de quórum desconectadas, pero no compromete la consistencia ya alcanzada.
+\end{itemize}
+
+El diseño prioriza safety sobre liveness, en línea con el caso de uso de transferencia de valor: ante un escenario adverso, el SCP detiene el avance del ledger en lugar de producir bifurcaciones. Para el problema de reventa de entradas, esta priorización es relevante porque garantiza que ningún ticket se pueda asignar simultáneamente a dos compradores distintos en estados acordados como finales.
 
 \subsubsection{Evidencia formal (pruebas/modelos sobre SCP)}
 
-La literatura formal sobre SCP provee modelos para razonar sobre consistencia e intersección de quórums. Estos resultados fundamentan la discusión académica del protocolo dentro del proyecto.
+El whitepaper de Mazières ``The Stellar Consensus Protocol: A Federated Model for Internet-level Consensus'' presenta las pruebas de safety bajo intersección de quórums y de liveness bajo supuestos de red asíncrona pero correcta. Trabajos posteriores han modelado el protocolo en lógicas formales y herramientas de model checking, validando las propiedades originales y caracterizando el comportamiento bajo configuraciones de confianza específicas. Estos resultados sustentan la utilización del SCP como infraestructura de consenso en el presente trabajo.
 
 \subsection{Soroban (Rust/Wasm)}
 
-Soroban es la capa de contratos inteligentes de Stellar y utiliza Rust compilado a WebAssembly. Su modelo de ejecución permite implementar lógica de emisión, transferencia y validación de activos digitales con control explícito de estado.
+Soroban es la plataforma de contratos inteligentes de Stellar. Sus contratos se escriben en Rust contra el crate \texttt{soroban-sdk} (versión 23 en este trabajo) y se compilan al target \texttt{wasm32v1-none}, generando un módulo WebAssembly que se sube al ledger y se invoca desde transacciones. El modelo de ejecución es determinístico, sin acceso a fuentes no reproducibles (relojes locales, aleatoriedad no derivada del ledger, syscalls del sistema operativo), lo que garantiza que toda invocación produzca el mismo resultado en cualquier nodo.
+
+Para reducir el tamaño del binario y los costos de despliegue, el perfil de compilación \texttt{release} configurado en este proyecto utiliza \texttt{opt-level="z"}, \textit{Link-Time Optimization} habilitado, símbolos eliminados (\texttt{strip = true}) y manejo de pánico mediante \texttt{abort}.
 
 \subsubsection{Storage y eventos}
 
-Los contratos en Soroban gestionan estado persistente y emisión de eventos, habilitando trazabilidad técnica para componentes de auditoría e indexación.
+Los contratos Soroban gestionan tres tipos de almacenamiento: \texttt{Persistent} (estado de larga duración con costo de \textit{rent} cada cierto número de ledgers), \texttt{Temporary} (estado de corto plazo con costo reducido) e \texttt{Instance} (estado asociado al binario del contrato). El uso del tipo apropiado define el costo de \textit{rent} de cada entrada, lo que constituye una decisión de diseño con impacto directo en los costos operacionales.
 
-\subsubsection{NFTs en Soroban (OpenZeppelin)}
+La emisión de eventos se realiza mediante el método \texttt{events().publish()} sobre el entorno del contrato. Cada evento se compone de \textit{topics} indexables y un \textit{body} con el cuerpo serializable. Los eventos no se almacenan en el storage del contrato sino en el meta del ledger, lo que permite a los indexadores consumirlos sin afectar el costo de \textit{rent} del contrato. En el contrato \texttt{event\_contract} de este trabajo se definen siete eventos que cubren el ciclo de vida completo del boleto, lo que habilita la sincronización determinística entre el estado on-chain y la base de datos relacional off-chain.
 
-El patrón NFT en Soroban permite representar entradas no fungibles con identificadores únicos, propiedad transferible y reglas de redención controlada.
+\subsubsection{NFTs en Soroban}
+
+El estándar NFT en Soroban define una representación de activos no fungibles caracterizada por un identificador único, un propietario (de tipo \texttt{Address}) y reglas de transferencia controladas por el contrato emisor. La unicidad del identificador garantiza la imposibilidad de duplicar un mismo activo, lo que se utiliza en el presente trabajo como mecanismo principal de prevención de duplicidad de códigos QR en la reventa.
+
+El contrato \texttt{event\_contract} implementa un patrón de NFT extendido con versionado: cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), donde \texttt{ticket\_root\_id} es estable a lo largo de toda la vida del activo y \texttt{version} se incrementa en cada operación de reventa mediante un esquema de \textit{burn} de la versión anterior y \textit{remint} de una versión nueva. Este patrón conserva trazabilidad completa del historial sin reutilizar identificadores de propietarios anteriores.
 
 \subsection{Tokens y pagos}
 
-El sistema de pagos de la propuesta contempla activos de prueba sobre testnet para ejecutar compras y distribución de comisiones durante la reventa.
-
 \subsubsection{XLM vía Stellar Asset Contract (SAC)}
 
-XLM se utiliza como activo base de liquidación para los escenarios principales de compra y transferencia en el prototipo.
+XLM es el activo nativo de la red Stellar. A través del Stellar Asset Contract (SAC), XLM y cualquier activo emitido en Stellar se exponen como tokens compatibles con la interfaz estándar de Soroban (\texttt{transfer}, \texttt{balance}, \texttt{approve}). El contrato SAC del XLM en testnet utilizado en este trabajo es \walletkey{CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC}. Esta integración permite que las operaciones de pago de la compra de reventa se ejecuten dentro del mismo flujo de invocación del contrato \texttt{event\_contract}, sin requerir transacciones separadas para el pago y la transferencia de propiedad.
 
 \subsubsection{Token simulado USDC\_SIM vía SAC}
 
-Como extensión experimental, se define un token de prueba USDC\_SIM para analizar comportamiento de pagos con un activo estable simulado dentro del mismo flujo contractual.
-
+Como extensión experimental se contempla la emisión de un activo de prueba denominado USDC\_SIM, expuesto también vía SAC, para evaluar el comportamiento del flujo de reventa con un token de referencia estable. El uso de USDC\_SIM se limita al entorno de testnet y no implica integración con el emisor real de USDC en mainnet.

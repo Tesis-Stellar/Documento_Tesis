@@ -3,52 +3,92 @@
 %----------------------------------------------------------------------------
 
 \subsection{Descripción del problema}
-La reventa de entradas en canales digitales enfrenta problemas de autenticidad, trazabilidad y transparencia de transacciones. En plataformas no especializadas y en mercados informales, el comprador no siempre cuenta con mecanismos verificables para confirmar propiedad, historial del ticket y validez al momento de ingreso.
 
+La reventa de entradas en canales digitales presenta tres problemas técnicos verificables: (i) duplicidad de códigos QR estáticos, que permite el ingreso múltiple con un mismo identificador; (ii) reventa concurrente del mismo activo a varios compradores en plataformas que no garantizan unicidad transaccional; y (iii) ausencia de trazabilidad pública de la cadena de propiedad, lo que impide al comprador final verificar el origen de la entrada antes de su uso.
+
+Adicionalmente, los canales tradicionales de liquidación entre vendedor, plataforma y organizador operan sobre infraestructura bancaria con tiempos de finalidad entre 72 y 120 horas hábiles, frente a los 3 a 5 segundos que ofrece la red Stellar, lo que genera una asimetría entre la entrega del activo digital y la confirmación efectiva del pago. Esta asimetría es uno de los vectores explotados en escenarios de fraude documentados en mercados secundarios.
 
 \subsection{Objetivos}
 \subsubsection{Objetivo General}
-Desarrollar una solución B2B de reventa de tickets, basada en contratos inteligentes de Stellar, que garantice unicidad y autenticidad del activo digital y permita evaluar mecanismos de reducción de fraude y especulación en el mercado secundario.
+
+Desarrollar una solución B2B de reventa de tickets, basada en la tecnología de contratos inteligentes de Stellar, que garantice la unicidad y autenticidad de cada activo digital, reduciendo al mínimo el fraude y la especulación en la reventa de entradas para eventos de entretenimiento.
+
 %----------------------------------------------------------------------------
 
 \subsubsection{Objetivos Específicos}
- 
+
 \begin{itemize}
-    \item Diseñar un modelo de ticket NFT con unicidad verificable y trazabilidad de propiedad.
-    \item Implementar contratos inteligentes para emisión, listado, compra, transferencia y redención de tickets.
-    \item Construir un prototipo web distribuido para simular el flujo completo de reventa en testnet.
-    \item Evaluar desempeño técnico y comportamiento antifraude mediante métricas reproducibles.
+    \item Crear un sistema de reventa B2B de tickets basado en contratos inteligentes y NFTs que aseguren autenticidad, originalidad y trazabilidad.
+    \item Desarrollar un contrato inteligente que genere tickets como NFTs, permita la transferencia de propiedad y automatice la distribución de comisiones.
+    \item Implementar un prototipo que simule el proceso completo de reventa en la red de prueba de Stellar, desde la venta hasta la compra.
+    \item Gestionar el funcionamiento de la herramienta a través de una implementación web que permita la simulación y visualización del modelo y cómo este se incorpora al modelo de Blockchain.
 \end{itemize}
 %----------------------------------------------------------------------------
 
 \subsection{Alcance y delimitaciones}
 
-El alcance se centra en el mercado secundario de entradas con despliegue en testnet. Quedan fuera de alcance, para esta versión, integración con pasarelas fiat reales, KYC productivo, despliegue definitivo en mainnet y acoplamiento con tiqueteras comerciales de terceros.
+El alcance del trabajo se limita al mercado secundario de entradas para eventos de entretenimiento, con despliegue del prototipo sobre la red de prueba (testnet) de Stellar. El sistema cubre el ciclo completo del ticket: emisión por parte del organizador, venta primaria, listado de reventa, compra atómica con distribución de comisiones, transferencia de propiedad, redención en puerta y cancelación.
+
+Quedan fuera de alcance, para esta versión del prototipo: integración con pasarelas de pago fiat reales, procesos productivos de Know Your Customer (KYC), despliegue definitivo en mainnet, acoplamiento con plataformas comerciales de ticketing de terceros, y certificación formal bajo ISO/IEC 27001 o ISO 9001 (los estándares se aplican como marco de referencia metodológico, no como objeto de auditoría).
 
 \subsection{Metodología (investigación + desarrollo del prototipo)}
 
-La metodología combina revisión técnico-científica, diseño de arquitectura, implementación incremental del prototipo y evaluación experimental. Se articula en ciclos de definición de requerimientos, desarrollo de componentes y validación por escenarios de uso y fraude.
+La metodología combina cuatro fases articuladas: (i) revisión técnico-científica de Stellar, SCP, Soroban y patrones de NFT, sustentada en documentación oficial y literatura indexada; (ii) diseño de arquitectura del prototipo, con definición de actores, contratos y separación de responsabilidades on-chain/off-chain; (iii) implementación incremental por fases, donde cada fase entrega un componente funcional verificable (contratos, backend, frontend, indexador); y (iv) evaluación experimental sobre testnet con métricas reproducibles de latencia, costo y comportamiento antifraude.
+
+Esta metodología se enmarca en un ciclo de vida del desarrollo de software (SDLC) compatible con los principios de ISO 9001 en lo que respecta a control de versiones, trazabilidad de cambios y registro documental de cada iteración. El repositorio público del proyecto (\url{https://github.com/Tesis-Stellar/stellar-tickets}) y su pipeline de integración continua (GitHub Actions sobre el contrato Soroban) constituyen la evidencia operativa de esta práctica.
 
 \subsection{Requerimientos}
 
 \subsubsection{Requerimientos funcionales (mínimos: 10)}
 
-Incluyen, como base, creación y gestión de tickets, listado de reventa, compra atómica, distribución de comisiones, verificación de titularidad, redención en puerta y trazabilidad de transferencias.
+Se definen los siguientes diez requerimientos funcionales, todos verificables sobre el prototipo desplegado en testnet:
+
+\begin{itemize}
+    \item \textbf{RF-01 — Emisión de boletos como NFT:} el contrato debe permitir al organizador autenticado emitir un boleto identificado por una tupla \((\texttt{ticket\_root\_id}, \texttt{version})\) única en el contrato del evento.
+    \item \textbf{RF-02 — Listado en reventa:} el propietario actual de un boleto debe poder listar el activo en venta secundaria definiendo un precio en stroops.
+    \item \textbf{RF-03 — Cancelación de listado:} el propietario debe poder retirar el boleto del mercado secundario antes de su compra.
+    \item \textbf{RF-04 — Compra primaria:} el sistema debe permitir la compra inicial del boleto al organizador, transfiriendo el 100\,\% del precio al organizador.
+    \item \textbf{RF-05 — Compra de reventa atómica:} la compra en mercado secundario debe ejecutar en una sola transacción el pago al vendedor, la distribución de comisiones al organizador y la plataforma, y la transferencia de propiedad.
+    \item \textbf{RF-06 — Distribución automática de comisiones:} el contrato debe aplicar las comisiones parametrizadas (5\,\% organizador, 3\,\% plataforma en la configuración del prototipo) sobre cada operación de reventa.
+    \item \textbf{RF-07 — Invalidación del ticket previo (burn/remint):} en cada reventa, la versión anterior del boleto debe quedar marcada como inválida y emitirse una nueva versión con \texttt{version+1} a nombre del comprador.
+    \item \textbf{RF-08 — Verificación y redención en puerta:} solo direcciones registradas como verificadores autorizados pueden marcar un boleto como redimido (\texttt{usado}).
+    \item \textbf{RF-09 — Trazabilidad de eventos on-chain:} el contrato debe emitir eventos para cada operación crítica (creación, listado, cancelación, compra primaria, reventa, redención e invalidación), de modo que un indexador externo pueda reconstruir el historial completo.
+    \item \textbf{RF-10 — Consulta de estado y propiedad:} el contrato debe exponer funciones de consulta que permitan verificar el propietario actual, la versión vigente y el ciclo de vida de cualquier boleto sin requerir privilegios especiales.
+\end{itemize}
 
 \subsubsection{Requerimientos no funcionales (mínimos: 6, base ISO/IEC 27001)}
 
-Consideran control de acceso, integridad de datos, trazabilidad de eventos, gestión de claves, disponibilidad operativa y monitoreo de fallos en componentes críticos.
+Se establecen seis requerimientos no funcionales tomando como marco de referencia los controles del Anexo A de ISO/IEC 27001:2022:
+
+\begin{itemize}
+    \item \textbf{RNF-01 — Control de acceso (A.5.15, A.8.3):} las operaciones que modifican el estado del contrato (\texttt{crear\_boleto}, \texttt{listar\_boleto}, \texttt{cancelar\_venta}, \texttt{comprar\_boleto}, \texttt{redimir\_boleto}, \texttt{invalidar\_boleto}) deben ejecutar \texttt{require\_auth()} sobre el rol correspondiente (organizador, propietario, comprador o verificador).
+    \item \textbf{RNF-02 — Integridad criptográfica del registro (A.8.24):} cada transacción debe quedar registrada en el ledger con firma digital y referencia inmutable al hash del bloque anterior, de manera que cualquier alteración posterior sea detectable.
+    \item \textbf{RNF-03 — Trazabilidad y registro de eventos (A.8.15):} todas las transiciones de estado del boleto deben emitir eventos on-chain consumibles por el indexador, con persistencia off-chain en PostgreSQL para historial de largo plazo.
+    \item \textbf{RNF-04 — Gestión de claves criptográficas (A.8.24):} las llaves privadas operacionales (organizador, plataforma, verificador) deben permanecer fuera del repositorio del código y del frontend; el comprador firma sus propias transacciones desde una billetera personal (Freighter) sin que la llave salga del entorno del usuario.
+    \item \textbf{RNF-05 — Disponibilidad operativa (A.5.30, A.8.14):} el backend debe operar en arquitectura sin estado, replicable horizontalmente, con base de datos relacional gestionada externamente; el indexador debe recuperarse automáticamente de errores transitorios y de ventanas de retención del RPC.
+    \item \textbf{RNF-06 — Validación y manejo de excepciones (A.8.26, A.8.29):} el contrato debe definir un conjunto cerrado de errores tipados (16 códigos en \texttt{ErrorContrato}) y rechazar toda operación que viole las precondiciones, sin estados parciales.
+\end{itemize}
 
 \subsubsection{Requerimientos complementarios (no obligatorios)}
 
-Como extensiones se consideran reglas dinámicas de mercado, políticas avanzadas de cancelación, analítica de especulación y soporte para activos de pago adicionales.
+Como extensiones funcionales no obligatorias, el sistema contempla: tope de precio máximo de reventa configurable por evento, listas de bloqueo de direcciones, soporte para activos de pago adicionales (USDC\_SIM como caso de prueba), políticas de cancelación con devolución parcial, y panel de analítica para detección de patrones de especulación.
 
 \subsection{Estado del arte (comparación técnica y evidencia empírica)}
 
-La literatura y la evidencia de mercado reportan riesgos persistentes de fraude en ticketing digital, especialmente en contextos de alta demanda. Como línea comparativa, este trabajo contrasta mecanismos tradicionales de reventa con enfoques basados en blockchain en términos de trazabilidad, verificabilidad y tiempos de liquidación.
+El contraste entre los esquemas tradicionales de reventa y un esquema basado en contratos inteligentes sobre Stellar se resume en los siguientes parámetros técnicos:
+
+\begin{itemize}
+    \item \textbf{Tiempo de liquidación:} Stellar opera con tiempos de finalidad entre 3 y 5 segundos por transacción; las pasarelas tradicionales y la banca corresponsal liquidan transferencias internacionales en ventanas de 72 a 120 horas hábiles.
+    \item \textbf{Costo nominal por operación:} Stellar aplica una tarifa base de 100 stroops por operación (\(0{,}00001\) XLM); las pasarelas tradicionales aplican comisiones del 1{,}5\,\% al 3{,}5\,\% sobre el monto, sumadas a una tarifa fija.
+    \item \textbf{Capacidad de procesamiento:} Stellar reporta capacidad de 1\,000 a 3\,000 TPS, frente al rango de 15 a 30 TPS de Ethereum 1.0, lo que define una diferencia de capacidad teórica del orden de 100x.
+    \item \textbf{Mecanismo antifraude:} la unicidad del NFT (tupla \texttt{ticket\_root\_id}, \texttt{version}) y el patrón de \textit{burn/remint} en cada reventa eliminan la posibilidad de coexistencia de dos copias válidas del mismo activo, problema que sí ocurre en los códigos QR estáticos no anclados a un registro distribuido.
+    \item \textbf{Trazabilidad pública:} todo evento on-chain queda registrado de forma verificable mediante exploradores públicos (\textit{Stellar Expert}), mientras que en los mercados secundarios tradicionales el historial de transferencias no es accesible al comprador final.
+\end{itemize}
 
 \subsection{Marco legal colombiano (caso de referencia: Ley 1493/2011 y fiscalización digital)}
 
-El proyecto usa la Ley 1493 de 2011 como marco de referencia documental para discutir fiscalización y trazabilidad digital de transacciones en espectáculos públicos. El análisis jurídico se modela como mapeo normativo simulado dentro del diseño, sin declarar cumplimiento regulatorio productivo.
-\subsubsection{Requerimientos de conectividad}
+La Ley 1493 de 2011 regula los espectáculos públicos de las artes escénicas en Colombia y establece, entre otros mecanismos, una contribución parafiscal del 10\,\% sobre el valor de la boletería de los espectáculos cuyo precio individual sea igual o superior a tres Unidades de Valor Tributario (UVT). Esta contribución debe ser recaudada por el productor del espectáculo y reportada a la autoridad competente, lo que impone requisitos de trazabilidad sobre cada boleto vendido y su precio efectivo de transacción.
 
+En el modelo propuesto, el contrato inteligente automatiza el cálculo de esta contribución en el punto exacto de la venta primaria y de cada reventa, dado que: (i) el precio efectivo queda registrado on-chain como parámetro de la operación de compra; (ii) cada cambio de propiedad emite un evento (\texttt{boleto\_comprado\_primario}, \texttt{boleto\_revendido}) con el precio asociado; y (iii) el indexador persiste estos eventos en una base de datos relacional auditable. Esta arquitectura facilita el cumplimiento del deber de reporte de la ticketera, dado que el cálculo del 10\,\% sobre cada operación que supere el umbral legal se obtiene como una agregación determinística sobre el historial indexado, sin depender de reportes manuales ni de conciliaciones a posteriori.
+
+El presente trabajo utiliza la Ley 1493/2011 como caso de referencia académica para discutir la fiscalización digital en el contexto del prototipo. La discusión jurídica se modela como mapeo normativo dentro del diseño y no constituye una declaración de cumplimiento regulatorio productivo.
