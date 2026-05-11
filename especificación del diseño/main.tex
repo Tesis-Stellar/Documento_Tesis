@@ -75,7 +75,7 @@
   \vspace{0.3cm}
   {\Large (\shortname)\par}
   \vspace{1.2cm}
-  {\large Versión 0.4 — \docdate\par}
+  {\large Versión 0.6 — \docdate\par}
   \vspace{0.8cm}
   \includegraphics[width=4cm]{pontificia-universidad-javeriana-seeklogo.png}\par
   \vspace{0.4cm}
@@ -117,6 +117,7 @@
   0.3 & 15/03/2026 & Desarrollo de las secciones 4 (Vista de casos de uso), 5 (Vista lógica) y 6 (Vista de procesos). & \team\\
   0.4 & 24/03/2026 & Actualización integral: alineación con la implementación real de los contratos (nombres en español, versionado burn/remint, sistema de verificadores, invalidación on-chain), corrección de la arquitectura Frontend$\rightarrow$Backend$\rightarrow$Blockchain, eliminación de App de Escaneo y modo offline no implementados, actualización de diagramas C4. & \team\\
   0.5 & 25/04/2026 & Sincronización con estado final del prototipo: corrección de stack backend (Express en lugar de NestJS), documentación de integración Soroban completa (venta primaria, reventa atómica, asegurar on-chain, mercado secundario P2P, cancelación de listado), incorporación de Freighter Wallet como componente implementado, actualización de modelo de datos off-chain con campos Web3, adición de rol STAFF y panel de administración (Phase 4), corrección de flujo de verificación (escáner QR implementado, sin modo offline), actualización de rutas frontend y variables de entorno. & \team\\
+  0.6 & 11/05/2026 & Referencias bibliográficas movidas de la sección 1.4 al final del documento como sección independiente. Diagrama de casos de uso actualizado: solo Admin Plataforma puede crear eventos y desplegar contratos inteligentes. Actor renombrado de "Comprador"/"Vendedor" a "Usuario" en todos los casos de uso. & \team\\
 \end{longtable}
 
 \newpage
@@ -182,20 +183,6 @@ El SAD abarca la arquitectura del prototipo académico del sistema de reventa B2
   SRS & \textit{Software Requirements Specification}. Documento de requerimientos del proyecto.\\
   SPMP & \textit{Software Project Management Plan}. Plan de gestión del proyecto.\\
 \end{longtable}
-
-\subsection{Referencias}
-\label{subsec:referencias}
-
-\begin{enumerate}[leftmargin=*,label={[\arabic*]}]
-  \item IEEE Std 1471-2000: \textit{IEEE Recommended Practice for Architectural Description of Software-Intensive Systems}.
-  \item ISO/IEC/IEEE 42010:2011: \textit{Systems and software engineering — Architecture description}.
-  \item Brown, S. (2018). \textit{The C4 Model for Visualising Software Architecture}. \url{https://c4model.com/}.
-  \item Bass, L., Clements, P., \& Kazman, R. (2012). \textit{Software Architecture in Practice}, 3rd Edition. Addison-Wesley.
-  \item SRS del sistema Tickets-NFT B2B (v0.1).
-  \item SPMP del sistema Tickets-NFT B2B (v1.1).
-  \item Stellar Development Foundation: \textit{Stellar Documentation}, \url{https://developers.stellar.org/}.
-  \item Soroban Documentation: \textit{Smart Contracts on Stellar}, \url{https://soroban.stellar.org/}.
-\end{enumerate}
 
 \subsection{Visión general del documento}
 \label{subsec:vision-general}
@@ -410,14 +397,14 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
   \centering
   \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
     \toprule
-    \textbf{Actores} & Organizador (Ticketera), Admin Plataforma\\
+    \textbf{Actores} & Admin Plataforma\\
     \midrule
-    \textbf{Descripción} & El organizador configura un nuevo evento (nombre, fecha, wallets de comisión, políticas de reventa). La plataforma invoca el Factory para desplegar un contrato Soroban específico para ese evento en la testnet.\\
+    \textbf{Descripción} & El administrador de la plataforma configura un nuevo evento (nombre, fecha, wallets de comisión, políticas de reventa). La plataforma invoca el Factory para desplegar un contrato Soroban específico para ese evento en la testnet.\\
     \midrule
-    \textbf{Precondiciones} & El organizador está autenticado y tiene permisos de creación de eventos.\\
+    \textbf{Precondiciones} & El administrador está autenticado y tiene permisos de creación de eventos.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El organizador ingresa los datos del evento y configura fees.\newline
+      1. El administrador ingresa los datos del evento y configura fees.\newline
       2. El backend valida los parámetros y registra el evento en PostgreSQL.\newline
       3. El backend invoca el contrato Factory en Stellar.\newline
       4. El Factory despliega un nuevo contrato de evento con los parámetros configurados.\newline
@@ -439,20 +426,20 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
   \centering
   \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
     \toprule
-    \textbf{Actores} & Comprador\\
+    \textbf{Actores} & Usuario\\
     \midrule
-    \textbf{Descripción} & El comprador adquiere un ticket emitido por el organizador. El 100\% del pago se transfiere al organizador.\\
+    \textbf{Descripción} & El usuario adquiere un ticket emitido por el organizador. El 100\% del pago se transfiere al organizador.\\
     \midrule
-    \textbf{Precondiciones} & El evento existe, tiene tickets disponibles y el comprador tiene fondos suficientes en su wallet.\\
+    \textbf{Precondiciones} & El evento existe, tiene tickets disponibles y el usuario tiene fondos suficientes en su wallet.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El comprador selecciona un boleto disponible en la aplicación web TuTicket.\newline
+      1. El usuario selecciona un boleto disponible en la aplicación web TuTicket.\newline
       2. El frontend envía la solicitud de compra al Backend API.\newline
       3. El backend orquesta la invocación de \texttt{comprar\_boleto} en el contrato de evento.\newline
-      4. El contrato transfiere el 100\% del pago al organizador mediante \texttt{ClienteToken} y asigna el boleto al comprador, marcando \texttt{es\_reventa = true}.\newline
+      4. El contrato transfiere el 100\% del pago al organizador mediante \texttt{ClienteToken} y asigna el boleto al usuario, marcando \texttt{es\_reventa = true}.\newline
       5. El backend registra la operación en PostgreSQL.\\
     \midrule
-    \textbf{Postcondiciones} & El comprador es el nuevo propietario del boleto. El pago fue transferido al organizador. Futuras ventas de este boleto serán tratadas como reventa (con comisiones y burn/remint).\\
+    \textbf{Postcondiciones} & El usuario es el nuevo propietario del boleto. El pago fue transferido al organizador. Futuras ventas de este boleto serán tratadas como reventa (con comisiones y burn/remint).\\
     \midrule
     \textbf{Relevancia arquitectónica} & Ejerce la orquestación Backend$\rightarrow$Soroban, la escritura on-chain con registro off-chain posterior, y la transición \texttt{es\_reventa = false $\rightarrow$ true} que determina el comportamiento de todas las transacciones futuras sobre ese boleto.\\
     \bottomrule
@@ -468,14 +455,14 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
   \centering
   \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
     \toprule
-    \textbf{Actores} & Vendedor\\
+    \textbf{Actores} & Usuario\\
     \midrule
     \textbf{Descripción} & El propietario de un ticket lo publica en el marketplace para reventa, estableciendo un precio.\\
     \midrule
-    \textbf{Precondiciones} & El vendedor es propietario del ticket, el ticket está vigente (no consumido ni invalidado) y el evento permite reventa.\\
+    \textbf{Precondiciones} & El usuario es propietario del ticket, el ticket está vigente (no consumido ni invalidado) y el evento permite reventa.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El vendedor selecciona un boleto de su inventario y fija precio de reventa.\newline
+      1. El usuario selecciona un boleto de su inventario y fija precio de reventa.\newline
       2. El frontend envía la solicitud al Backend API.\newline
       3. El backend invoca \texttt{listar\_boleto} en el contrato de evento, que marca \texttt{en\_venta = true} y actualiza el precio.\newline
       4. El marketplace muestra el boleto disponible para compra.\\
@@ -496,27 +483,27 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
   \centering
   \begin{tabularx}{\textwidth}{@{}p{3.5cm} X@{}}
     \toprule
-    \textbf{Actores} & Comprador\\
+    \textbf{Actores} & Usuario\\
     \midrule
-    \textbf{Descripción} & El comprador adquiere un ticket en el mercado secundario. En una sola transacción atómica se ejecutan: pago al vendedor, comisión al organizador, comisión a la plataforma, burn de la versión anterior y mint de una nueva versión del ticket.\\
+    \textbf{Descripción} & El usuario adquiere un ticket en el mercado secundario. En una sola transacción atómica se ejecutan: pago al vendedor, comisión al organizador, comisión a la plataforma, burn de la versión anterior y mint de una nueva versión del ticket.\\
     \midrule
-    \textbf{Precondiciones} & El ticket está listado para reventa, el comprador tiene fondos suficientes y no es el propietario actual.\\
+    \textbf{Precondiciones} & El ticket está listado para reventa, el usuario tiene fondos suficientes y no es el propietario actual.\\
     \midrule
     \textbf{Flujo principal} &
-      1. El comprador selecciona un boleto en reventa y confirma la compra.\newline
+      1. El usuario selecciona un boleto en reventa y confirma la compra.\newline
       2. El frontend envía la solicitud al Backend API.\newline
       3. El backend invoca \texttt{comprar\_boleto} en el contrato de evento, que ejecuta atómicamente:\newline
       \hspace{1em}a) Transferencia de comisión al organizador (\texttt{ComisionOrganizador\%}).\newline
       \hspace{1em}b) Transferencia de comisión a la plataforma (\texttt{ComisionPlataforma\%}).\newline
       \hspace{1em}c) Transferencia del pago neto al vendedor.\newline
       \hspace{1em}d) Burn: la versión actual se marca como \texttt{invalidado = true}.\newline
-      \hspace{1em}e) Remint: se crea nueva versión (\texttt{version + 1}) asignada al comprador.\newline
+      \hspace{1em}e) Remint: se crea nueva versión (\texttt{version + 1}) asignada al usuario.\newline
       4. El contrato emite evento \texttt{BoletoRevendido} on-chain indexado por \texttt{ticket\_root\_id}.\newline
       5. El backend actualiza PostgreSQL.\\
     \midrule
     \textbf{Flujo alternativo} & Si cualquier paso falla, toda la transacción se revierte. No existe estado intermedio.\\
     \midrule
-    \textbf{Postcondiciones} & El comprador posee la nueva versión del ticket. Los pagos y comisiones fueron distribuidos. La versión anterior está invalidada.\\
+    \textbf{Postcondiciones} & El usuario posee la nueva versión del ticket. Los pagos y comisiones fueron distribuidos. La versión anterior está invalidada.\\
     \midrule
     \textbf{Relevancia arquitectónica} & Es el caso de uso más crítico del sistema. Ejerce la atomicidad transaccional de Soroban, el patrón burn+remint, la distribución de comisiones embebida en el contrato y la trazabilidad por \texttt{ticket\_root\_id}. Valida el driver de atomicidad e inmutabilidad.\\
     \bottomrule
@@ -1421,7 +1408,21 @@ Medida & Pérdida de datos cero para transacciones confirmadas en PostgreSQL. Lo
 \textbf{Consecuencias:} Separación de responsabilidades clara: el propietario posee el boleto, pero no controla su redención. Previene fraudes donde un propietario podría intentar redimir y luego reclamar que no lo hizo. Los verificadores son gestionables (agregar/remover) por el organizador.
 
 %===============================================================
-% Referencias (si se usa bibliografía adicional al final)
+% Referencias
 %===============================================================
+
+\section*{Referencias}
+\label{sec:referencias}
+
+\begin{enumerate}[leftmargin=*,label={[\arabic*]}]
+  \item IEEE Std 1471-2000: \textit{IEEE Recommended Practice for Architectural Description of Software-Intensive Systems}.
+  \item ISO/IEC/IEEE 42010:2011: \textit{Systems and software engineering — Architecture description}.
+  \item Brown, S. (2018). \textit{The C4 Model for Visualising Software Architecture}. \url{https://c4model.com/}.
+  \item Bass, L., Clements, P., \& Kazman, R. (2012). \textit{Software Architecture in Practice}, 3rd Edition. Addison-Wesley.
+  \item SRS del sistema Tickets-NFT B2B (v0.1).
+  \item SPMP del sistema Tickets-NFT B2B (v1.1).
+  \item Stellar Development Foundation: \textit{Stellar Documentation}, \url{https://developers.stellar.org/}.
+  \item Soroban Documentation: \textit{Smart Contracts on Stellar}, \url{https://soroban.stellar.org/}.
+\end{enumerate}
 
 \end{document}
