@@ -1,0 +1,1470 @@
+
+% Plantilla LaTeX - Plan de Pruebas EasyMarket SPL
+% Compilar con: pdflatex main.tex
+% Recomendado en Overleaf: usar compilador pdfLaTeX.
+
+\documentclass[12pt,letterpaper]{article}
+
+% =========================
+% Paquetes
+% =========================
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{caption}
+
+% =========================
+% Configuración general
+% =========================
+\geometry{left=2.8cm,right=2.8cm,top=2.6cm,bottom=2.6cm}
+\onehalfspacing
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{0pt}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Plan de Pruebas: Secure Ticket}
+\rhead{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\captionsetup{font=small,labelfont=bf}
+
+% =========================
+% Comandos editables
+% =========================
+\newcommand{\NombreProyecto}{Secure Ticket}
+\newcommand{\NombreDocumento}{Plan de Pruebas}
+\newcommand{\VersionDocumento}{v1.0}
+\newcommand{\FechaDocumento}{\today}
+\newcommand{\Institucion}{Pontificia Universidad Javeriana}
+\newcommand{\Facultad}{Facultad de Ingeniería}
+\newcommand{\Programa}{Ingeniería de Sistemas}
+\newcommand{\Ciudad}{Bogotá, D.C.}
+
+\newcommand{\CampoEditable}[1]{\textcolor{gray}{\textit{[#1]}}}
+
+% =========================
+% Inicio del documento
+% =========================
+\begin{document}
+
+% =========================
+% Portada
+% =========================
+\begin{titlepage}
+    \centering
+
+    \vspace*{1.2cm}
+
+    {\Large \Institucion \par}
+    {\large \Facultad \par}
+    {\large \Programa \par}
+
+    \vspace{2.5cm}
+
+    {\Huge \textbf{\NombreDocumento} \par}
+    \vspace{0.4cm}
+    {\LARGE \textbf{\NombreProyecto} \par}
+
+    \vspace{1.2cm}
+
+    {\large Versión del documento: \VersionDocumento \par}
+    {\large Fecha: \FechaDocumento \par}
+
+    \vspace{2.2cm}
+
+    \begin{tabular}{rl}
+        \textbf{Autores:} & \CampoEditable{Juan Diego Arias Durán} \\
+                          & \CampoEditable{Santiago Andrés Mesa Niño} \\
+                          & \CampoEditable{Andrés Felipe Manosalva Garzón} \\
+                          & \CampoEditable{Juan Camilo Carvajal Rodríguez} \\
+        \textbf{Director:} & \CampoEditable{Rafael Vicente Páez Méndez, PhD} \\
+    \end{tabular}
+
+    \vfill
+
+    {\large \Ciudad \par}
+    {\large \the\year \par}
+\end{titlepage}
+
+% =========================
+% Historial de cambios
+% =========================
+\section*{Historial de cambios}
+\addcontentsline{toc}{section}{Historial de cambios}
+
+\begin{longtable}{|p{2cm}|p{2.5cm}|p{4cm}|p{5.2cm}|p{3cm}|}
+\hline
+\textbf{Versión} & \textbf{Fecha} & \textbf{Sección modificada} & \textbf{Descripción de cambios} & \textbf{Responsable(s)} \\
+\hline
+1.0 & \CampoEditable{DD/MM/AAAA} & Documento completo & Versión inicial del plan de pruebas de EasyMarket SPL. & \CampoEditable{Equipo} \\
+\hline
+\end{longtable}
+
+\newpage
+
+% =========================
+% Índices
+% =========================
+\tableofcontents
+\newpage
+\listoftables
+\newpage
+\listoffigures
+\newpage
+
+% =========================
+% 1. Introducción
+% =========================
+\section{Introducción}
+
+\subsection{Propósito del documento}
+
+El propósito de este documento es definir el plan de pruebas de \NombreProyecto, estableciendo los ítems de prueba, la estrategia de validación, los tipos de prueba aplicables, los criterios de aceptación, los casos de prueba y la forma de registrar los resultados obtenidos durante la verificación del prototipo.
+
+Este plan sirve como guía para evaluar que los componentes principales del sistema cumplen con los requerimientos funcionales y no funcionales definidos para el proyecto. En particular, busca validar los flujos críticos asociados a la autenticidad, trazabilidad, reventa y verificación de tickets mediante una arquitectura híbrida compuesta por frontend web, backend, base de datos PostgreSQL y contratos inteligentes ejecutados sobre Stellar/Soroban Testnet.
+
+El documento también permite establecer una base objetiva para reportar el estado de calidad del software antes de la entrega final del trabajo de grado, diferenciando entre pruebas automatizadas, pruebas manuales guiadas, pruebas de integración, pruebas de carga, pruebas de aceptación y limitaciones propias del alcance académico del prototipo.
+
+\subsection{Alcance del sistema}
+
+\NombreProyecto{} es un prototipo académico orientado a soportar la reventa segura de tickets para eventos mediante el uso de contratos inteligentes y tokens no fungibles sobre la red Stellar/Soroban. El sistema permite representar tickets como activos digitales, gestionar su estado, consultar su trazabilidad, habilitar flujos de reventa y verificar tickets mediante un flujo de escaneo QR.
+
+El alcance de este plan cubre las pruebas sobre los siguientes componentes:
+
+\begin{itemize}
+    \item Contratos inteligentes Soroban asociados a la emisión, reventa, cancelación, invalidación y redención de tickets.
+    \item Backend/API responsable de la lógica de negocio, autenticación, autorización por roles, gestión de tickets, scanner QR, validaciones de estado y comunicación con servicios de persistencia.
+    \item Indexador o mecanismo de sincronización entre eventos on-chain y el estado almacenado off-chain en PostgreSQL.
+    \item Base de datos PostgreSQL utilizada para persistir usuarios, eventos, tickets, órdenes, estados y campos asociados a la integración Web3.
+    \item Frontend web utilizado por compradores, vendedores, administradores y personal de verificación.
+    \item Flujos end-to-end del prototipo, incluyendo compra primaria simulada, inventario, scanner QR y reventa en Stellar/Soroban Testnet.
+    \item Pruebas de seguridad funcional enfocadas en roles, tokens, propiedad de tickets y validación de operaciones no autorizadas.
+    \item Pruebas de carga sobre endpoints REST representativos, sin incluir carga masiva sobre transacciones blockchain.
+    \item Pruebas de aceptación con usuarios o stakeholders en un ambiente académico controlado.
+\end{itemize}
+
+Las pruebas blockchain se realizan exclusivamente sobre Stellar/Soroban Testnet. El despliegue en mainnet, el uso de activos con valor real, pagos reales, integraciones con pasarelas de pago productivas, procesos KYC/AML y operación comercial en producción se encuentran fuera del alcance de este plan de pruebas.
+
+Adicionalmente, algunas funcionalidades se validan de acuerdo con el alcance real del prototipo. La compra primaria se evalúa como un flujo simulado/off-chain cuando así corresponde a la implementación actual. El scanner QR se evalúa en modalidad DB-first, mientras que la redención on-chain se valida a nivel de contrato inteligente. La reventa con Freighter se contempla como prueba manual guiada sobre Stellar/Soroban Testnet, debido a la fragilidad técnica de automatizar extensiones de wallet en pruebas end-to-end.
+
+\subsection{Audiencia objetivo}
+
+Este documento está dirigido a los siguientes perfiles relacionados con el proyecto \NombreProyecto:
+
+\begin{itemize}
+    \item Equipo de desarrollo frontend, backend y contratos inteligentes.
+    \item Equipo responsable de pruebas, validación y documentación.
+    \item Director del trabajo de grado.
+    \item Jurados o revisores académicos del proyecto.
+    \item Interesados técnicos que requieran comprender el alcance, estrategia y resultados de las pruebas realizadas.
+\end{itemize}
+
+\subsection{Referencias}
+
+\begin{longtable}{|p{1.5cm}|p{13.5cm}|}
+\hline
+\textbf{ID} & \textbf{Referencia} \\
+\hline
+R1 & Especificación de Requerimientos de Software de \NombreProyecto{} (SRS). \\
+\hline
+R2 & Documento de Especificación del Diseño o Arquitectura de Software de \NombreProyecto{} (SAD/SDD). \\
+\hline
+R3 & Repositorio oficial del proyecto \NombreProyecto. \\
+\hline
+R4 & Documentación oficial de Stellar y Soroban para contratos inteligentes y ejecución sobre Testnet. \\
+\hline
+R5 & Documentación de herramientas de prueba utilizadas en el proyecto: Cargo Test, Jest, Supertest, Playwright, k6 y herramientas asociadas al entorno de desarrollo. \\
+\hline
+R6 & Plan de pruebas de EasyMarket SPL utilizado como referencia estructural para la organización del presente documento. \\
+\hline
+\end{longtable}
+
+% =========================
+% 2. Objetivos del plan de pruebas
+% =========================
+\section{Objetivos del plan de pruebas}
+
+El objetivo principal de este plan de pruebas es establecer una estrategia sistemática para verificar y validar el funcionamiento de \NombreProyecto, considerando los componentes de software que conforman el prototipo y los flujos críticos definidos para el trabajo de grado. Las pruebas buscan comprobar que el sistema cumple con los requerimientos funcionales y no funcionales asociados a la autenticidad, trazabilidad, reventa y verificación de tickets en un ambiente académico controlado.
+
+Dado que \NombreProyecto{} integra componentes tradicionales de software con contratos inteligentes sobre Stellar/Soroban Testnet, el plan de pruebas contempla una validación en diferentes niveles: contratos, backend, frontend, persistencia, sincronización on-chain/off-chain, pruebas end-to-end, seguridad funcional, carga y aceptación de usuario.
+
+\subsection{Objetivo general}
+
+Definir y ejecutar una estrategia de pruebas que permita evaluar la calidad funcional, técnica y operativa del prototipo \NombreProyecto, verificando que sus componentes principales soportan los flujos de compra primaria simulada, reventa, verificación QR, control de acceso, trazabilidad e interacción con contratos inteligentes sobre Stellar/Soroban Testnet.
+
+\subsection{Objetivos específicos}
+
+Los objetivos específicos del presente plan de pruebas son:
+
+\begin{itemize}
+    \item Verificar el correcto funcionamiento de los contratos inteligentes Soroban asociados a la emisión, reventa, cancelación, invalidación y redención de tickets.
+    
+    \item Validar que el backend/API implemente correctamente las reglas de negocio relacionadas con autenticación, autorización por roles, gestión de tickets, scanner QR, compra primaria simulada, reventa y restricciones de operación.
+    
+    \item Comprobar que el frontend web permita ejecutar los flujos principales del prototipo desde la perspectiva de los usuarios definidos: comprador, vendedor, administrador y personal de verificación.
+    
+    \item Evaluar la sincronización entre los eventos o estados derivados de la lógica on-chain y la información persistida off-chain en PostgreSQL.
+    
+    \item Validar que el scanner QR permita verificar tickets válidos y rechazar tickets usados, inválidos, inexistentes, vencidos o procesados por usuarios no autorizados.
+    
+    \item Verificar que los mecanismos de seguridad funcional impidan operaciones no autorizadas, incluyendo accesos sin token, tokens inválidos, roles insuficientes, manipulación de solicitudes y operaciones sobre tickets ajenos.
+    
+    \item Evaluar el comportamiento del sistema bajo carga moderada sobre endpoints REST representativos, excluyendo carga masiva sobre transacciones blockchain, Freighter o mainnet.
+    
+    \item Validar la disponibilidad básica del prototipo en el ambiente de despliegue mediante pruebas de humo sobre los servicios principales.
+    
+    \item Obtener una validación académica de aceptación por parte de usuarios o stakeholders mediante tareas representativas del flujo de negocio.
+    
+    \item Registrar los resultados de las pruebas de forma trazable, relacionando cada prueba con los casos de uso, requerimientos o atributos de calidad que busca verificar.
+\end{itemize}
+
+\subsection{Metas de calidad}
+
+Las metas de calidad que orientan este plan de pruebas son las siguientes:
+
+\begin{itemize}
+    \item \textbf{Correctitud funcional:} los flujos principales del prototipo deben ejecutarse de acuerdo con las reglas de negocio definidas para compra, reventa, verificación, invalidación y cancelación de tickets.
+    
+    \item \textbf{Integridad:} las operaciones sobre tickets deben preservar estados consistentes, evitando que un ticket usado, invalidado, cancelado o no perteneciente al usuario pueda ser operado indebidamente.
+    
+    \item \textbf{Trazabilidad:} el sistema debe permitir relacionar el estado de un ticket con su ciclo de vida, incluyendo propietario, versión, estado de venta, eventos relevantes y vínculo con la lógica blockchain cuando aplique.
+    
+    \item \textbf{Seguridad funcional:} las acciones críticas deben estar restringidas según rol, token, propiedad del ticket y validación de wallet cuando corresponda.
+    
+    \item \textbf{Confiabilidad operativa:} los flujos críticos deben manejar errores esperados de forma controlada, incluyendo QR inválidos, doble escaneo, tickets inexistentes, tokens inválidos y solicitudes manipuladas.
+    
+    \item \textbf{Rendimiento básico:} los endpoints REST representativos deben responder de manera estable bajo una carga moderada, dentro de umbrales acordes al alcance académico del prototipo.
+    
+    \item \textbf{Usabilidad básica:} los usuarios deben poder completar tareas representativas del sistema, como comprar un ticket, consultar inventario, listar una reventa o escanear un QR, con una comprensión razonable del estado y resultado de cada operación.
+\end{itemize}
+
+\subsection{Criterios generales de éxito}
+
+Los criterios generales de éxito permiten establecer las condiciones mínimas bajo las cuales el proceso de pruebas se considera satisfactorio para el alcance académico de \NombreProyecto. Estos criterios no implican operación productiva ni despliegue en mainnet, sino validación del prototipo en los ambientes definidos para el proyecto.
+
+\begin{longtable}{|p{4cm}|p{8cm}|p{3cm}|}
+\hline
+\textbf{Categoría} & \textbf{Criterio de éxito} & \textbf{Tipo de validación} \\
+\hline
+Contratos inteligentes & Las pruebas de contratos Soroban deben ejecutarse sin fallos bloqueantes, cubriendo emisión, reventa, cancelación, invalidación, redención y casos negativos relevantes. & Automatizada \\
+\hline
+Backend/API & Las pruebas unitarias y de API deben validar reglas de negocio, autenticación, autorización, scanner QR, operaciones sobre tickets y manejo de errores esperados. & Automatizada \\
+\hline
+Frontend/E2E & Los flujos principales del prototipo deben poder ejecutarse desde la interfaz web, incluyendo compra primaria simulada, inventario y scanner QR. & Automatizada / Manual \\
+\hline
+Reventa en Testnet & La reventa debe validarse mediante una prueba manual guiada sobre Stellar/Soroban Testnet, usando Freighter y verificando cambio de propietario, trazabilidad y actualización del estado del ticket. & Manual guiada \\
+\hline
+Scanner QR & El scanner debe aceptar tickets válidos y rechazar tickets usados, inválidos, inexistentes, expirados o procesados por usuarios no autorizados. & Automatizada / E2E \\
+\hline
+Redención on-chain & La redención on-chain debe estar validada a nivel de contrato inteligente, aunque el scanner operativo del prototipo funcione bajo un enfoque DB-first. & Automatizada \\
+\hline
+Sincronización on-chain/off-chain & Las pruebas de integración deben validar que los eventos o estados relevantes se reflejan correctamente en PostgreSQL, sin duplicaciones ni inconsistencias visibles. & Integración \\
+\hline
+Seguridad funcional & El sistema debe rechazar accesos sin token, tokens inválidos o vencidos, roles insuficientes, operaciones sobre tickets ajenos y solicitudes manipuladas. & Automatizada \\
+\hline
+Carga y rendimiento & Los escenarios de carga deben cubrir lectura pública, usuarios autenticados y operaciones críticas controladas, manteniendo tasas de error y tiempos de respuesta dentro de los umbrales definidos para el prototipo. & Automatizada \\
+\hline
+Despliegue & El smoke test debe confirmar que el frontend, backend, autenticación, consulta de eventos, inventario y scanner funcionan en el ambiente desplegado. & Manual guiada \\
+\hline
+Aceptación de usuario & Las pruebas de aceptación deben permitir evaluar si usuarios o stakeholders pueden completar tareas representativas y comprender los estados principales del ticket. & Manual / Formulario \\
+\hline
+Trazabilidad & Cada prueba crítica debe estar asociada a un requerimiento, caso de uso o atributo de calidad mediante la matriz de trazabilidad. & Documental \\
+\hline
+Limitaciones & Las limitaciones del prototipo deben quedar documentadas explícitamente, incluyendo exclusión de mainnet, pagos reales, carga blockchain masiva y redención on-chain desde el scanner operativo. & Documental \\
+\hline
+\end{longtable}
+
+% =========================
+% 3. Ítems de prueba
+% =========================
+\section{Ítems de prueba}
+
+Los ítems de prueba corresponden a los componentes, servicios, flujos e integraciones de \NombreProyecto{} que serán evaluados durante el proceso de verificación y validación. Estos elementos fueron seleccionados por su relevancia dentro del funcionamiento del prototipo y por su relación directa con los objetivos del sistema: autenticidad, trazabilidad, reventa y verificación de tickets.
+
+Dado que \NombreProyecto{} utiliza una arquitectura híbrida, los ítems de prueba incluyen tanto componentes tradicionales de software, como frontend, backend y base de datos, como componentes asociados a la lógica blockchain, tales como contratos inteligentes Soroban e integración con Stellar/Soroban Testnet.
+
+\begin{longtable}{|p{3.2cm}|p{2.8cm}|p{5.3cm}|p{4.2cm}|}
+\hline
+\textbf{Nombre} & \textbf{Tipo} & \textbf{Descripción} & \textbf{Objetivo de prueba} \\
+\hline
+Contrato \textit{FabricaBoletos} & Contrato inteligente & Contrato Soroban encargado de gestionar o desplegar contratos asociados a eventos, según el modelo de arquitectura definido para el sistema. & Verificar que la creación y administración de contratos de evento se realice correctamente bajo las reglas definidas. \\
+\hline
+Contrato \textit{ContratoEvento} & Contrato inteligente & Contrato Soroban que contiene la lógica principal relacionada con emisión, reventa, cancelación, invalidación y redención de tickets. & Validar que las operaciones críticas sobre tickets se ejecuten correctamente y que los casos inválidos sean rechazados. \\
+\hline
+Contrato de representación NFT del ticket & Contrato inteligente / Activo digital & Componente asociado a la representación del ticket como activo digital único, incluyendo identificadores, versión, propietario y estado. & Verificar la unicidad, trazabilidad y relación del ticket con su propietario y ciclo de vida. \\
+\hline
+Backend/API & Servicio backend & Servicio responsable de exponer endpoints REST, aplicar reglas de negocio, autenticar usuarios, validar roles, procesar operaciones sobre tickets y coordinar la comunicación con persistencia e integraciones. & Verificar el correcto funcionamiento de las reglas de negocio, autorización, validaciones de estado y respuestas ante errores esperados. \\
+\hline
+Indexador Soroban & Servicio de sincronización & Componente encargado de procesar eventos o estados derivados de la lógica on-chain y reflejarlos en la base de datos off-chain. & Validar la sincronización entre eventos blockchain y PostgreSQL, evitando duplicaciones o inconsistencias visibles. \\
+\hline
+Base de datos PostgreSQL & Persistencia & Base de datos relacional utilizada para almacenar usuarios, eventos, tickets, órdenes, estados, check-ins y campos asociados a la integración Web3. & Verificar la consistencia de los datos persistidos después de operaciones de compra, reventa, verificación, cancelación e invalidación. \\
+\hline
+Frontend web & Interfaz gráfica & Aplicación web utilizada por compradores, vendedores, administradores y personal de verificación para interactuar con el sistema. & Validar que los usuarios puedan ejecutar los flujos principales del prototipo desde la interfaz, incluyendo compra primaria simulada, inventario y scanner QR. \\
+\hline
+Scanner QR & Flujo funcional / Interfaz de verificación & Funcionalidad utilizada por personal autorizado para verificar tickets mediante códigos QR. En el prototipo operativo, el scanner funciona bajo un enfoque DB-first. & Comprobar que el scanner acepte tickets válidos y rechace tickets usados, inválidos, inexistentes, expirados o procesados por usuarios no autorizados. \\
+\hline
+Módulo de autenticación y autorización & Servicio de seguridad & Mecanismo encargado de validar identidad, tokens, roles y permisos para acceder a operaciones protegidas del sistema. & Verificar que únicamente los usuarios autorizados puedan ejecutar acciones críticas según su rol y propiedad sobre los tickets. \\
+\hline
+Flujo de compra primaria simulada & Flujo funcional & Proceso mediante el cual un usuario adquiere un ticket dentro del prototipo, generando una orden y reflejando el ticket en su inventario. & Validar que la compra primaria simulada funcione correctamente sin afirmar operación con pagos reales ni transacción on-chain cuando no corresponda. \\
+\hline
+Flujo de reventa en Stellar/Soroban Testnet & Flujo funcional / Integración blockchain & Proceso mediante el cual un propietario lista un ticket para reventa y otro usuario lo adquiere utilizando Freighter sobre Stellar/Soroban Testnet. & Validar el flujo central de reventa, verificando cambio de propietario, trazabilidad, actualización de estado y relación con la lógica blockchain del prototipo. \\
+\hline
+Integración con Freighter Wallet & Integración externa & Extensión de wallet utilizada para firmar operaciones blockchain por parte de usuarios en Stellar/Soroban Testnet. & Verificar manualmente que los flujos que requieren firma de usuario puedan ejecutarse en Testnet sin usar mainnet ni activos reales. \\
+\hline
+Integración con Stellar/Soroban Testnet & Integración externa & Red de pruebas utilizada para desplegar o ejecutar operaciones blockchain dentro del alcance académico del sistema. & Validar operaciones blockchain en un ambiente de prueba, excluyendo mainnet, activos con valor real y operación productiva. \\
+\hline
+Pruebas de carga sobre API REST & Escenario de rendimiento & Conjunto de escenarios k6 o equivalentes orientados a evaluar endpoints de lectura pública, usuarios autenticados y operaciones críticas controladas. & Evaluar estabilidad y tiempos de respuesta del backend bajo carga moderada, sin ejecutar carga masiva sobre Freighter o transacciones Soroban reales. \\
+\hline
+Pruebas de aceptación de usuario & Validación con usuarios & Actividades guiadas para que usuarios o stakeholders ejecuten tareas representativas y evalúen claridad, comprensión y confianza del sistema. & Obtener retroalimentación sobre la usabilidad básica y comprensión de los flujos principales del prototipo. \\
+\hline
+Smoke test de despliegue & Validación de ambiente & Prueba de humo orientada a verificar que el frontend, backend y flujos mínimos funcionen en el ambiente desplegado. & Confirmar la disponibilidad básica del prototipo fuera del ambiente local de desarrollo. \\
+\hline
+Matriz de trazabilidad & Artefacto documental & Relación entre pruebas, requerimientos, casos de uso y atributos de calidad definidos para el sistema. & Asegurar que las pruebas ejecutadas se encuentren asociadas a los elementos funcionales y no funcionales que buscan validar. \\
+\hline
+\end{longtable}
+
+Los ítems de prueba descritos en esta sección delimitan el alcance de la estrategia de validación. Aquellos elementos que involucren mainnet, pagos reales, activos con valor económico, procesos KYC/AML o integraciones productivas quedan excluidos del presente plan por encontrarse fuera del alcance académico del prototipo.
+
+% =========================
+% 4. Alcance de las pruebas
+% =========================
+\section{Alcance de las pruebas}
+
+El alcance de las pruebas de \NombreProyecto{} comprende la verificación y validación de los componentes principales del prototipo académico, así como de los flujos funcionales que soportan la autenticidad, trazabilidad, reventa y verificación de tickets. Las pruebas se enfocan en evaluar el comportamiento del sistema en ambientes controlados de desarrollo, integración, despliegue académico y Stellar/Soroban Testnet.
+
+Este plan no busca certificar el sistema para operación productiva, sino demostrar que el prototipo implementa correctamente los mecanismos definidos dentro del alcance del trabajo de grado.
+
+\subsection{Componentes incluidos en el alcance}
+
+Las pruebas cubren los siguientes componentes del sistema:
+
+\begin{itemize}
+    \item \textbf{Contratos inteligentes Soroban:} se validan las funciones relacionadas con emisión, compra, reventa, cancelación, invalidación, redención, permisos de verificadores y casos negativos sobre tickets.
+    
+    \item \textbf{Backend/API:} se evalúan los endpoints REST, reglas de negocio, autenticación, autorización por roles, validaciones de estado, scanner QR, compra primaria simulada, reventa, cancelación e invalidación según el alcance implementado.
+    
+    \item \textbf{Frontend web:} se prueban los flujos principales de usuario disponibles en la interfaz, incluyendo inicio de sesión, consulta de eventos, compra primaria simulada, inventario de tickets y scanner QR.
+    
+    \item \textbf{Base de datos PostgreSQL:} se valida la persistencia y consistencia de entidades como usuarios, eventos, tickets, órdenes, estados, check-ins y campos asociados a la integración Web3.
+    
+    \item \textbf{Indexador o sincronización on-chain/off-chain:} se prueban los mecanismos encargados de reflejar eventos o estados asociados a la lógica blockchain en la base de datos off-chain.
+    
+    \item \textbf{Integración con Stellar/Soroban Testnet:} se valida la lógica blockchain en red de pruebas, principalmente para flujos relacionados con contratos inteligentes y reventa manual guiada.
+    
+    \item \textbf{Integración con Freighter Wallet:} se contempla dentro del flujo manual guiado de reventa en Testnet, debido a que la automatización de extensiones de wallet puede ser frágil y poco estable.
+    
+    \item \textbf{Pruebas de carga sobre API REST:} se incluyen escenarios sobre lectura pública, usuarios autenticados y operaciones críticas controladas.
+    
+    \item \textbf{Pruebas de aceptación:} se incluye la validación académica con usuarios o stakeholders sobre tareas representativas del sistema.
+    
+    \item \textbf{Smoke test de despliegue:} se valida que los servicios principales del prototipo funcionen en el ambiente desplegado.
+\end{itemize}
+
+\subsection{Flujos funcionales incluidos}
+
+Los flujos funcionales cubiertos por este plan de pruebas son los siguientes:
+
+\begin{longtable}{|p{4cm}|p{7cm}|p{4cm}|}
+\hline
+\textbf{Flujo} & \textbf{Descripción} & \textbf{Tipo de prueba asociada} \\
+\hline
+Compra primaria simulada & Flujo mediante el cual un usuario selecciona un evento, realiza un checkout simulado y recibe un ticket en su inventario. & E2E / Backend / Frontend \\
+\hline
+Reventa en Testnet & Flujo mediante el cual un usuario propietario lista un ticket para reventa y otro usuario lo adquiere usando Freighter sobre Stellar/Soroban Testnet. & Manual guiada / Blockchain \\
+\hline
+Scanner QR & Flujo mediante el cual un usuario autorizado verifica un ticket mediante QR, registrando el uso del ticket y rechazando casos inválidos. & API / E2E / Seguridad \\
+\hline
+Redención on-chain & Validación de la función de redención del ticket en el contrato inteligente Soroban. & Contrato inteligente \\
+\hline
+Invalidación de boleto & Validación de que un ticket invalidado no pueda listarse, comprarse, escanearse o redimirse según el nivel implementado. & Contrato / Backend / API \\
+\hline
+Cancelación de reventa & Validación de que un ticket listado pueda retirarse del mercado secundario y no pueda ser comprado posteriormente. & Contrato / Backend / API \\
+\hline
+Autenticación y autorización & Validación de tokens, roles, permisos, propiedad de tickets y operaciones no autorizadas. & Seguridad / API \\
+\hline
+Sincronización on-chain/off-chain & Validación de que los eventos o estados relevantes se reflejen correctamente en PostgreSQL. & Integración \\
+\hline
+Carga sobre API REST & Evaluación del comportamiento del backend bajo carga moderada en endpoints representativos. & Rendimiento \\
+\hline
+Aceptación de usuario & Validación de que usuarios o stakeholders puedan completar tareas representativas y comprender los estados principales del sistema. & UAT / Formulario \\
+\hline
+\end{longtable}
+
+\subsection{Niveles de prueba incluidos}
+
+El plan contempla los siguientes niveles de prueba:
+
+\begin{itemize}
+    \item \textbf{Pruebas unitarias:} orientadas a validar componentes aislados, principalmente contratos inteligentes y lógica de backend.
+    
+    \item \textbf{Pruebas de integración:} enfocadas en la interacción entre backend, base de datos, indexador y eventos asociados a la lógica on-chain.
+    
+    \item \textbf{Pruebas de API:} dirigidas a verificar endpoints, códigos de respuesta, validaciones, manejo de errores y reglas de autorización.
+    
+    \item \textbf{Pruebas end-to-end:} orientadas a validar flujos principales desde la perspectiva del usuario a través de la interfaz web.
+    
+    \item \textbf{Pruebas manuales guiadas:} utilizadas para flujos donde la automatización no es conveniente o estable, especialmente la reventa con Freighter sobre Stellar/Soroban Testnet.
+    
+    \item \textbf{Pruebas de carga:} enfocadas en medir el comportamiento de endpoints REST bajo carga moderada.
+    
+    \item \textbf{Pruebas de aceptación:} orientadas a obtener retroalimentación de usuarios o stakeholders sobre tareas representativas del prototipo.
+    
+    \item \textbf{Pruebas documentales:} utilizadas para mantener trazabilidad entre requerimientos, casos de uso, atributos de calidad y pruebas ejecutadas.
+\end{itemize}
+
+\subsection{Cobertura parcial por diseño}
+
+Algunas funcionalidades se consideran parcialmente cubiertas debido al alcance real del prototipo y a decisiones arquitectónicas del sistema. Estas condiciones se documentan explícitamente para evitar afirmar capacidades que no forman parte de la implementación actual.
+
+\begin{longtable}{|p{4cm}|p{6.5cm}|p{4.5cm}|}
+\hline
+\textbf{Elemento} & \textbf{Cobertura actual} & \textbf{Justificación} \\
+\hline
+Scanner QR on-chain & El scanner operativo se valida bajo un enfoque DB-first; la redención on-chain se prueba a nivel de contrato. & La integración directa de redención on-chain en el scanner no hace parte del flujo operativo actual del prototipo. \\
+\hline
+Invalidación administrativa por API & La invalidación se cubre mediante contrato, reglas backend y validaciones en flujos de scanner, listado y compra. & No existe un endpoint administrativo completo de invalidación en la versión actual del prototipo. \\
+\hline
+Reventa con Freighter & La reventa se valida mediante una prueba manual guiada sobre Stellar/Soroban Testnet. & Automatizar Freighter puede generar pruebas frágiles y poco mantenibles. \\
+\hline
+Compra primaria & La compra primaria se valida como flujo simulado/off-chain del prototipo. & El uso de pagos reales o transacciones productivas queda fuera del alcance académico. \\
+\hline
+Carga blockchain & No se ejecuta carga masiva sobre Freighter ni transacciones Soroban reales. & Las pruebas de carga se limitan a endpoints REST representativos para evitar resultados poco representativos o riesgos innecesarios sobre Testnet. \\
+\hline
+\end{longtable}
+
+\subsection{Elementos fuera del alcance}
+
+Quedan fuera del alcance de este plan de pruebas los siguientes elementos:
+
+\begin{itemize}
+    \item Despliegue o validación sobre Stellar Mainnet.
+    \item Uso de activos con valor real.
+    \item Integración con pagos reales o pasarelas de pago productivas.
+    \item Validaciones comerciales, legales o financieras asociadas a operación productiva.
+    \item Procesos KYC/AML.
+    \item Pruebas de penetración formales o auditorías externas de seguridad.
+    \item Pruebas de carga masiva sobre transacciones blockchain reales.
+    \item Automatización completa de flujos con Freighter Wallet.
+    \item Pruebas sobre aplicaciones móviles nativas.
+    \item Certificación de disponibilidad, escalabilidad o tolerancia a fallos para producción.
+\end{itemize}
+
+\subsection{Criterio de delimitación del alcance}
+
+Una prueba se considera dentro del alcance cuando evalúa una funcionalidad implementada en el prototipo, puede ejecutarse en ambiente local, staging, despliegue académico o Stellar/Soroban Testnet, y contribuye a validar uno de los objetivos principales del sistema: autenticidad, trazabilidad, reventa o verificación de tickets.
+
+Por el contrario, una prueba se considera fuera del alcance cuando requiere operación en mainnet, activos reales, pagos productivos, infraestructura comercial, validaciones legales especializadas o capacidades no implementadas en la versión actual del sistema.
+
+% =========================
+% 5. Estrategia de pruebas
+% =========================
+\section{Estrategia de pruebas}
+
+La estrategia de pruebas de \NombreProyecto{} se define a partir de una combinación de pruebas automatizadas, pruebas de integración, pruebas end-to-end, pruebas manuales guiadas, pruebas de carga y pruebas de aceptación. Esta combinación responde a la naturaleza híbrida del sistema, el cual integra frontend web, backend/API, base de datos PostgreSQL, contratos inteligentes Soroban y flujos sobre Stellar/Soroban Testnet.
+
+El enfoque general consiste en validar primero los componentes de forma aislada, posteriormente sus integraciones principales y finalmente los flujos funcionales que representan el comportamiento esperado del prototipo desde la perspectiva del usuario. De esta forma, las pruebas se organizan en niveles progresivos: contratos, backend, integración, frontend, flujos end-to-end, carga, despliegue y aceptación.
+
+Todas las pruebas relacionadas con blockchain se ejecutan en entornos locales de contrato o en Stellar/Soroban Testnet. No se contempla el uso de mainnet, activos reales ni pagos productivos, debido a que estos elementos se encuentran fuera del alcance académico del proyecto.
+
+\subsection{Pruebas unitarias de contratos inteligentes}
+
+Las pruebas unitarias de contratos inteligentes tienen como objetivo validar la lógica on-chain implementada en Soroban. Estas pruebas permiten verificar el comportamiento de las funciones críticas de los contratos sin depender de la interfaz gráfica ni de flujos externos del sistema.
+
+En este nivel se validan operaciones como emisión de tickets, reventa, cancelación, invalidación, redención, asignación de verificadores autorizados, control de estados y rechazo de casos inválidos.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} Cargo Test, entorno de pruebas de Rust y Soroban SDK.
+    \item \textbf{Ambiente:} ambiente local de desarrollo para contratos inteligentes.
+    \item \textbf{Ítems evaluados:} contratos \textit{FabricaBoletos}, \textit{ContratoEvento} y componentes asociados a la representación del ticket.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Ejecución exitosa de las pruebas de contrato.
+        \item Cobertura de emisión, reventa, cancelación, invalidación y redención.
+        \item Inclusión de casos negativos para usuarios no autorizados, tickets inexistentes, tickets usados o tickets inválidos.
+        \item Validación de que los estados del ticket impidan operaciones no permitidas.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas unitarias y de API del backend}
+
+Las pruebas del backend permiten validar la lógica de negocio expuesta por la API, incluyendo autenticación, autorización, reglas de operación sobre tickets, scanner QR, cancelación, validaciones de estado y manejo de errores esperados.
+
+Estas pruebas verifican que el backend aplique restricciones de seguridad y reglas de negocio de forma independiente al frontend, evitando que operaciones críticas dependan únicamente de validaciones visuales o del cliente.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} framework de pruebas del backend, Supertest o herramientas equivalentes utilizadas en el repositorio.
+    \item \textbf{Ambiente:} ambiente local de desarrollo e integración con base de datos de prueba.
+    \item \textbf{Ítems evaluados:} endpoints REST, servicios de autenticación, autorización, scanner QR, operaciones sobre tickets, reglas de reventa e invalidación según el alcance implementado.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Ejecución exitosa de las pruebas unitarias y de API.
+        \item Validación de respuestas esperadas ante tokens inválidos, expirados o ausentes.
+        \item Validación de restricciones por roles \textit{CUSTOMER}, \textit{STAFF} y \textit{ADMIN}.
+        \item Rechazo de operaciones sobre tickets ajenos, usados, inexistentes o inválidos.
+        \item Manejo controlado de errores de negocio y solicitudes manipuladas.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas de integración}
+
+Las pruebas de integración tienen como propósito validar la interacción entre componentes del sistema que no pueden evaluarse de forma completamente aislada. En \NombreProyecto{}, estas pruebas se enfocan principalmente en la relación entre backend, base de datos PostgreSQL, indexador y eventos asociados a la lógica on-chain.
+
+El objetivo es comprobar que los cambios derivados de operaciones sobre tickets se reflejen de forma consistente en la persistencia off-chain, evitando duplicaciones, pérdida de eventos o estados inconsistentes.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} framework de pruebas del backend, base de datos de prueba, fixtures o eventos normalizados.
+    \item \textbf{Ambiente:} ambiente local de integración con PostgreSQL.
+    \item \textbf{Ítems evaluados:} indexador Soroban, sincronización on-chain/off-chain, persistencia de tickets, estados y campos Web3.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Procesamiento correcto de eventos de boleto creado, listado, cancelado, revendido, redimido e invalidado.
+        \item Actualización correcta de campos como propietario, versión, estado de venta y precio de reventa.
+        \item Manejo controlado de eventos desconocidos o mal formados.
+        \item Idempotencia ante eventos duplicados.
+        \item Ausencia de inconsistencias visibles entre el estado esperado y el estado persistido.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas end-to-end del frontend}
+
+Las pruebas end-to-end permiten validar flujos completos desde la perspectiva del usuario mediante la interfaz web. En este plan se priorizan los flujos principales que representan el uso esperado del prototipo: inicio de sesión, consulta de eventos, compra primaria simulada, inventario y scanner QR.
+
+Estas pruebas no buscan cubrir exhaustivamente todos los estados visuales de la aplicación, sino comprobar que los usuarios puedan completar tareas funcionales críticas utilizando la interfaz.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} Playwright o herramienta E2E equivalente configurada en el frontend.
+    \item \textbf{Ambiente:} ambiente local o despliegue académico con frontend y backend disponibles.
+    \item \textbf{Ítems evaluados:} frontend web, navegación, compra primaria simulada, inventario, scanner QR y mensajes de error.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item El usuario puede iniciar sesión y navegar por eventos.
+        \item El usuario puede ejecutar una compra primaria simulada y visualizar el ticket en inventario.
+        \item El scanner QR puede mostrar resultados de éxito y rechazo según el caso evaluado.
+        \item Los usuarios no autorizados son bloqueados en flujos restringidos.
+        \item Los errores principales se presentan de forma comprensible para el usuario.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Prueba manual guiada de reventa en Testnet}
+
+La reventa con Freighter Wallet se define como una prueba manual guiada debido a que la automatización de extensiones de wallet puede producir pruebas frágiles y difíciles de mantener. Esta prueba permite validar el flujo central del sistema sobre Stellar/Soroban Testnet sin involucrar mainnet ni activos reales.
+
+El flujo contempla que un usuario propietario liste un ticket para reventa y que un segundo usuario lo compre mediante una operación firmada con Freighter. Se verifican el cambio de propietario, la actualización de estado, la trazabilidad del ticket y la consistencia con PostgreSQL.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} navegador web, Freighter Wallet, frontend del sistema, backend/API, PostgreSQL y Stellar/Soroban Testnet.
+    \item \textbf{Ambiente:} ambiente local o despliegue académico configurado contra Stellar/Soroban Testnet.
+    \item \textbf{Ítems evaluados:} flujo de reventa, integración con Freighter, contrato en Testnet, marketplace, inventario y persistencia.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Usuario propietario puede listar un ticket para reventa.
+        \item Un segundo usuario puede comprar el ticket listado utilizando Freighter.
+        \item La operación se realiza sobre Stellar/Soroban Testnet.
+        \item Se verifica cambio de propietario y actualización del inventario.
+        \item Se valida que el ticket no permanezca disponible indebidamente para el propietario anterior.
+        \item Se prueban casos negativos como compra del propio ticket, listado de ticket ajeno o rechazo de firma.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas del scanner QR}
+
+Las pruebas del scanner QR se enfocan en validar el flujo de verificación de tickets desde la perspectiva operativa del prototipo. El scanner funciona bajo un enfoque DB-first, por lo cual la validación de uso del ticket y registro de check-in se realiza principalmente contra la base de datos del sistema.
+
+La redención on-chain se evalúa de forma separada mediante pruebas de contrato inteligente, sin afirmar que el scanner operativo ejecute redención directamente sobre Soroban.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} pruebas de API, pruebas E2E y frontend del scanner.
+    \item \textbf{Ambiente:} ambiente local o despliegue académico.
+    \item \textbf{Ítems evaluados:} scanner QR, control de acceso por rol, check-ins, estados de ticket y manejo de QR inválidos.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item El scanner acepta tickets válidos con usuarios autorizados.
+        \item El sistema rechaza QR falsos, expirados, stale, inexistentes, usados o asociados a tickets inválidos.
+        \item Se impide el doble escaneo de un mismo ticket.
+        \item Se restringe el acceso al scanner para usuarios no autorizados.
+        \item El flujo crea o actualiza los registros de check-in de forma consistente.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas de seguridad funcional}
+
+Las pruebas de seguridad funcional buscan verificar que las acciones críticas del sistema estén protegidas mediante autenticación, autorización por roles, validación de propiedad del ticket y validación de solicitudes manipuladas.
+
+Estas pruebas no corresponden a una auditoría de seguridad formal ni a un pentest, sino a la validación de controles funcionales esperados para el prototipo.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} pruebas de API, Supertest o herramienta equivalente.
+    \item \textbf{Ambiente:} ambiente local de pruebas.
+    \item \textbf{Ítems evaluados:} autenticación JWT, roles, endpoints protegidos, propiedad de tickets, wallet asociada y validaciones de solicitud.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Rechazo de solicitudes sin token, con token inválido o token expirado.
+        \item Rechazo de usuarios con rol insuficiente en endpoints protegidos.
+        \item Rechazo de operaciones sobre tickets ajenos.
+        \item Rechazo de manipulación de precio, estado o identificadores desde el request.
+        \item Validación de que las restricciones se apliquen en backend y no únicamente en frontend.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas de carga}
+
+Las pruebas de carga buscan evaluar el comportamiento del backend/API bajo una carga moderada y representativa del prototipo. Estas pruebas se limitan a endpoints REST y no incluyen carga masiva sobre Freighter, mainnet, pagos reales ni transacciones Soroban reales.
+
+La estrategia contempla tres escenarios: lectura pública, usuarios autenticados y operaciones críticas controladas.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} k6 o herramienta equivalente.
+    \item \textbf{Ambiente:} ambiente local o despliegue académico.
+    \item \textbf{Ítems evaluados:} endpoints de salud, eventos, marketplace, login, inventario, scanner y checkout simulado cuando aplique.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Ejecución de un escenario de lectura pública con carga moderada.
+        \item Ejecución de un escenario de usuarios autenticados.
+        \item Ejecución de un escenario de operaciones críticas controladas.
+        \item Tasa de error menor o igual al umbral definido para el prototipo.
+        \item Tiempos de respuesta p95 dentro de los umbrales establecidos para cada escenario.
+        \item Separación explícita entre pruebas REST y operaciones blockchain.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas de humo de despliegue}
+
+Las pruebas de humo de despliegue permiten verificar que el sistema funcione de manera básica en el ambiente desplegado. Su propósito no es realizar una validación exhaustiva, sino confirmar que los servicios principales están disponibles y que los flujos mínimos pueden ejecutarse.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} navegador web, endpoints de salud, frontend desplegado y backend desplegado.
+    \item \textbf{Ambiente:} ambiente de despliegue académico.
+    \item \textbf{Ítems evaluados:} frontend, backend, autenticación, eventos, marketplace, inventario y scanner.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item El frontend carga correctamente.
+        \item El backend responde en el endpoint de salud.
+        \item El usuario puede iniciar sesión.
+        \item Los eventos y marketplace se consultan correctamente.
+        \item El inventario y scanner funcionan según el rol correspondiente.
+        \item No se presentan errores críticos visibles en consola o backend durante el flujo mínimo.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Pruebas de aceptación de usuario}
+
+Las pruebas de aceptación de usuario permiten obtener una validación académica controlada sobre la comprensión y ejecución de tareas representativas del sistema. Estas pruebas se orientan a usuarios o stakeholders que interactúan con el prototipo desde roles como comprador, vendedor, staff o administrador.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} formulario de aceptación, guía de tareas y ambiente del prototipo.
+    \item \textbf{Ambiente:} ambiente local, staging o despliegue académico.
+    \item \textbf{Ítems evaluados:} claridad del flujo, comprensión del estado del ticket, confianza percibida sobre autenticidad y capacidad de completar tareas.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Participación de usuarios o stakeholders en tareas representativas.
+        \item Registro de resultados mediante formulario con escala de valoración.
+        \item Identificación de errores, confusiones o sugerencias.
+        \item Consolidación de resultados por rol y tarea.
+        \item Análisis de la aceptación general del prototipo dentro del alcance académico.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Trazabilidad de pruebas}
+
+La trazabilidad permite relacionar cada prueba con los requerimientos, casos de uso o atributos de calidad que busca validar. Esta actividad permite justificar la cobertura del plan de pruebas y facilita identificar funcionalidades cubiertas, parcialmente cubiertas o fuera del alcance.
+
+\begin{itemize}
+    \item \textbf{Herramientas:} matriz de trazabilidad.
+    \item \textbf{Ambiente:} artefacto documental del proyecto.
+    \item \textbf{Ítems evaluados:} relación entre pruebas, requerimientos, casos de uso, atributos de calidad y estado de ejecución.
+    \item \textbf{Criterios de completitud:}
+    \begin{itemize}
+        \item Cada prueba crítica cuenta con identificador único.
+        \item Cada prueba se asocia con al menos un requerimiento, caso de uso o atributo de calidad.
+        \item La matriz diferencia estado de implementación y estado de ejecución.
+        \item Las coberturas parciales y exclusiones por alcance quedan documentadas.
+    \end{itemize}
+\end{itemize}
+
+% =========================
+% 6. Ambiente y datos de prueba
+% =========================
+\section{Ambiente y datos de prueba}
+
+Esta sección describe los ambientes, herramientas, configuraciones y datos utilizados para ejecutar las pruebas de \NombreProyecto. Dado que el sistema corresponde a un prototipo académico, las pruebas se realizan en ambientes controlados y no contemplan operación sobre mainnet, pagos reales ni activos con valor económico.
+
+El ambiente de pruebas se organiza en cuatro niveles principales: ambiente local de desarrollo, ambiente de integración, ambiente de despliegue académico y ambiente blockchain de pruebas sobre Stellar/Soroban Testnet. Esta separación permite validar los componentes de manera aislada y posteriormente verificar los flujos principales del sistema de forma integrada.
+
+\subsection{Ambientes de prueba}
+
+Los ambientes considerados para la ejecución de pruebas son los siguientes:
+
+\begin{longtable}{|p{3.5cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Ambiente} & \textbf{Descripción} & \textbf{Uso dentro del plan de pruebas} \\
+\hline
+Ambiente local de desarrollo & Entorno ejecutado en las máquinas del equipo de desarrollo, con frontend, backend, base de datos y contratos configurados localmente o contra servicios de prueba. & Ejecución de pruebas unitarias, pruebas de API, pruebas de integración, pruebas E2E locales y validaciones iniciales de flujos. \\
+\hline
+Ambiente de integración & Entorno utilizado para validar la interacción entre backend, base de datos, indexador y eventos normalizados asociados a la lógica on-chain. & Ejecución de pruebas de integración, sincronización on-chain/off-chain y validación de persistencia. \\
+\hline
+Ambiente de despliegue académico & Entorno desplegado para validar que el prototipo pueda ejecutarse fuera del ambiente local, incluyendo frontend, backend y servicios asociados. & Ejecución de smoke test de despliegue, pruebas de aceptación y validación básica de disponibilidad. \\
+\hline
+Stellar/Soroban Testnet & Red de pruebas utilizada para validar operaciones blockchain sin activos reales ni exposición a mainnet. & Ejecución de pruebas relacionadas con contratos inteligentes, reventa manual guiada con Freighter y validación de transacciones de prueba. \\
+\hline
+\end{longtable}
+
+\subsection{Configuración técnica del ambiente}
+
+La configuración técnica contempla los componentes principales requeridos para ejecutar el prototipo y sus pruebas.
+
+\begin{longtable}{|p{4cm}|p{5cm}|p{5.5cm}|}
+\hline
+\textbf{Componente} & \textbf{Tecnología / herramienta} & \textbf{Propósito en pruebas} \\
+\hline
+Frontend web & React, Vite, TypeScript y Playwright & Ejecutar la interfaz del usuario y validar flujos end-to-end del prototipo. \\
+\hline
+Backend/API & Node.js, Express, TypeScript, framework de pruebas del backend y Supertest & Ejecutar reglas de negocio, endpoints REST, pruebas unitarias, pruebas de API y validaciones de seguridad funcional. \\
+\hline
+Contratos inteligentes & Rust, Soroban SDK y Cargo Test & Validar la lógica on-chain de emisión, reventa, cancelación, invalidación y redención de tickets. \\
+\hline
+Base de datos & PostgreSQL & Persistir usuarios, eventos, tickets, órdenes, check-ins y campos asociados a la integración Web3. \\
+\hline
+ORM / migraciones & Prisma o herramienta equivalente definida en el repositorio & Gestionar el esquema de base de datos y validar el estado de migraciones. \\
+\hline
+Indexador & Servicio de sincronización implementado en backend & Procesar eventos o estados asociados a la lógica on-chain y reflejarlos en PostgreSQL. \\
+\hline
+Wallet & Freighter Wallet & Firmar operaciones de usuario en Stellar/Soroban Testnet durante la prueba manual guiada de reventa. \\
+\hline
+Red blockchain & Stellar/Soroban Testnet & Ejecutar operaciones blockchain de prueba sin usar mainnet ni activos reales. \\
+\hline
+Pruebas de carga & k6 & Ejecutar escenarios de carga sobre endpoints REST representativos. \\
+\hline
+Pruebas de aceptación & Formulario de aceptación y guía de tareas & Recoger retroalimentación de usuarios o stakeholders sobre los flujos principales del prototipo. \\
+\hline
+\end{longtable}
+
+\subsection{Variables de entorno}
+
+Para ejecutar las pruebas se requiere configurar variables de entorno asociadas al frontend, backend, base de datos, autenticación, contratos y red Stellar/Soroban Testnet. Los valores sensibles no deben incluirse en este documento ni en el repositorio público; únicamente se documentan los nombres de variables y su propósito.
+
+\begin{longtable}{|p{4.5cm}|p{7cm}|p{3cm}|}
+\hline
+\textbf{Variable} & \textbf{Propósito} & \textbf{Componente} \\
+\hline
+\texttt{DATABASE\_URL} & Cadena de conexión a PostgreSQL para ejecución del backend y pruebas de integración. & Backend / BD \\
+\hline
+\texttt{JWT\_SECRET} & Secreto utilizado para firmar o validar tokens de autenticación en ambiente de prueba. & Backend \\
+\hline
+\texttt{SOROBAN\_RPC\_URL} & URL del endpoint RPC de Stellar/Soroban Testnet. & Backend / Blockchain \\
+\hline
+\texttt{STELLAR\_NETWORK} & Identificador de la red Stellar utilizada. Para pruebas debe corresponder a Testnet. & Backend / Blockchain \\
+\hline
+\texttt{CONTRACT\_ADDRESS} & Dirección del contrato utilizado en pruebas o flujos de integración cuando aplique. & Backend / Blockchain \\
+\hline
+\texttt{FACTORY\_CONTRACT\_ADDRESS} & Dirección del contrato Factory cuando el flujo lo requiera. & Backend / Blockchain \\
+\hline
+\texttt{FRONTEND\_URL} & URL del frontend en ambiente local o desplegado. & Frontend / E2E \\
+\hline
+\texttt{BACKEND\_URL} & URL del backend/API utilizada por pruebas E2E, smoke test o carga. & Backend / E2E \\
+\hline
+\texttt{BASE\_URL} & URL base usada por los scripts de carga k6. & Carga \\
+\hline
+\texttt{E2E\_REAL} & Bandera para habilitar pruebas E2E contra ambiente real cuando aplique. & Frontend / E2E \\
+\hline
+\end{longtable}
+
+Los valores concretos de estas variables deben definirse en archivos locales de configuración, por ejemplo \texttt{.env}, \texttt{.env.test} o \texttt{.env.example}, según la estructura del repositorio. Ningún secreto real debe incluirse dentro del documento de pruebas.
+
+\subsection{Datos de prueba}
+
+Los datos de prueba se definen para representar los actores, eventos, tickets y estados necesarios para ejecutar los escenarios funcionales del sistema. Estos datos pueden provenir de seed data, fixtures, registros creados durante la prueba o configuraciones manuales del ambiente.
+
+\begin{longtable}{|p{3.5cm}|p{5.5cm}|p{5.5cm}|}
+\hline
+\textbf{Tipo de dato} & \textbf{Descripción} & \textbf{Uso en pruebas} \\
+\hline
+Usuarios compradores & Cuentas con rol \textit{CUSTOMER} utilizadas para compra primaria simulada, inventario y compra de reventa. & Pruebas E2E, API, UAT y reventa manual guiada. \\
+\hline
+Usuario vendedor & Cuenta con rol \textit{CUSTOMER} que posee tickets disponibles para listar en reventa. & Prueba manual guiada de reventa y validación de marketplace. \\
+\hline
+Usuario staff & Cuenta con rol \textit{STAFF} autorizada para operar el scanner QR. & Pruebas de scanner, seguridad por roles y smoke test. \\
+\hline
+Usuario administrador & Cuenta con rol \textit{ADMIN} utilizada para validar operaciones administrativas permitidas. & Pruebas de seguridad, scanner, smoke test y flujos administrativos. \\
+\hline
+Wallets de prueba & Cuentas Freighter o llaves de Stellar Testnet asociadas a usuarios de prueba. & Reventa manual guiada, firma de transacciones y validación de propietario. \\
+\hline
+Eventos de prueba & Eventos registrados en el sistema con tickets disponibles o asociados a contratos. & Compra primaria, inventario, marketplace y reventa. \\
+\hline
+Tickets disponibles & Tickets activos y operables asociados a eventos de prueba. & Compra, reventa, inventario y scanner. \\
+\hline
+Tickets usados & Tickets marcados como usados o con check-in registrado. & Validación de rechazo de doble escaneo y operaciones no permitidas. \\
+\hline
+Tickets invalidos o invalidables & Tickets utilizados para validar restricciones de invalidación, compra, listado o escaneo. & Pruebas de contrato, API y scanner. \\
+\hline
+Tickets listados en reventa & Tickets marcados como disponibles en marketplace secundario. & Reventa manual guiada, cancelación y validación de marketplace. \\
+\hline
+Códigos QR válidos & Representaciones QR asociadas a tickets existentes y activos. & Scanner QR y pruebas E2E de verificación. \\
+\hline
+Códigos QR inválidos & QR falsos, expirados, stale, inexistentes o manipulados. & Casos negativos del scanner QR. \\
+\hline
+Eventos on-chain normalizados & Fixtures o estructuras simuladas de eventos emitidos por contratos Soroban. & Pruebas de integración del indexador y sincronización on-chain/off-chain. \\
+\hline
+\end{longtable}
+
+\subsection{Estados de ticket considerados}
+
+Las pruebas consideran diferentes estados del ticket para validar que el sistema permita o rechace operaciones según corresponda. La nomenclatura exacta puede variar de acuerdo con la implementación, pero conceptualmente se manejan los siguientes estados:
+
+\begin{longtable}{|p{3.5cm}|p{6cm}|p{5cm}|}
+\hline
+\textbf{Estado} & \textbf{Descripción} & \textbf{Uso en pruebas} \\
+\hline
+Activo / Disponible & Ticket válido que puede ser usado, comprado o listado según el flujo correspondiente. & Compra, reventa e inventario. \\
+\hline
+Listado en reventa & Ticket ofrecido en el marketplace secundario por su propietario. & Reventa y cancelación de reventa. \\
+\hline
+Vendido / Asignado & Ticket asociado a un comprador después de una compra primaria simulada o reventa. & Inventario y trazabilidad. \\
+\hline
+Usado & Ticket que ya fue verificado mediante scanner o redimido según el nivel evaluado. & Rechazo de doble escaneo y prevención de reutilización. \\
+\hline
+Invalidado & Ticket marcado como no operable por reglas del sistema o contrato. & Rechazo de compra, listado, escaneo o redención. \\
+\hline
+Cancelado de reventa & Ticket retirado del marketplace secundario por su propietario o por regla del sistema. & Validación de cancelación y rechazo de compra posterior. \\
+\hline
+Inexistente o manipulado & Identificador de ticket que no corresponde a un registro válido del sistema. & Casos negativos de API, scanner y seguridad. \\
+\hline
+\end{longtable}
+
+\subsection{Datos para pruebas de carga}
+
+Las pruebas de carga requieren datos estables y no destructivos que permitan ejecutar escenarios repetibles sobre endpoints REST. Para evitar alteración no controlada del estado del sistema, se priorizan endpoints de lectura y operaciones controladas.
+
+\begin{longtable}{|p{4cm}|p{6cm}|p{4.5cm}|}
+\hline
+\textbf{Escenario} & \textbf{Datos requeridos} & \textbf{Observaciones} \\
+\hline
+Lectura pública & Eventos existentes, marketplace o listado público de tickets. & No requiere autenticación ni modifica datos críticos. \\
+\hline
+Usuarios autenticados & Usuarios de prueba con credenciales válidas y tickets asociados. & Requiere tokens o credenciales configuradas mediante variables de entorno. \\
+\hline
+Operaciones críticas controladas & Usuario staff/admin, QR de prueba, ticket controlado o flujo de checkout simulado. & Debe evitar datos destructivos o reiniciar el estado antes de cada ejecución. \\
+\hline
+\end{longtable}
+
+\subsection{Consideraciones de seguridad sobre datos de prueba}
+
+Los datos utilizados durante las pruebas deben cumplir las siguientes condiciones:
+
+\begin{itemize}
+    \item No deben incluir información personal sensible real.
+    \item No deben utilizar activos con valor económico.
+    \item No deben incluir claves privadas reales dentro del repositorio o del documento.
+    \item Las wallets utilizadas deben corresponder exclusivamente a Stellar/Soroban Testnet.
+    \item Las credenciales de prueba deben poder rotarse o reemplazarse sin afectar el sistema.
+    \item Los códigos QR utilizados para pruebas negativas deben ser generados únicamente con fines de validación.
+    \item Los datos destructivos o de cambio de estado deben aislarse para evitar afectar otros escenarios de prueba.
+\end{itemize}
+
+\subsection{Criterios de preparación del ambiente}
+
+Antes de ejecutar las pruebas, se debe verificar que el ambiente cumpla con los siguientes criterios:
+
+\begin{itemize}
+    \item El repositorio se encuentra en la rama y commit definidos para la ejecución de pruebas.
+    \item Las dependencias del frontend, backend y contratos están instaladas correctamente.
+    \item Las variables de entorno requeridas están configuradas.
+    \item La base de datos está disponible y con migraciones aplicadas.
+    \item Los usuarios, eventos, tickets y QR de prueba están creados o disponibles.
+    \item Los contratos requeridos están compilados o desplegados según el tipo de prueba.
+    \item La red configurada para blockchain corresponde a Stellar/Soroban Testnet.
+    \item El backend y frontend se encuentran ejecutándose para pruebas E2E, smoke test o carga.
+    \item Freighter Wallet está configurado con cuentas de Testnet para la prueba manual guiada de reventa.
+    \item Los scripts de carga y guías manuales se encuentran actualizados en el repositorio.
+\end{itemize}
+
+% =========================
+% 7. Criterios de entrada y salida
+% =========================
+\section{Criterios de entrada y salida}
+
+Los criterios de entrada y salida establecen las condiciones mínimas que deben cumplirse antes de iniciar la ejecución de las pruebas y las condiciones necesarias para considerar que una prueba, grupo de pruebas o fase de validación ha finalizado satisfactoriamente. Estos criterios permiten controlar la ejecución del plan de pruebas, reducir ambigüedades y asegurar que los resultados obtenidos sean trazables y reproducibles.
+
+Dado que \NombreProyecto{} integra componentes frontend, backend, base de datos, contratos inteligentes y servicios externos de prueba, los criterios se definen tanto de forma general como por tipo de prueba.
+
+\subsection{Criterios generales de entrada}
+
+Antes de iniciar la ejecución formal de las pruebas, se deben cumplir las siguientes condiciones:
+
+\begin{longtable}{|p{4cm}|p{9.5cm}|p{2cm}|}
+\hline
+\textbf{Criterio} & \textbf{Descripción} & \textbf{Estado} \\
+\hline
+Versión congelada & Debe existir una rama, tag o commit definido para la ejecución de pruebas, evitando cambios no controlados durante la validación. & Pendiente \\
+\hline
+Repositorio disponible & El código fuente del frontend, backend, contratos y pruebas debe estar disponible en el repositorio oficial del proyecto. & Pendiente \\
+\hline
+Dependencias instaladas & Las dependencias requeridas para frontend, backend, contratos y herramientas de prueba deben estar instaladas correctamente. & Pendiente \\
+\hline
+Variables de entorno configuradas & Los archivos de configuración requeridos deben estar disponibles en el ambiente de prueba, sin exponer secretos reales. & Pendiente \\
+\hline
+Base de datos disponible & PostgreSQL debe estar disponible y con las migraciones aplicadas para ejecutar pruebas de API, integración y E2E. & Pendiente \\
+\hline
+Datos de prueba preparados & Usuarios, eventos, tickets, roles, códigos QR y wallets de Testnet deben estar disponibles según el tipo de prueba. & Pendiente \\
+\hline
+Contratos compilados & Los contratos inteligentes deben compilar correctamente antes de ejecutar pruebas de contrato o flujos blockchain. & Pendiente \\
+\hline
+Red blockchain configurada & Las pruebas blockchain deben estar configuradas exclusivamente contra Stellar/Soroban Testnet o entorno local de contrato. & Pendiente \\
+\hline
+Servicios ejecutándose & Para pruebas E2E, carga, smoke test o aceptación, el frontend y backend deben estar activos y accesibles. & Pendiente \\
+\hline
+Freighter configurado & Para la prueba manual de reventa, Freighter Wallet debe estar configurado con cuentas de Stellar Testnet y fondos de prueba suficientes. & Pendiente \\
+\hline
+Matriz de trazabilidad disponible & Debe existir una matriz base que relacione pruebas con requerimientos, casos de uso o atributos de calidad. & Pendiente \\
+\hline
+\end{longtable}
+
+El estado de cada criterio será actualizado durante la fase de ejecución formal de pruebas.
+
+\subsection{Criterios generales de salida}
+
+Una vez ejecutadas las pruebas, se considerará que el proceso de validación cumple su salida general cuando se satisfagan las siguientes condiciones:
+
+\begin{longtable}{|p{4cm}|p{9.5cm}|p{2cm}|}
+\hline
+\textbf{Criterio} & \textbf{Descripción} & \textbf{Estado} \\
+\hline
+Pruebas ejecutadas & Las pruebas planificadas para el alcance definido deben haberse ejecutado o contar con justificación explícita en caso de no ejecución. & Pendiente \\
+\hline
+Resultados registrados & Cada prueba ejecutada debe contar con estado: aprobada, fallida, parcial, bloqueada o no aplica. & Pendiente \\
+\hline
+Fallos bloqueantes identificados & Los errores críticos encontrados durante la ejecución deben estar documentados y clasificados. & Pendiente \\
+\hline
+Fallos bloqueantes corregidos o justificados & Los defectos que impidan validar un flujo crítico deben corregirse o declararse como limitación del prototipo. & Pendiente \\
+\hline
+Evidencia asociada & Las pruebas ejecutadas deben contar con evidencia correspondiente, como logs, resultados de consola, capturas, reportes, tx hashes o formularios. & Pendiente \\
+\hline
+Trazabilidad actualizada & La matriz de trazabilidad debe reflejar el estado real de implementación y ejecución de cada prueba. & Pendiente \\
+\hline
+Limitaciones documentadas & Las coberturas parciales, exclusiones y decisiones de alcance deben estar explícitamente registradas. & Pendiente \\
+\hline
+Conclusión de calidad & Debe existir una conclusión sobre el estado de calidad del prototipo con base en los resultados obtenidos. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Criterios de entrada por tipo de prueba}
+
+Además de los criterios generales, cada tipo de prueba requiere condiciones específicas antes de su ejecución.
+
+\begin{longtable}{|p{3.5cm}|p{11cm}|}
+\hline
+\textbf{Tipo de prueba} & \textbf{Criterios de entrada} \\
+\hline
+Pruebas de contratos & Los contratos deben compilar correctamente; el entorno Rust/Soroban debe estar configurado; los casos de prueba deben estar implementados en el repositorio. \\
+\hline
+Pruebas backend/API & El backend debe tener dependencias instaladas; la base de datos de prueba debe estar disponible; las variables de entorno deben estar configuradas; los usuarios y roles de prueba deben existir o ser creados por fixtures. \\
+\hline
+Pruebas de integración & La base de datos debe estar migrada; los fixtures o eventos normalizados deben estar disponibles; el servicio de indexación o módulo equivalente debe poder ejecutarse en ambiente de prueba. \\
+\hline
+Pruebas frontend/E2E & El frontend y backend deben estar ejecutándose; los usuarios de prueba deben existir; los datos mínimos de eventos y tickets deben estar disponibles; la herramienta E2E debe estar configurada. \\
+\hline
+Prueba manual de reventa Testnet & Freighter debe estar instalado; las wallets de Testnet deben estar configuradas; los usuarios deben estar vinculados a wallets; el ticket a revender debe existir; los contratos y backend deben apuntar a Testnet. \\
+\hline
+Pruebas del scanner QR & Deben existir tickets válidos, usados, inválidos o inexistentes según el caso; los usuarios STAFF y ADMIN deben estar disponibles; los QR de prueba deben estar generados. \\
+\hline
+Pruebas de carga & El backend debe estar disponible; los endpoints definidos deben responder correctamente en condiciones normales; las credenciales o tokens de prueba deben estar configurados; los datos usados deben ser estables. \\
+\hline
+Smoke test de despliegue & Las URLs de frontend y backend deben estar disponibles; el commit desplegado debe estar identificado; los usuarios y datos mínimos deben existir. \\
+\hline
+Pruebas de aceptación & La guía de tareas debe estar definida; el formulario debe estar preparado; los usuarios o stakeholders deben estar seleccionados; el ambiente debe estar estable para ejecutar las tareas. \\
+\hline
+Trazabilidad & La matriz debe contener los identificadores de pruebas, su tipo, nivel y relación con requerimientos o casos de uso. \\
+\hline
+\end{longtable}
+
+\subsection{Criterios de salida por tipo de prueba}
+
+Cada grupo de pruebas se considera finalizado cuando cumple los siguientes criterios de salida:
+
+\begin{longtable}{|p{3.5cm}|p{11cm}|}
+\hline
+\textbf{Tipo de prueba} & \textbf{Criterios de salida} \\
+\hline
+Pruebas de contratos & Todas las pruebas ejecutadas deben pasar o, en caso de falla, el defecto debe estar documentado. Deben quedar cubiertos los casos críticos de emisión, reventa, cancelación, invalidación, redención y negativos relevantes. \\
+\hline
+Pruebas backend/API & Los endpoints críticos deben responder según lo esperado; las reglas de negocio, autorización, scanner y validaciones de estado deben aprobarse sin fallos bloqueantes. \\
+\hline
+Pruebas de integración & Los eventos o estados procesados deben reflejarse correctamente en PostgreSQL; no debe haber duplicaciones ni inconsistencias visibles en los datos evaluados. \\
+\hline
+Pruebas frontend/E2E & Los flujos principales deben completarse desde la interfaz o mostrar errores controlados cuando corresponda. Los errores visuales o funcionales críticos deben quedar registrados. \\
+\hline
+Prueba manual de reventa Testnet & La guía debe ejecutarse completamente o registrar el punto exacto de bloqueo. Debe quedar claro si hubo cambio de propietario, actualización de estado y transacción en Testnet. \\
+\hline
+Pruebas del scanner QR & El scanner debe aceptar QR válidos y rechazar QR inválidos, usados, expirados, inexistentes o ejecutados por usuarios no autorizados. \\
+\hline
+Pruebas de carga & Los escenarios deben completar su ejecución y reportar métricas de error rate, promedio, máximo y percentil 95. Los resultados deben compararse con los umbrales definidos. \\
+\hline
+Smoke test de despliegue & Los servicios principales deben estar disponibles y permitir ejecutar los flujos mínimos definidos para el ambiente desplegado. \\
+\hline
+Pruebas de aceptación & Los participantes deben completar las tareas asignadas o registrar los bloqueos encontrados. Los formularios deben consolidarse para análisis. \\
+\hline
+Trazabilidad & La matriz debe actualizarse con el estado real de cada prueba y su relación con requerimientos, casos de uso o atributos de calidad. \\
+\hline
+\end{longtable}
+
+\subsection{Estados de resultado de prueba}
+
+Para unificar el registro de resultados, cada prueba será clasificada con uno de los siguientes estados:
+
+\begin{longtable}{|p{3.5cm}|p{11cm}|}
+\hline
+\textbf{Estado} & \textbf{Descripción} \\
+\hline
+Aprobada & La prueba se ejecutó y el resultado obtenido coincide con el resultado esperado. \\
+\hline
+Fallida & La prueba se ejecutó, pero el resultado obtenido no coincide con el resultado esperado. \\
+\hline
+Parcial & La prueba se ejecutó o implementó parcialmente, pero no cubre la totalidad del flujo o depende de una limitación del prototipo. \\
+\hline
+Bloqueada & La prueba no pudo ejecutarse por ausencia de ambiente, datos, credenciales, dependencia externa o defecto bloqueante. \\
+\hline
+No ejecutada & La prueba está definida o implementada, pero aún no se ha ejecutado formalmente. \\
+\hline
+No aplica & La prueba no corresponde al alcance del prototipo o requiere capacidades fuera del alcance académico, como mainnet, pagos reales o infraestructura productiva. \\
+\hline
+\end{longtable}
+
+\subsection{Criterio de suspensión y reanudación}
+
+Una prueba o grupo de pruebas podrá suspenderse temporalmente cuando se presente alguna de las siguientes condiciones:
+
+\begin{itemize}
+    \item El ambiente requerido no se encuentra disponible.
+    \item La base de datos no está migrada o no contiene los datos mínimos.
+    \item Las variables de entorno no están configuradas correctamente.
+    \item El frontend o backend no inicia correctamente.
+    \item Freighter no está configurado para Stellar/Soroban Testnet en la prueba manual de reventa.
+    \item Una dependencia externa de prueba, como Stellar/Soroban Testnet, no responde adecuadamente.
+    \item Se identifica un defecto bloqueante que impide continuar con el flujo evaluado.
+\end{itemize}
+
+La ejecución podrá reanudarse cuando la condición que generó la suspensión sea corregida, documentada o reemplazada por un escenario equivalente dentro del alcance del prototipo.
+
+% =========================
+% 8. Casos de prueba
+% =========================
+\section{Casos de prueba}
+
+Esta sección presenta los casos de prueba definidos para validar los componentes y flujos principales de \NombreProyecto. Los casos se organizan por tipo de prueba y se relacionan con los elementos críticos del sistema: contratos inteligentes, backend/API, frontend, scanner QR, reventa en Testnet, sincronización on-chain/off-chain, seguridad, carga, despliegue y aceptación de usuario.
+
+Los casos descritos en esta sección corresponden a pruebas implementadas, pruebas automatizadas listas para ejecución o guías manuales definidas para flujos que no se automatizan por restricciones técnicas, como la interacción con Freighter Wallet. El estado final de cada caso será actualizado después de la ejecución formal de las pruebas.
+
+\subsection{Formato de los casos de prueba}
+
+Para mantener consistencia en el registro de pruebas, cada caso se describe mediante los siguientes campos:
+
+\begin{longtable}{|p{3.5cm}|p{11cm}|}
+\hline
+\textbf{Campo} & \textbf{Descripción} \\
+\hline
+ID & Identificador único del caso de prueba. \\
+\hline
+Nombre & Nombre corto del caso de prueba. \\
+\hline
+Tipo & Clasificación de la prueba: contrato, API, integración, E2E, carga, manual guiada, aceptación o documental. \\
+\hline
+Precondiciones & Condiciones necesarias antes de ejecutar la prueba. \\
+\hline
+Pasos resumidos & Secuencia general de acciones requeridas para ejecutar el caso. \\
+\hline
+Resultado esperado & Comportamiento que debe presentar el sistema para considerar la prueba aprobada. \\
+\hline
+Estado & Estado de ejecución de la prueba: pendiente, aprobada, fallida, parcial, bloqueada o no aplica. \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba de contratos inteligentes}
+
+Los casos de prueba de contratos inteligentes validan la lógica on-chain implementada en Soroban. Estas pruebas se ejecutan principalmente mediante \texttt{cargo test} y permiten verificar que las reglas críticas del ciclo de vida del ticket funcionen correctamente.
+
+\begin{longtable}{|p{2.4cm}|p{3.4cm}|p{4.2cm}|p{4.2cm}|p{1.8cm}|}
+\hline
+\textbf{ID} & \textbf{Caso} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+CONTRACT-ISSUE-01 & Emisión de boleto & Contrato inicializado y datos válidos de evento/ticket. & El contrato crea un boleto único asociado al evento y al propietario correspondiente. & Pendiente \\
+\hline
+CONTRACT-RESALE-01 & Reventa de boleto & Existe un boleto activo y propietario autorizado. & El contrato permite ejecutar la reventa bajo las reglas definidas y actualiza la propiedad del ticket. & Pendiente \\
+\hline
+CONTRACT-BURN-REMINT-01 & Burn/remint o versionamiento de ticket & Existe un ticket que será transferido en reventa. & La versión anterior queda no operable y se refleja una nueva versión o estado equivalente del ticket. & Pendiente \\
+\hline
+CONTRACT-COMMISSION-01 & Distribución de comisiones & Existe una operación de reventa con precio y reglas de comisión definidas. & El contrato calcula y distribuye las comisiones según la lógica establecida. & Pendiente \\
+\hline
+CONTRACT-RESALE-CANCEL-01 & Cancelación de reventa & Existe un ticket listado para reventa por su propietario. & El propietario puede cancelar la venta y el ticket deja de estar disponible en reventa. & Pendiente \\
+\hline
+CONTRACT-INVALIDATE-01 & Invalidación de boleto & Existe un ticket activo o listado. & El boleto invalidado no puede venderse, listarse, comprarse ni redimirse posteriormente. & Pendiente \\
+\hline
+CONTRACT-REDEEM-01 & Redención on-chain & Existe un ticket válido y un verificador autorizado. & El contrato permite la redención por verificador autorizado y rechaza redenciones no autorizadas o repetidas. & Pendiente \\
+\hline
+CONTRACT-NEG-01 & Casos negativos de contrato & Existen entradas inválidas: ticket inexistente, usuario no autorizado, boleto usado o invalidado. & El contrato rechaza las operaciones inválidas sin alterar indebidamente el estado. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba backend/API}
+
+Los casos de prueba backend/API verifican los endpoints, reglas de negocio, seguridad funcional y validaciones realizadas del lado del servidor. Estas pruebas se ejecutan mediante el framework de pruebas del backend y Supertest o herramienta equivalente.
+
+\begin{longtable}{|p{2.6cm}|p{3.8cm}|p{4.2cm}|p{3.8cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Caso} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+API-AUTH-01 & Acceso sin token & Endpoint protegido disponible. & El sistema rechaza la solicitud con código 401 o equivalente. & Pendiente \\
+\hline
+API-AUTH-02 & Token inválido o vencido & Se utiliza un token inválido, mal formado o expirado. & El sistema rechaza la solicitud y no ejecuta la operación. & Pendiente \\
+\hline
+SEC-ROLE-01 & Validación de roles & Usuarios con roles CUSTOMER, STAFF y ADMIN disponibles. & Cada rol solo puede ejecutar las operaciones permitidas. & Pendiente \\
+\hline
+API-TICKET-OWNER-01 & Operación sobre ticket ajeno & Usuario autenticado intenta operar un ticket que no le pertenece. & El backend rechaza la operación. & Pendiente \\
+\hline
+API-REQUEST-MANIP-01 & Manipulación de request & Solicitud con precio, estado o identificador manipulado. & El backend valida la información y rechaza operaciones inválidas. & Pendiente \\
+\hline
+API-SCAN-NEG-01 & Scanner QR con negativos & Existen QR válidos, inválidos, usados, expirados e inexistentes. & El scanner acepta QR válidos y rechaza casos inválidos o no autorizados. & Pendiente \\
+\hline
+API-TICKET-INVALIDATE-01 & Invalidación de ticket & Existe ticket activo o invalidable según la implementación. & El sistema bloquea operaciones posteriores sobre tickets invalidos o invalidados. & Parcial \\
+\hline
+API-RESALE-CANCEL-01 & Cancelación de reventa & Existe ticket listado para reventa. & La cancelación retira el ticket del marketplace y evita compras posteriores. & Pendiente \\
+\hline
+API-CHECKIN-01 & Registro de check-in & Ticket válido y usuario STAFF/ADMIN. & El sistema registra el check-in y evita duplicación en escaneos posteriores. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba de integración}
+
+Los casos de integración validan la interacción entre backend, base de datos, indexador y eventos asociados a la lógica on-chain. En esta categoría se aceptan eventos normalizados o fixtures cuando la prueba no depende directamente de una transacción real en Testnet.
+
+\begin{longtable}{|p{2.8cm}|p{3.8cm}|p{4.2cm}|p{3.8cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Caso} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+INT-SYNC-01 & Sincronización de eventos & Base de datos disponible y eventos normalizados definidos. & Los eventos procesados actualizan correctamente PostgreSQL. & Pendiente \\
+\hline
+INT-SYNC-02 & Evento de boleto creado & Evento de creación disponible. & Se crea o actualiza el registro del ticket con los campos esperados. & Pendiente \\
+\hline
+INT-SYNC-03 & Evento de boleto listado & Evento de listado disponible. & El ticket queda marcado como disponible para reventa. & Pendiente \\
+\hline
+INT-SYNC-04 & Evento de venta cancelada & Evento de cancelación disponible. & El ticket deja de estar listado para reventa. & Pendiente \\
+\hline
+INT-SYNC-05 & Evento de boleto revendido & Evento de reventa disponible. & Se actualiza propietario, versión y estado del ticket. & Pendiente \\
+\hline
+INT-SYNC-06 & Evento de boleto redimido & Evento de redención disponible. & El ticket queda marcado como usado o redimido según el modelo de datos. & Pendiente \\
+\hline
+INT-SYNC-07 & Evento de boleto invalidado & Evento de invalidación disponible. & El ticket queda bloqueado para operaciones posteriores. & Pendiente \\
+\hline
+INT-SYNC-08 & Evento duplicado & Se procesa dos veces el mismo evento. & El sistema mantiene idempotencia y no duplica registros. & Pendiente \\
+\hline
+INT-SYNC-09 & Evento desconocido o mal formado & Evento no reconocido o con estructura inválida. & El sistema maneja el evento de forma controlada sin romper el proceso. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba frontend y end-to-end}
+
+Los casos frontend/E2E validan que los usuarios puedan completar flujos representativos desde la interfaz web del prototipo.
+
+\begin{longtable}{|p{2.6cm}|p{3.8cm}|p{4.3cm}|p{3.8cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Caso} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+E2E-BUY-01 & Compra primaria simulada & Usuario CUSTOMER, evento disponible y backend activo. & El usuario completa el checkout simulado y visualiza el ticket en inventario. & Pendiente \\
+\hline
+E2E-BUY-02 & Usuario no autenticado intenta comprar & Usuario sin sesión activa. & El sistema bloquea la compra o redirige al inicio de sesión. & Pendiente \\
+\hline
+E2E-BUY-03 & Error de checkout simulado & Condición de error controlada en checkout. & El sistema muestra un error comprensible y no deja estado inconsistente. & Pendiente \\
+\hline
+E2E-INVENTORY-01 & Consulta de inventario & Usuario autenticado con tickets asociados. & El inventario muestra los tickets correspondientes al usuario. & Pendiente \\
+\hline
+E2E-SCAN-01 & Scanner QR desde UI & Usuario STAFF/ADMIN y QR válido disponible. & El scanner muestra éxito para QR válido y registra el uso del ticket. & Pendiente \\
+\hline
+E2E-SCAN-02 & Doble escaneo desde UI & Ticket previamente escaneado. & El sistema rechaza el segundo escaneo y muestra mensaje de error. & Pendiente \\
+\hline
+E2E-SCAN-03 & QR inválido desde UI & QR inválido o manipulado. & El sistema rechaza el QR y muestra un mensaje de error comprensible. & Pendiente \\
+\hline
+E2E-SCAN-04 & CUSTOMER intenta acceder al scanner & Usuario con rol CUSTOMER. & El sistema bloquea el acceso a la funcionalidad de scanner. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Caso de prueba manual de reventa en Testnet}
+
+La reventa con Freighter se valida mediante una guía manual debido a la fragilidad de automatizar extensiones de wallet. Este caso representa el flujo central de la propuesta de \NombreProyecto{}.
+
+\begin{longtable}{|p{3.2cm}|p{11.5cm}|}
+\hline
+\textbf{Campo} & \textbf{Descripción} \\
+\hline
+ID & E2E-REV-01 \\
+\hline
+Nombre & Reventa manual guiada en Stellar/Soroban Testnet con Freighter. \\
+\hline
+Tipo & Manual guiada / Integración blockchain. \\
+\hline
+Precondiciones & Usuario A y Usuario B con cuentas y wallets de Testnet configuradas; Usuario A posee un ticket válido; contratos y backend apuntan a Stellar/Soroban Testnet; Freighter está instalado y configurado; PostgreSQL contiene los datos mínimos. \\
+\hline
+Pasos resumidos & Usuario A inicia sesión, conecta Freighter, lista un ticket propio para reventa; Usuario B inicia sesión, conecta Freighter y compra el ticket listado; se valida la firma, transacción en Testnet, cambio de propietario, actualización de inventario y consistencia con PostgreSQL. \\
+\hline
+Casos negativos & Compra del propio ticket, listado de ticket ajeno, compra de ticket cancelado, rechazo de firma en Freighter y wallet firmante distinta al usuario autenticado cuando aplique. \\
+\hline
+Resultado esperado & La reventa se completa en Stellar/Soroban Testnet, el ticket cambia de propietario, el marketplace e inventario se actualizan y los casos negativos son rechazados. \\
+\hline
+Estado & Pendiente de ejecución formal. \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba de carga}
+
+Las pruebas de carga se organizan en tres escenarios: lectura pública, usuarios autenticados y operaciones críticas controladas. Estas pruebas se ejecutan sobre endpoints REST y no sobre mainnet, Freighter ni transacciones Soroban masivas.
+
+\begin{longtable}{|p{2.8cm}|p{3.8cm}|p{4.4cm}|p{3.6cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Escenario} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+LOAD-PUBLIC-01 & Lectura pública & Backend disponible, eventos y marketplace configurados. & Los endpoints públicos responden bajo carga moderada con error rate y p95 dentro del umbral. & Pendiente \\
+\hline
+LOAD-AUTH-01 & Usuarios autenticados & Usuarios de prueba y credenciales válidas disponibles. & Login, inventario y endpoints autenticados responden dentro de los umbrales definidos. & Pendiente \\
+\hline
+LOAD-CRITICAL-01 & Operaciones críticas controladas & Usuario STAFF/ADMIN, QR o datos controlados y backend estable. & Scanner, checkout simulado u operaciones seleccionadas responden sin errores significativos. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba de smoke test de despliegue}
+
+El smoke test valida que el prototipo funcione de forma básica en el ambiente desplegado.
+
+\begin{longtable}{|p{2.8cm}|p{4cm}|p{4.2cm}|p{3.6cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Caso} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+SMOKE-DEPLOY-01 & Frontend disponible & URL de frontend desplegada. & La aplicación carga correctamente en navegador. & Pendiente \\
+\hline
+SMOKE-DEPLOY-02 & Backend disponible & URL de backend desplegada. & El endpoint de salud responde correctamente. & Pendiente \\
+\hline
+SMOKE-DEPLOY-03 & Login en despliegue & Usuario de prueba disponible. & El usuario puede iniciar sesión. & Pendiente \\
+\hline
+SMOKE-DEPLOY-04 & Consulta de eventos y marketplace & Datos públicos disponibles. & Los eventos y marketplace cargan correctamente. & Pendiente \\
+\hline
+SMOKE-DEPLOY-05 & Inventario y scanner & Usuario con tickets y usuario STAFF/ADMIN disponibles. & El inventario y scanner funcionan según el rol correspondiente. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Casos de prueba de aceptación de usuario}
+
+Las pruebas de aceptación se orientan a validar que usuarios o stakeholders puedan completar tareas representativas del prototipo y comprender los estados principales del ticket.
+
+\begin{longtable}{|p{2.6cm}|p{3.4cm}|p{4.3cm}|p{4cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Perfil} & \textbf{Tarea} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+UAT-01 & Comprador & Iniciar sesión, consultar eventos, comprar ticket y revisar inventario. & El usuario completa la compra simulada y comprende el estado del ticket. & Pendiente \\
+\hline
+UAT-02 & Vendedor/revendedor & Seleccionar ticket propio y listarlo para reventa. & El usuario comprende el proceso de publicación del ticket en marketplace. & Pendiente \\
+\hline
+UAT-03 & Comprador de reventa & Consultar marketplace y comprar un ticket de reventa si el flujo está disponible. & El usuario comprende el flujo de reventa y el cambio de propiedad. & Pendiente \\
+\hline
+UAT-04 & Staff/verificador & Escanear QR válido e intentar doble escaneo. & El usuario comprende el resultado del scanner y la prevención de doble uso. & Pendiente \\
+\hline
+UAT-05 & Admin/organizador & Revisar eventos, tickets o estados administrativos disponibles. & El usuario identifica la información operativa relevante del sistema. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Casos documentales de trazabilidad}
+
+La trazabilidad relaciona pruebas con requerimientos, casos de uso y atributos de calidad.
+
+\begin{longtable}{|p{2.8cm}|p{4cm}|p{4.3cm}|p{3.5cm}|p{1.6cm}|}
+\hline
+\textbf{ID} & \textbf{Caso} & \textbf{Precondiciones} & \textbf{Resultado esperado} & \textbf{Estado} \\
+\hline
+TRACE-01 & Matriz de trazabilidad & Requerimientos, casos de uso y pruebas identificadas. & Cada prueba crítica se asocia con al menos un requerimiento, caso de uso o atributo de calidad. & Pendiente \\
+\hline
+TRACE-02 & Cobertura parcial & Funcionalidades con cobertura parcial identificadas. & Las limitaciones quedan documentadas sin afirmar capacidades fuera del alcance. & Pendiente \\
+\hline
+TRACE-03 & Exclusiones por alcance & Elementos fuera del alcance definidos. & Mainnet, pagos reales, carga blockchain masiva y automatización completa de Freighter quedan excluidos explícitamente. & Pendiente \\
+\hline
+\end{longtable}
+
+\subsection{Resumen de cobertura de casos}
+
+La siguiente tabla resume la cobertura esperada por categoría de prueba.
+
+\begin{longtable}{|p{4cm}|p{5cm}|p{5.5cm}|}
+\hline
+\textbf{Categoría} & \textbf{Casos principales} & \textbf{Cobertura esperada} \\
+\hline
+Contratos inteligentes & CONTRACT-ISSUE, CONTRACT-RESALE, CONTRACT-REDEEM, CONTRACT-INVALIDATE & Lógica on-chain de emisión, reventa, redención, invalidación y negativos. \\
+\hline
+Backend/API & API-SCAN, SEC-ROLE, API-RESALE-CANCEL, API-TICKET-INVALIDATE & Reglas de negocio, seguridad funcional, scanner, cancelación e invalidación parcial. \\
+\hline
+Integración & INT-SYNC & Sincronización entre eventos normalizados y PostgreSQL. \\
+\hline
+Frontend/E2E & E2E-BUY, E2E-SCAN & Compra primaria simulada, inventario y scanner desde interfaz. \\
+\hline
+Reventa Testnet & E2E-REV-01 & Flujo manual guiado de reventa con Freighter sobre Stellar/Soroban Testnet. \\
+\hline
+Carga & LOAD-PUBLIC, LOAD-AUTH, LOAD-CRITICAL & Rendimiento básico sobre endpoints REST representativos. \\
+\hline
+Despliegue & SMOKE-DEPLOY & Disponibilidad mínima de frontend, backend y flujos básicos. \\
+\hline
+Aceptación & UAT & Validación académica con usuarios o stakeholders. \\
+\hline
+Trazabilidad & TRACE & Relación entre pruebas, requerimientos, casos de uso y limitaciones. \\
+\hline
+\end{longtable}
+
+% =========================
+% 9. Resultados y análisis
+% =========================
+\section{Resultados y análisis}
+
+\subsection{Resumen general de ejecución}
+
+\begin{longtable}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Tipo de prueba} & \textbf{Ejecutadas} & \textbf{Exitosas} & \textbf{Fallidas} & \textbf{No ejecutadas} \\
+\hline
+Unitarias & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} \\
+\hline
+Sistema & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} \\
+\hline
+Carga & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} \\
+\hline
+Aceptación de usuario & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} \\
+\hline
+Configurabilidad & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} & \CampoEditable{N} \\
+\hline
+\end{longtable}
+
+\subsection{Resultados de pruebas unitarias}
+
+\CampoEditable{Describir resultados por servicio: Users, Products, Orders y Reviews. Incluir cobertura, errores encontrados y correcciones realizadas.}
+
+\subsection{Resultados de pruebas de sistema}
+
+\CampoEditable{Describir resultados por flujo: creación/edición de productos, compra, seguimiento en tiempo real y seguimiento por estados.}
+
+\subsection{Resultados de pruebas de carga}
+
+\begin{longtable}{|p{4cm}|p{3cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{Endpoint/Controlador} & \textbf{Tiempo promedio} & \textbf{Throughput} & \textbf{Tasa de error} & \textbf{Conclusión} \\
+\hline
+\CampoEditable{Endpoint} & \CampoEditable{ms} & \CampoEditable{req/s} & \CampoEditable{\%} & \CampoEditable{Aprobado/Fallido} \\
+\hline
+\end{longtable}
+
+\subsection{Resultados de aceptación de usuario}
+
+\CampoEditable{Incluir el análisis de encuestas, comentarios de usuarios, porcentajes de aceptación y observaciones relevantes.}
+
+\subsection{Resultados de configurabilidad}
+
+\CampoEditable{Describir el comportamiento del derivador frente a producto mínimo, producto máximo, producto no válido y producto con restricciones aplicadas.}
+
+\subsection{Análisis de defectos}
+
+\begin{longtable}{|p{2cm}|p{4cm}|p{3cm}|p{3cm}|p{3cm}|}
+\hline
+\textbf{ID defecto} & \textbf{Descripción} & \textbf{Severidad} & \textbf{Estado} & \textbf{Acción tomada} \\
+\hline
+DEF-01 & \CampoEditable{Descripción del defecto} & \CampoEditable{Alta/Media/Baja} & \CampoEditable{Abierto/Cerrado} & \CampoEditable{Acción} \\
+\hline
+\end{longtable}
+
+% =========================
+% 10. Riesgos
+% =========================
+\section{Riesgos y mitigaciones}
+
+\begin{longtable}{|p{2cm}|p{5cm}|p{3cm}|p{5cm}|}
+\hline
+\textbf{ID} & \textbf{Riesgo} & \textbf{Impacto} & \textbf{Mitigación} \\
+\hline
+R-01 & Ambiente de pruebas inestable. & Alto & Separar ambiente de pruebas y documentar configuración. \\
+\hline
+R-02 & Datos de prueba insuficientes. & Medio & Preparar datos válidos, inválidos y de borde antes de ejecutar pruebas. \\
+\hline
+R-03 & Pruebas de carga no representativas. & Medio & Definir escenarios de carga baja y alta con parámetros claros. \\
+\hline
+R-04 & Baja participación en pruebas de aceptación. & Medio & Definir tareas cortas, claras y medibles para los usuarios participantes. \\
+\hline
+R-05 & Configuraciones SPL no alineadas con el árbol de características. & Alto & Validar cada configuración contra FeatureIDE y registrar evidencia. \\
+\hline
+\end{longtable}
+
+% =========================
+% 11. Trazabilidad
+% =========================
+\section{Matriz de trazabilidad}
+
+\begin{longtable}{|p{3cm}|p{4cm}|p{4cm}|p{4cm}|}
+\hline
+\textbf{Requerimiento} & \textbf{Descripción} & \textbf{Caso(s) de prueba asociado(s)} & \textbf{Estado de validación} \\
+\hline
+REQ-01 & \CampoEditable{Descripción del requerimiento} & \CampoEditable{USR-01, PS-01, etc.} & \CampoEditable{Validado/Pendiente/Fallido} \\
+\hline
+REQ-02 & \CampoEditable{Descripción del requerimiento} & \CampoEditable{Casos asociados} & \CampoEditable{Estado} \\
+\hline
+REQ-03 & \CampoEditable{Descripción del requerimiento} & \CampoEditable{Casos asociados} & \CampoEditable{Estado} \\
+\hline
+\end{longtable}
+
+% =========================
+% 12. Conclusiones
+% =========================
+\section{Conclusiones}
+
+\CampoEditable{Redactar las conclusiones principales del proceso de pruebas. Indicar si el sistema cumple los criterios de aceptación, cuáles fueron los principales hallazgos y qué aspectos requieren mejora.}
+
+\subsection{Trabajo futuro}
+
+\CampoEditable{Indicar pruebas o mejoras futuras: automatización E2E, pruebas de seguridad, pruebas de usabilidad más formales, pruebas en producción controlada, etc.}
+
+% =========================
+% 13. Anexos
+% =========================
+\section{Anexos}
+
+\subsection{Anexo A: Evidencias de pruebas unitarias}
+
+\CampoEditable{Agregar capturas, reportes de cobertura o enlaces a resultados.}
+
+\subsection{Anexo B: Evidencias de pruebas de sistema}
+
+\CampoEditable{Agregar capturas de pantalla, colecciones de Postman o resultados manuales.}
+
+\subsection{Anexo C: Evidencias de pruebas de carga}
+
+\CampoEditable{Agregar reportes de JMeter, tablas de métricas y gráficos.}
+
+\subsection{Anexo D: Formularios de aceptación}
+
+\CampoEditable{Agregar preguntas, respuestas consolidadas y resultados de usuarios.}
+
+\subsection{Anexo E: Evidencias de configurabilidad}
+
+\CampoEditable{Agregar árbol de características, configuraciones generadas y capturas del derivador.}
+
+\end{document}
