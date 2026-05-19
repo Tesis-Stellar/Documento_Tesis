@@ -55,6 +55,52 @@
   tabsize=2
 }
 
+% ====== Permitir corte de línea dentro de \texttt (rutas/identificadores) ======
+% Evita que texto monoespaciado se salga del margen derecho. Inserta puntos
+% de corte (sin guion) que solo se usan si la línea lo necesita:
+%   - tras separadores ASCII  / . : - ,  y  \_   con prioridad alta (pen. 0)
+%   - tras cada letra/dígito ASCII con prioridad baja (pen. 800), como
+%     último recurso para cadenas largas sin separadores (p. ej.
+%     direcciones de contrato base32).
+% No toca caracteres acentuados (UTF-8): no se desfasa la codificación.
+\makeatletter
+\let\origtexttt\texttt
+% Define el significado "activo" del carácter #1 (carácter + punto de corte)
+% sin alterar su catcode global; el catcode se activa solo dentro de \texttt.
+\def\ttbreak@def#1{%
+  \expandafter\edef\csname ttbk@\number`#1\endcsname{%
+    \noexpand\char\number`#1\relax
+    \noexpand\penalty\ttbreak@pen\noexpand\hskip0pt\noexpand\relax}%
+  \expandafter\let\expandafter\ttbreak@cs\csname ttbk@\number`#1\endcsname
+  \begingroup\lccode`\~=`#1\relax
+  \lowercase{\endgroup\global\let~\ttbreak@cs}%
+}
+% Separadores: prioridad alta (penalty 0)
+\def\ttbreak@pen{0}%
+\ttbreak@def/\ttbreak@def.\ttbreak@def:\ttbreak@def-\ttbreak@def,
+% Letras y dígitos ASCII: prioridad baja (penalty 800)
+\def\ttbreak@pen{800}%
+\@tfor\ttbreak@c:=%
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\do{%
+  \expandafter\ttbreak@def\ttbreak@c}%
+% Versión de \_ con punto de corte (penalty 0)
+\def\ttbreak@uscore{\char95\penalty0\hskip0pt\relax}%
+\def\ttbreak@actcat#1{\catcode`#1=\active}%
+% Activa los catcodes solo dentro del grupo de \texttt
+\def\ttbreak@chars{%
+  \catcode`\/=\active \catcode`\.=\active \catcode`\:=\active
+  \catcode`\-=\active \catcode`\,=\active
+  \@tfor\ttbreak@c:=%
+ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789\do{%
+    \expandafter\ttbreak@actcat\ttbreak@c}%
+  \let\_\ttbreak@uscore}%
+\DeclareRobustCommand{\texttt}{\begingroup\ttfamily\ttbreak@chars\ttbreak@grab}
+\def\ttbreak@grab#1{#1\endgroup}
+\makeatother
+% Relaja la justificación para reducir desbordes en párrafos
+\emergencystretch=2.5em
+\tolerance=1200
+
 % ====== Metadatos del proyecto ======
 \newcommand{\projectname}{Reventa B2B de tickets con NFTs en Stellar (Soroban)}
 \newcommand{\shortname}{Proyecto Tickets-NFT B2B}
@@ -441,7 +487,7 @@ A continuación se describe cada caso de uso, destacando su relevancia arquitect
     \midrule
     \textbf{Postcondiciones} & El usuario es el nuevo propietario del boleto. El pago fue transferido al organizador. Futuras ventas de este boleto serán tratadas como reventa (con comisiones y burn/remint).\\
     \midrule
-    \textbf{Relevancia arquitectónica} & Ejerce la orquestación Backend$\rightarrow$Soroban, la escritura on-chain con registro off-chain posterior, y la transición \texttt{es\_reventa = false $\rightarrow$ true} que determina el comportamiento de todas las transacciones futuras sobre ese boleto.\\
+    \textbf{Relevancia arquitectónica} & Ejerce la orquestación Backend$\rightarrow$Soroban, la escritura on-chain con registro off-chain posterior, y la transición \texttt{es\_reventa = false -> true} que determina el comportamiento de todas las transacciones futuras sobre ese boleto.\\
     \bottomrule
   \end{tabularx}
   \caption{CU-02: Compra primaria de ticket}
@@ -846,9 +892,9 @@ Este es el flujo más crítico del sistema desde el punto de vista arquitectóni
   \item \textbf{Compra:} el comprador selecciona el boleto en el marketplace e inicia la compra. El frontend envía la solicitud al Backend API, que orquesta la invocación de \texttt{comprar\_boleto}.
   \item \textbf{Ejecución atómica en el contrato:} como \texttt{es\_reventa = true}, el contrato ejecuta la distribución de comisiones y el burn/remint en una sola transacción:
     \begin{enumerate}[label=\alph*)]
-      \item Calcula la comisión del organizador: \texttt{precio $\times$ ComisionOrganizador / 100}.
-      \item Calcula la comisión de la plataforma: \texttt{precio $\times$ ComisionPlataforma / 100}.
-      \item Calcula el pago neto al vendedor: \texttt{precio $-$ comisión\_org $-$ comisión\_plat}.
+      \item Calcula la comisión del organizador: \texttt{precio * ComisionOrganizador / 100}.
+      \item Calcula la comisión de la plataforma: \texttt{precio * ComisionPlataforma / 100}.
+      \item Calcula el pago neto al vendedor: \texttt{precio - comisión\_org - comisión\_plat}.
       \item Ejecuta tres transferencias mediante \texttt{ClienteToken}: al organizador, a la plataforma y al vendedor.
       \item \textbf{Burn:} marca la versión actual del boleto como \texttt{invalidado = true}, \texttt{en\_venta = false}.
       \item \textbf{Remint:} crea nueva versión (\texttt{version + 1}) con \texttt{propietario = comprador}, \texttt{en\_venta = false}, \texttt{es\_reventa = true}.
