@@ -1,10 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.22)  18 MAY 2026 22:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.3.22)  19 MAY 2026 23:09
 entering extended mode
  restricted \write18 enabled.
- file:line:error style messages enabled.
  %&-line parsing enabled.
-**plantilla_plan_pruebas_easymarket.tex
-(./plantilla_plan_pruebas_easymarket.tex
+**"Plan de Pruebas Secure Ticket.tex"
+(./Plan de Pruebas Secure Ticket.tex
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
 (/usr/local/texlive/2026/texmf-dist/tex/latex/base/article.cls
@@ -415,6 +414,18 @@ Package: titlesec 2025/01/04 v2.17 Sectioning titles
 \titlewidthlast=\dimen190
 \titlewidthfirst=\dimen191
 )
+(/usr/local/texlive/2026/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+Package: pdflscape 2025-06-23 v0.14 Display of landscape pages in PDF
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.st
+y
+Package: pdflscape-nometadata 2025-06-23 v0.14 Display of landscape pages in PD
+F (HO)
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
+Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
+))
 (/usr/local/texlive/2026/texmf-dist/tex/latex/caption/caption.sty
 Package: caption 2023/08/05 v3.6o Customizing captions (AR)
 
@@ -439,8 +450,8 @@ Package caption Info: longtable package is loaded.
 (/usr/local/texlive/2026/texmf-dist/tex/latex/caption/ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
 ))
-Package hyperref Info: Option `colorlinks' set `true' on input line 44.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 71
+Package hyperref Info: Option `colorlinks' set `true' on input line 47.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 77
 .
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmr.fd
@@ -450,34 +461,34 @@ File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count317
 )
-(./plantilla_plan_pruebas_easymarket.aux
+(./Plan de Pruebas Secure Ticket.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 Package babel Info: 'spanish' activates 'spanish' shorthands.
 (babel)             Reported on input line 11.
 )
-\openout1 = `plantilla_plan_pruebas_easymarket.aux'.
+\openout1 = `"Plan de Pruebas Secure Ticket.aux"'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 71.
-LaTeX Font Info:    ... okay on input line 71.
-LaTeX Info: Redefining \. on input line 71.
-LaTeX Info: Redefining \% on input line 71.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Info: Redefining \. on input line 77.
+LaTeX Info: Redefining \% on input line 77.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -535,61 +546,57 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-Package hyperref Info: Link coloring ON on input line 71.
+Package hyperref Info: Link coloring ON on input line 77.
 
-(./plantilla_plan_pruebas_easymarket.out)
-(./plantilla_plan_pruebas_easymarket.out)
+(./Plan de Pruebas Secure Ticket.out) (./Plan de Pruebas Secure Ticket.out)
 \@outlinefile=\write3
-\openout3 = `plantilla_plan_pruebas_easymarket.out'.
+\openout3 = `"Plan de Pruebas Secure Ticket.out"'.
 
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 9
-8.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
+04.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 9
-8.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
+04.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-98.
+104.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-98.
+104.
 
 (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 98.
+(Font)              <12> on input line 104.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 98.
+(Font)              <8> on input line 104.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 98.
+(Font)              <6> on input line 104.
  [1
 
 {/usr/local/texlive/2026/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{/usr/loc
 al/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}]
-Overfull \hbox (3.44417pt too wide) in paragraph at lines 120--121
-[]|\T1/lmr/bx/n/12 Responsable(s)| 
- []
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 130.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 130.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 130.
 
-
-Overfull \hbox (22.6938pt too wide) in paragraph at lines 122--122
-[]|[]\T1/lmr/m/it/12 [DD/MM/AAAA][]| 
- []
-
-
-Overfull \hbox (82.60147pt too wide) in alignment at lines 118--124
- [] [] [] [] [] 
+Overfull \hbox (2.0851pt too wide) in paragraph at lines 137--137
+ []|\T1/lmr/bx/n/10 Versión| 
  []
 
 
@@ -604,8 +611,8 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.126 \newpage
-               [1] (./plantilla_plan_pruebas_easymarket.toc
+l.159 \newpage
+               [1] (./Plan de Pruebas Secure Ticket.toc
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 
@@ -634,7 +641,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [4])
 \tf@toc=\write4
-\openout4 = `plantilla_plan_pruebas_easymarket.toc'.
+\openout4 = `"Plan de Pruebas Secure Ticket.toc"'.
 
 
 
@@ -644,12 +651,20 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[5] (./plantilla_plan_pruebas_easymarket.lot
+[5] (./Plan de Pruebas Secure Ticket.lot
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
-)
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[6])
 \tf@lot=\write5
-\openout5 = `plantilla_plan_pruebas_easymarket.lot'.
+\openout5 = `"Plan de Pruebas Secure Ticket.lot"'.
 
 
 
@@ -659,22 +674,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[6] (./plantilla_plan_pruebas_easymarket.lof
+[7] (./Plan de Pruebas Secure Ticket.lof
 LaTeX Info: Redefining \. on input line 1.
 LaTeX Info: Redefining \% on input line 1.
 )
 \tf@lof=\write6
-\openout6 = `plantilla_plan_pruebas_easymarket.lof'.
+\openout6 = `"Plan de Pruebas Secure Ticket.lof"'.
 
 
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[7]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -715,32 +722,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [12]
-Underfull \hbox (badness 1092) in paragraph at lines 270--271
-[]|\T1/lmr/bx/n/12 Tipo de va-li-
- []
-
-
-Underfull \hbox (badness 1303) in paragraph at lines 278--278
-[]|\T1/lmr/m/n/12 La re-ven-ta de-be va-li-dar-se me-dian-te una
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 284--284
-[]|\T1/lmr/m/n/12 Sincronización on-
- []
-
-
-Underfull \hbox (badness 2932) in paragraph at lines 292--293
-[]|\T1/lmr/m/n/12 Manual / For-
- []
-
-
-Overfull \hbox (9.4319pt too wide) in alignment at lines 268--298
- [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -757,246 +738,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [14]
-Underfull \hbox (badness 1024) in paragraph at lines 313--314
-[]|\T1/lmr/m/n/12 Verificar que la crea-
- []
-
-
-Underfull \hbox (badness 1127) in paragraph at lines 313--314
-\T1/lmr/m/n/12 ción y ad-mi-nis-tra-ción
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 317--317
-[]|\T1/lmr/m/n/12 Contrato de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 317--317
-\T1/lmr/m/n/12 re-pre-sen-ta-ción
- []
-
-
-Underfull \hbox (badness 1990) in paragraph at lines 317--317
-[]|\T1/lmr/m/n/12 Componente aso-cia-do a la
- []
-
-
-Underfull \hbox (badness 3209) in paragraph at lines 317--318
-[]|\T1/lmr/m/n/12 Verificar la uni-ci-dad,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 319--319
-[]|\T1/lmr/m/n/12 Servicio bac-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 319--320
-[]|\T1/lmr/m/n/12 Verificar el co-rrec-to
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 321--321
-[]|\T1/lmr/m/n/12 Indexador So-ro-
- []
-
-
-Underfull \hbox (badness 5637) in paragraph at lines 321--321
-[]|\T1/lmr/m/n/12 Componente en-car-ga-do de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 321--322
-[]|\T1/lmr/m/n/12 Validar la sin-cro-ni-
- []
-
-
-Underfull \hbox (badness 7186) in paragraph at lines 321--322
-\T1/lmr/m/n/12 za-ción en-tre even-tos
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 321--322
-\T1/lmr/m/n/12 block-chain y Post-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 321--322
-\T1/lmr/m/n/12 greSQL, evi-tan-do
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 323--323
-[]|\T1/lmr/m/n/12 Base de da-tos
- []
-
-
-Underfull \hbox (badness 1400) in paragraph at lines 323--323
-\T1/lmr/m/n/12 rios, even-tos, tic-kets, ór-de-
- []
-
-
-Underfull \hbox (badness 5302) in paragraph at lines 327--327
-\T1/lmr/m/n/12 / In-ter-faz de
- []
-
-
-Underfull \hbox (badness 1342) in paragraph at lines 327--327
-[]|\T1/lmr/m/n/12 Funcionalidad uti-li-za-da por
- []
-
-
-Underfull \hbox (badness 3568) in paragraph at lines 327--328
-\T1/lmr/m/n/12 usa-dos, in-vá-li-dos, in-
- []
-
-
-Underfull \hbox (badness 2591) in paragraph at lines 327--328
-\T1/lmr/m/n/12 pro-ce-sa-dos por usua-
- []
-
-
-Underfull \hbox (badness 3557) in paragraph at lines 331--331
-\T1/lmr/m/n/12 pri-ma-ria si-mu-la-
- []
-
-
-Underfull \hbox (badness 2384) in paragraph at lines 331--331
-\T1/lmr/m/n/12 usua-rio ad-quie-re un tic-ket
- []
-
-
-Underfull \hbox (badness 1635) in paragraph at lines 331--332
-\T1/lmr/m/n/12 pa-gos reales ni tran-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 333--333
-[]|\T1/lmr/m/n/12 Flujo de re-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 333--333
-\T1/lmr/m/n/12 ven-ta en Ste-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 333--333
-\T1/lmr/m/n/12 llar/Soroban
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 333--333
-\T1/lmr/m/n/12 / In-te-gra-ción
- []
-
-
-Underfull \hbox (badness 1354) in paragraph at lines 333--333
-\T1/lmr/m/n/12 so-bre Ste-llar/Soroban Test-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 335--335
-[]|\T1/lmr/m/n/12 Integración con
- []
-
-
-Underfull \hbox (badness 1163) in paragraph at lines 335--335
-\T1/lmr/m/n/12 da pa-ra fir-mar ope-ra-cio-nes
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 335--336
-\T1/lmr/m/n/12 que los flu-jos que
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 335--336
-\T1/lmr/m/n/12 re-quie-ren fir-ma de
- []
-
-
-Underfull \hbox (badness 3088) in paragraph at lines 335--336
-\T1/lmr/m/n/12 tar-se en Test-net sin
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 337--337
-[]|\T1/lmr/m/n/12 Integración con
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 337--337
-\T1/lmr/m/n/12 Ste-llar/Soroban
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 337--338
-[]|\T1/lmr/m/n/12 Validar ope-ra-cio-nes
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 337--338
-\T1/lmr/m/n/12 block-chain en un
- []
-
-
-Underfull \hbox (badness 5667) in paragraph at lines 337--338
-\T1/lmr/m/n/12 am-bien-te de prue-ba,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 337--338
-\T1/lmr/m/n/12 ex-clu-yen-do main-net,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 339--339
-[]|\T1/lmr/m/n/12 Escenario de
- []
-
-
-Underfull \hbox (badness 1796) in paragraph at lines 339--340
-[]|\T1/lmr/m/n/12 Evaluar es-ta-bi-li-dad y
- []
-
-
-Underfull \hbox (badness 2818) in paragraph at lines 339--340
-\T1/lmr/m/n/12 tiem-pos de res-pues-ta
- []
-
-
-Underfull \hbox (badness 1297) in paragraph at lines 341--341
-[]|\T1/lmr/m/n/12 Validación con
- []
-
-
-Underfull \hbox (badness 1242) in paragraph at lines 341--342
-\T1/lmr/m/n/12 ción so-bre la usa-bi-li-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 343--343
-[]|\T1/lmr/m/n/12 Smoke test de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 343--343
-[]|\T1/lmr/m/n/12 Validación de
- []
-
-
-Underfull \hbox (badness 4193) in paragraph at lines 345--346
-\T1/lmr/m/n/12 cuen-tren aso-cia-das a
- []
-
-
-Overfull \hbox (36.05826pt too wide) in alignment at lines 309--347
- [] [] [] [] 
- []
-
-
 ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1015,7 +756,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [16]
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1032,45 +772,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [18]
-Underfull \hbox (badness 10000) in paragraph at lines 392--393
-[]|\T1/lmr/bx/n/12 Tipo de prue-ba
- []
-
-
-Underfull \hbox (badness 1337) in paragraph at lines 394--394
-[]|\T1/lmr/m/n/12 Compra pri-ma-ria si-
- []
-
-
-Underfull \hbox (badness 7888) in paragraph at lines 394--395
-[]|\T1/lmr/m/n/12 E2E / Bac-kend /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 396--397
-[]|\T1/lmr/m/n/12 Manual guia-da /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 408--408
-[]|\T1/lmr/m/n/12 Sincronización on-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 410--410
-[]|\T1/lmr/m/n/12 Carga so-bre API
- []
-
-
-Underfull \hbox (badness 2799) in paragraph at lines 410--410
-[]|\T1/lmr/m/n/12 Evaluación del com-por-ta-mien-to del
- []
-
-
-Overfull \hbox (9.4319pt too wide) in alignment at lines 390--414
- [] [] [] 
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1079,7 +780,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [19]
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1096,60 +796,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [21]
-Underfull \hbox (badness 1137) in paragraph at lines 448--448
-[]|\T1/lmr/m/n/12 Invalidación ad-mi-nis-
- []
-
-
-Underfull \hbox (badness 1466) in paragraph at lines 448--449
-[]|\T1/lmr/m/n/12 No exis-te un end-point
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 450--451
-[]|\T1/lmr/m/n/12 Automatizar Freigh-ter
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 450--451
-\T1/lmr/m/n/12 pue-de ge-ne-rar prue-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 450--451
-\T1/lmr/m/n/12 bas frá-gi-les y po-co
- []
-
-
-Underfull \hbox (badness 3590) in paragraph at lines 454--455
-[]|\T1/lmr/m/n/12 Las prue-bas de car-ga
- []
-
-
-Underfull \hbox (badness 1448) in paragraph at lines 454--455
-\T1/lmr/m/n/12 se li-mi-tan a end-points
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 454--455
-\T1/lmr/m/n/12 REST re-pre-sen-ta-ti-vos
- []
-
-
-Underfull \hbox (badness 6741) in paragraph at lines 454--455
-\T1/lmr/m/n/12 pa-ra evi-tar re-sul-ta-dos
- []
-
-
-Underfull \hbox (badness 3942) in paragraph at lines 454--455
-\T1/lmr/m/n/12 po-co re-pre-sen-ta-ti-vos o
- []
-
-
-Overfull \hbox (9.4319pt too wide) in alignment at lines 442--456
- [] [] [] 
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1158,17 +804,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [22]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 7
+52.
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 7
+57.
 
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[23]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 5
-04.
- (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/ts1lmr.fd
+(/usr/local/texlive/2026/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
@@ -1178,7 +822,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[24{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
+[23{/usr/local/texlive/2026/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[24]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1187,6 +839,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [25]
+Overfull \hbox (7.56888pt too wide) in paragraph at lines 831--832
+[]\T1/lmr/bx/n/12 Herramientas: \T1/lmr/m/n/12 na-ve-ga-dor web, Freigh-ter Wa-
+llet, fron-tend del sis-te-ma, bac-kend/API,
+ []
+
+
+Overfull \hbox (9.93927pt too wide) in paragraph at lines 832--833
+[]\T1/lmr/bx/n/12 Ambiente: \T1/lmr/m/n/12 am-bien-te lo-cal o des-plie-gue aca
+-dé-mi-co con-fi-gu-ra-do con-tra Ste-llar/Soroban
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1195,17 +858,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [26]
-Overfull \hbox (7.56888pt too wide) in paragraph at lines 578--579
-[]\T1/lmr/bx/n/12 Herramientas: \T1/lmr/m/n/12 na-ve-ga-dor web, Freigh-ter Wa-
-llet, fron-tend del sis-te-ma, bac-kend/API,
- []
-
-
-Overfull \hbox (9.93927pt too wide) in paragraph at lines 579--580
-[]\T1/lmr/bx/n/12 Ambiente: \T1/lmr/m/n/12 am-bien-te lo-cal o des-plie-gue aca
--dé-mi-co con-fi-gu-ra-do con-tra Ste-llar/Soroban
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1246,60 +898,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [31]
-Underfull \hbox (badness 1331) in paragraph at lines 722--723
-[]|\T1/lmr/bx/n/12 Uso den-tro del plan de
- []
-
-
-Underfull \hbox (badness 1077) in paragraph at lines 724--725
-[]|\T1/lmr/m/n/12 Ejecución de prue-bas uni-ta-
- []
-
-
-Underfull \hbox (badness 1354) in paragraph at lines 726--726
-[]|\T1/lmr/m/n/12 Entorno uti-li-za-do pa-ra va-li-
- []
-
-
-Underfull \hbox (badness 1762) in paragraph at lines 726--727
-\T1/lmr/m/n/12 te-gra-ción, sin-cro-ni-za-ción on-
- []
-
-
-Underfull \hbox (badness 1881) in paragraph at lines 728--728
-[]|\T1/lmr/m/n/12 Ambiente de des-
- []
-
-
-Underfull \hbox (badness 1107) in paragraph at lines 728--729
-[]|\T1/lmr/m/n/12 Ejecución de smo-ke test de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 730--730
-[]|\T1/lmr/m/n/12 Stellar/Soroban
- []
-
-
-Underfull \hbox (badness 3635) in paragraph at lines 744--744
-[]|\T1/lmr/m/n/12 Node.js, Ex-press, Ty-peS-
- []
-
-
-Underfull \hbox (badness 3128) in paragraph at lines 744--745
-[]|\T1/lmr/m/n/12 Ejecutar re-glas de ne-go-cio,
- []
-
-
-Underfull \hbox (badness 2012) in paragraph at lines 752--752
-[]|\T1/lmr/m/n/12 Servicio de sin-cro-ni-za-ción
- []
-
-
-Underfull \hbox (badness 5533) in paragraph at lines 756--757
-[]|\T1/lmr/m/n/12 Ejecutar ope-ra-cio-nes block-
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1308,7 +906,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [32]
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1317,47 +914,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [33]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 7
-72.
- (/usr/local/texlive/2026/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-Underfull \hbox (badness 5667) in paragraph at lines 776--776
-[]|\T1/lmr/m/n/12 URL del end-point RPC de Ste-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 776--777
-[]|\T1/lmr/m/n/12 Backend /
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 778--779
-[]|\T1/lmr/m/n/12 Backend /
- []
-
-
-Underfull \hbox (badness 2050) in paragraph at lines 780--780
-[]|\T1/lmr/m/n/12 Dirección del con-tra-to uti-li-za-do en
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 780--781
-[]|\T1/lmr/m/n/12 Backend /
- []
-
-
-Overfull \hbox (20.16267pt too wide) in paragraph at lines 782--782
-[]|\T1/lmtt/m/n/12 FACTORY_CONTRACT_ADDRESS| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 782--783
-[]|\T1/lmr/m/n/12 Backend /
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1366,42 +922,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [34]
-Underfull \hbox (badness 10000) in paragraph at lines 804--804
-[]|\T1/lmr/m/n/12 Usuarios com-pra-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 810--810
-[]|\T1/lmr/m/n/12 Usuario ad-mi-nis-
- []
-
-
-Underfull \hbox (badness 3492) in paragraph at lines 812--812
-\T1/lmr/m/n/12 Ste-llar Test-net aso-cia-das a
- []
-
-
-Underfull \hbox (badness 2980) in paragraph at lines 816--816
-[]|\T1/lmr/m/n/12 Tickets ac-ti-vos y ope-ra-bles
- []
-
-
-Underfull \hbox (badness 1365) in paragraph at lines 820--820
-[]|\T1/lmr/m/n/12 Tickets uti-li-za-dos pa-ra va-li-
- []
-
-
-Underfull \hbox (badness 1325) in paragraph at lines 826--827
-[]|\T1/lmr/m/n/12 Casos ne-ga-ti-vos del scan-ner
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 828--828
-[]|\T1/lmr/m/n/12 Eventos on-chain
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1410,17 +930,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [35]
-Underfull \hbox (badness 4013) in paragraph at lines 850--850
-[]|\T1/lmr/m/n/12 Cancelado de re-
- []
-
-
-Underfull \hbox (badness 2521) in paragraph at lines 852--853
-[]|\T1/lmr/m/n/12 Casos ne-ga-ti-vos de API,
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1429,35 +938,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [36]
-Underfull \hbox (badness 4072) in paragraph at lines 864--865
-[]|\T1/lmr/m/n/12 No re-quie-re au-ten-ti-ca-
- []
-
-
-Underfull \hbox (badness 1565) in paragraph at lines 864--865
-\T1/lmr/m/n/12 ción ni mo-di-fi-ca da-tos
- []
-
-
-Underfull \hbox (badness 1320) in paragraph at lines 866--867
-[]|\T1/lmr/m/n/12 Requiere to-kens o cre-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 866--867
-\T1/lmr/m/n/12 den-cia-les con-fi-gu-ra-das
- []
-
-
-Underfull \hbox (badness 8170) in paragraph at lines 866--867
-\T1/lmr/m/n/12 me-dian-te va-ria-bles de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 868--868
-[]|\T1/lmr/m/n/12 Operaciones crí-ti-cas
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1474,12 +954,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [38]
-Overfull \hbox (23.65828pt too wide) in alignment at lines 916--942
- [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1488,32 +962,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [39]
-Underfull \hbox (badness 10000) in paragraph at lines 956--956
-[]|\T1/lmr/m/n/12 Resultados re-gis-tra-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 958--958
-[]|\T1/lmr/m/n/12 Fallos blo-quean-tes
- []
-
-
-Underfull \hbox (badness 4713) in paragraph at lines 964--964
-[]|\T1/lmr/m/n/12 Trazabilidad ac-tua-li-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 966--966
-[]|\T1/lmr/m/n/12 Limitaciones do-cu-
- []
-
-
-Overfull \hbox (23.65828pt too wide) in alignment at lines 950--970
- [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1522,28 +970,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [40]
-Underfull \hbox (badness 1178) in paragraph at lines 980--981
-[]|\T1/lmr/m/n/12 Los con-tra-tos de-ben com-pi-lar co-rrec-ta-men-te; el en-to
-rno
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 982--982
-[]|\T1/lmr/m/n/12 Pruebas bac-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 986--986
-[]|\T1/lmr/m/n/12 Pruebas fron-
- []
-
-
-Underfull \hbox (badness 1297) in paragraph at lines 990--990
-[]|\T1/lmr/m/n/12 Pruebas del scan-
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1552,22 +978,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [41]
-Underfull \hbox (badness 10000) in paragraph at lines 1012--1012
-[]|\T1/lmr/m/n/12 Pruebas bac-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1016--1016
-[]|\T1/lmr/m/n/12 Pruebas fron-
- []
-
-
-Underfull \hbox (badness 1297) in paragraph at lines 1020--1020
-[]|\T1/lmr/m/n/12 Pruebas del scan-
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1576,7 +986,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [42]
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1593,100 +1002,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [44]
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1111--1111
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1113--1113
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Underfull \hbox (badness 1137) in paragraph at lines 1113--1113
-\T1/lmr/m/n/12 las re-glas de-fi-ni-das y
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1115--1115
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1115--1115
-\T1/lmr/m/n/12 BURN-
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1117--1117
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Overfull \hbox (14.27016pt too wide) in paragraph at lines 1117--1117
-\T1/lmr/m/n/12 COMMISSION-
- []
-
-
-Underfull \hbox (badness 2573) in paragraph at lines 1117--1117
-[]|\T1/lmr/m/n/12 Existe una ope-ra-ción
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1119--1119
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1119--1119
-\T1/lmr/m/n/12 RESALE-
- []
-
-
-Underfull \hbox (badness 4805) in paragraph at lines 1119--1119
-[]|\T1/lmr/m/n/12 El pro-pie-ta-rio pue-de
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1121--1121
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Overfull \hbox (9.52502pt too wide) in paragraph at lines 1121--1121
-\T1/lmr/m/n/12 INVALIDATE-
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1123--1123
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1123--1123
-[]|\T1/lmr/m/n/12 Redención on-
- []
-
-
-Overfull \hbox (4.64975pt too wide) in paragraph at lines 1125--1125
-[]|\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1125--1125
-\T1/lmr/m/n/12 ope-ra-cio-nes in-vá-li-das
- []
-
-
-Underfull \hbox (badness 6364) in paragraph at lines 1125--1125
-\T1/lmr/m/n/12 sin al-te-rar in-de-bi-da-
- []
-
-
-Overfull \hbox (62.68419pt too wide) in alignment at lines 1107--1127
- [] [] [] [] [] 
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1695,7 +1010,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [45]
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1704,162 +1018,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [46]
-Underfull \hbox (badness 10000) in paragraph at lines 1137--1137
-[]|\T1/lmr/m/n/12 API-AUTH-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1137--1137
-[]|\T1/lmr/m/n/12 Endpoint pro-te-gi-do
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1137--1138
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1139--1139
-[]|\T1/lmr/m/n/12 API-AUTH-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1139--1140
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1141--1141
-[]|\T1/lmr/m/n/12 SEC-ROLE-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1141--1141
-[]|\T1/lmr/m/n/12 Usuarios con ro-les
- []
-
-
-Underfull \hbox (badness 1960) in paragraph at lines 1141--1141
-\T1/lmr/m/n/12 CUS-TO-MER, STAFF
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1141--1142
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1143--1143
-[]|\T1/lmr/m/n/12 API-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1143--1143
-\T1/lmr/m/n/12 TICKET-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1143--1144
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1145--1145
-[]|\T1/lmr/m/n/12 API-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1145--1145
-\T1/lmr/m/n/12 REQUEST-
- []
-
-
-Underfull \hbox (badness 5667) in paragraph at lines 1145--1145
-[]|\T1/lmr/m/n/12 Solicitud con pre-cio,
- []
-
-
-Underfull \hbox (badness 1400) in paragraph at lines 1145--1145
-\T1/lmr/m/n/12 es-ta-do o iden-ti-fi-ca-dor
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1145--1146
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1147--1147
-[]|\T1/lmr/m/n/12 API-SCAN-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1147--1147
-[]|\T1/lmr/m/n/12 El scan-ner acep-ta
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1147--1148
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1149--1149
-[]|\T1/lmr/m/n/12 API-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1149--1149
-\T1/lmr/m/n/12 TICKET-
- []
-
-
-Overfull \hbox (3.83414pt too wide) in paragraph at lines 1149--1149
-\T1/lmr/m/n/12 INVALIDATE-
- []
-
-
-Underfull \hbox (badness 2343) in paragraph at lines 1149--1149
-[]|\T1/lmr/m/n/12 El sis-te-ma blo-quea
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1151--1151
-[]|\T1/lmr/m/n/12 API-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1151--1151
-\T1/lmr/m/n/12 RESALE-
- []
-
-
-Underfull \hbox (badness 4060) in paragraph at lines 1151--1151
-[]|\T1/lmr/m/n/12 Cancelación de re-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1151--1152
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1153--1153
-[]|\T1/lmr/m/n/12 API-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1153--1154
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (62.68504pt too wide) in alignment at lines 1133--1155
- [] [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1868,102 +1026,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [47]
-Underfull \hbox (badness 10000) in paragraph at lines 1165--1165
-[]|\T1/lmr/m/n/12 Sincronización de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1165--1165
-[]|\T1/lmr/m/n/12 Los even-tos pro-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1165--1165
-\T1/lmr/m/n/12 ce-sa-dos ac-tua-li-zan
- []
-
-
-Underfull \hbox (badness 2103) in paragraph at lines 1165--1165
-\T1/lmr/m/n/12 co-rrec-ta-men-te Post-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1165--1166
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1167--1167
-[]|\T1/lmr/m/n/12 Evento de bo-le-to
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1167--1168
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1169--1170
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1171--1172
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1173--1174
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 5862) in paragraph at lines 1175--1175
-[]|\T1/lmr/m/n/12 Evento de re-den-ción
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1175--1175
-\T1/lmr/m/n/12 re-di-mi-do se-gún el
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1175--1176
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 1168) in paragraph at lines 1177--1177
-\T1/lmr/m/n/12 quea-do pa-ra ope-ra-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1177--1178
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 3009) in paragraph at lines 1179--1179
-[]|\T1/lmr/m/n/12 El sis-te-ma man-tie-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1179--1180
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1181--1182
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (68.37552pt too wide) in alignment at lines 1161--1183
- [] [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1972,127 +1034,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [48]
-Underfull \hbox (badness 4096) in paragraph at lines 1193--1193
-[]|\T1/lmr/m/n/12 Usuario CUS-TO-MER,
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1193--1194
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1195--1196
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 1748) in paragraph at lines 1197--1197
-[]|\T1/lmr/m/n/12 El sis-te-ma mues-tra
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1197--1198
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1199--1199
-[]|\T1/lmr/m/n/12 E2E-
- []
-
-
-Overfull \hbox (2.69766pt too wide) in paragraph at lines 1199--1199
-\T1/lmr/m/n/12 INVENTORY-
- []
-
-
-Underfull \hbox (badness 1117) in paragraph at lines 1199--1199
-\T1/lmr/m/n/12 pon-dien-tes al usua-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1199--1200
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1201--1201
-[]|\T1/lmr/m/n/12 E2E-SCAN-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1201--1201
-[]|\T1/lmr/m/n/12 Usuario
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1201--1201
-\T1/lmr/m/n/12 STAFF/ADMIN y
- []
-
-
-Underfull \hbox (badness 1460) in paragraph at lines 1201--1201
-[]|\T1/lmr/m/n/12 El scan-ner mues-tra
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1201--1202
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1203--1203
-[]|\T1/lmr/m/n/12 E2E-SCAN-
- []
-
-
-Underfull \hbox (badness 3525) in paragraph at lines 1203--1203
-[]|\T1/lmr/m/n/12 El sis-te-ma re-cha-za
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1203--1204
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1205--1205
-[]|\T1/lmr/m/n/12 E2E-SCAN-
- []
-
-
-Underfull \hbox (badness 3525) in paragraph at lines 1205--1205
-[]|\T1/lmr/m/n/12 El sis-te-ma re-cha-za
- []
-
-
-Underfull \hbox (badness 6016) in paragraph at lines 1205--1205
-\T1/lmr/m/n/12 el QR y mues-tra
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1205--1206
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1207--1207
-[]|\T1/lmr/m/n/12 E2E-SCAN-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1207--1208
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (65.53049pt too wide) in alignment at lines 1189--1209
- [] [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2101,7 +1042,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [49]
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2110,112 +1050,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [50]
-Underfull \hbox (badness 6477) in paragraph at lines 1243--1243
-[]|\T1/lmr/bx/n/12 Resultado es-pe-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1245--1245
-[]|\T1/lmr/m/n/12 LOAD-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1245--1245
-[]|\T1/lmr/m/n/12 Backend dis-po-ni-ble,
- []
-
-
-Underfull \hbox (badness 2556) in paragraph at lines 1245--1245
-\T1/lmr/m/n/12 even-tos y mar-ket-pla-ce
- []
-
-
-Underfull \hbox (badness 1708) in paragraph at lines 1245--1245
-[]|\T1/lmr/m/n/12 Los end-points pú-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1245--1246
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1247--1247
-[]|\T1/lmr/m/n/12 LOAD-AUTH-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1247--1247
-[]|\T1/lmr/m/n/12 Usuarios au-ten-ti-ca-
- []
-
-
-Underfull \hbox (badness 2035) in paragraph at lines 1247--1247
-[]|\T1/lmr/m/n/12 Usuarios de prue-ba y
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1247--1247
-[]|\T1/lmr/m/n/12 Login, in-ven-ta-rio
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1247--1247
-\T1/lmr/m/n/12 ti-ca-dos res-pon-den
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1247--1248
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1249--1249
-[]|\T1/lmr/m/n/12 LOAD-
- []
-
-
-Underfull \hbox (badness 1845) in paragraph at lines 1249--1249
-[]|\T1/lmr/m/n/12 Operaciones crí-ti-cas
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1249--1249
-[]|\T1/lmr/m/n/12 Usuario
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1249--1249
-\T1/lmr/m/n/12 STAFF/ADMIN, QR
- []
-
-
-Underfull \hbox (badness 1796) in paragraph at lines 1249--1249
-\T1/lmr/m/n/12 o da-tos con-tro-la-dos y
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1249--1249
-[]|\T1/lmr/m/n/12 Scanner, chec-kout
- []
-
-
-Underfull \hbox (badness 1824) in paragraph at lines 1249--1249
-\T1/lmr/m/n/12 si-mu-la-do u ope-ra-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1249--1250
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (68.37552pt too wide) in alignment at lines 1241--1251
- [] [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2224,147 +1058,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [51]
-Underfull \hbox (badness 6477) in paragraph at lines 1259--1259
-[]|\T1/lmr/bx/n/12 Resultado es-pe-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1261--1261
-[]|\T1/lmr/m/n/12 SMOKE-
- []
-
-
-Underfull \hbox (badness 2142) in paragraph at lines 1261--1261
-[]|\T1/lmr/m/n/12 La apli-ca-ción car-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1261--1262
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1263--1263
-[]|\T1/lmr/m/n/12 SMOKE-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1263--1264
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1265--1265
-[]|\T1/lmr/m/n/12 SMOKE-
- []
-
-
-Underfull \hbox (badness 6859) in paragraph at lines 1265--1265
-[]|\T1/lmr/m/n/12 El usua-rio pue-de
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1265--1266
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1267--1267
-[]|\T1/lmr/m/n/12 SMOKE-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1267--1268
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1269--1269
-[]|\T1/lmr/m/n/12 SMOKE-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1269--1269
-[]|\T1/lmr/m/n/12 Usuario con tic-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1269--1269
-\T1/lmr/m/n/12 kets y usua-rio
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1269--1269
-\T1/lmr/m/n/12 STAFF/ADMIN
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1269--1270
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (68.37553pt too wide) in alignment at lines 1257--1271
- [] [] [] [] [] 
- []
-
-
-Underfull \hbox (badness 2269) in paragraph at lines 1281--1281
-[]|\T1/lmr/m/n/12 El usua-rio com-ple-ta
- []
-
-
-Underfull \hbox (badness 1337) in paragraph at lines 1281--1281
-\T1/lmr/m/n/12 com-pren-de el es-ta-do
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1281--1282
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (13.57556pt too wide) in paragraph at lines 1283--1283
-[]|\T1/lmr/m/n/12 Vendedor/revendedor| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1283--1284
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 3000) in paragraph at lines 1285--1285
-[]|\T1/lmr/m/n/12 Consultar mar-ket-pla-ce
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1285--1286
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1287--1288
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (3.78491pt too wide) in paragraph at lines 1289--1289
-[]|\T1/lmr/m/n/12 Admin/organizador| 
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1289--1290
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (59.8396pt too wide) in alignment at lines 1277--1291
- [] [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2373,87 +1066,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [52]
-Underfull \hbox (badness 2088) in paragraph at lines 1299--1299
-[]|\T1/lmr/bx/n/12 Resultado es-pe-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1301--1301
-[]|\T1/lmr/m/n/12 Requerimientos, ca-
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1301--1302
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1303--1303
-[]|\T1/lmr/m/n/12 Las li-mi-ta-cio-nes
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1303--1303
-\T1/lmr/m/n/12 que-dan do-cu-men-
- []
-
-
-Underfull \hbox (badness 3354) in paragraph at lines 1303--1303
-\T1/lmr/m/n/12 ta-das sin afir-mar
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1303--1303
-\T1/lmr/m/n/12 ca-pa-ci-da-des fue-ra
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1303--1304
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1305--1305
-[]|\T1/lmr/m/n/12 Mainnet, pa-
- []
-
-
-Underfull \hbox (badness 6675) in paragraph at lines 1305--1305
-\T1/lmr/m/n/12 gos reales, car-ga
- []
-
-
-Underfull \hbox (badness 4217) in paragraph at lines 1305--1305
-\T1/lmr/m/n/12 block-chain ma-si-va
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1305--1305
-\T1/lmr/m/n/12 y au-to-ma-ti-za-
- []
-
-
-Underfull \hbox (badness 3460) in paragraph at lines 1305--1305
-\T1/lmr/m/n/12 ción com-ple-ta de
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1305--1305
-\T1/lmr/m/n/12 Freigh-ter que-dan
- []
-
-
-Overfull \hbox (4.90036pt too wide) in paragraph at lines 1305--1306
-[]|\T1/lmr/m/n/12 Pendiente| 
- []
-
-
-Overfull \hbox (68.37553pt too wide) in alignment at lines 1297--1307
- [] [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2462,72 +1074,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [53]
-Underfull \hbox (badness 10000) in paragraph at lines 1317--1317
-[]|\T1/lmr/m/n/12 CONTRACT-ISSUE,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1317--1317
-\T1/lmr/m/n/12 CONTRACT-RESALE,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1317--1317
-\T1/lmr/m/n/12 CONTRACT-REDEEM,
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1317--1317
-\T1/lmr/m/n/12 CONTRACT-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1319--1319
-[]|\T1/lmr/m/n/12 API-SCAN, SEC-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1319--1319
-\T1/lmr/m/n/12 ROLE, API-RESALE-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1319--1319
-\T1/lmr/m/n/12 CANCEL, API-TICKET-
- []
-
-
-Underfull \hbox (badness 2529) in paragraph at lines 1321--1322
-[]|\T1/lmr/m/n/12 Sincronización en-tre even-tos
- []
-
-
-Underfull \hbox (badness 1014) in paragraph at lines 1325--1326
-[]|\T1/lmr/m/n/12 Flujo ma-nual guia-do de re-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1327--1327
-[]|\T1/lmr/m/n/12 LOAD-PUBLIC, LOAD-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1329--1330
-[]|\T1/lmr/m/n/12 Disponibilidad mí-ni-ma de
- []
-
-
-Underfull \hbox (badness 6461) in paragraph at lines 1329--1330
-\T1/lmr/m/n/12 fron-tend, bac-kend y flu-jos
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1331--1332
-[]|\T1/lmr/m/n/12 Validación aca-dé-mi-ca con
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2536,10 +1082,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [54]
-Overfull \hbox (62.68463pt too wide) in alignment at lines 1344--1358
- [] [] [] [] [] 
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2548,52 +1090,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [55]
-Overfull \hbox (18.76544pt too wide) in paragraph at lines 1372--1372
-[]|\T1/lmr/bx/n/12 Endpoint/Controlador| 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1372--1372
-[]|\T1/lmr/bx/n/12 Tiempo pro-
- []
-
-
-Overfull \hbox (11.4964pt too wide) in paragraph at lines 1374--1375
-[]|[]\T1/lmr/m/it/12 [Aprobado/Fallido][]| 
- []
-
-
-Overfull \hbox (62.68463pt too wide) in alignment at lines 1370--1376
- [] [] [] [] [] 
- []
-
-
-Underfull \hbox (badness 2662) in paragraph at lines 1390--1391
-[]|\T1/lmr/bx/n/12 Acción to-ma-
- []
-
-
-Overfull \hbox (10.76842pt too wide) in paragraph at lines 1392--1392
-[]|[]\T1/lmr/m/it/12 [Alta/Media/Baja][]| 
- []
-
-
-Overfull \hbox (7.28535pt too wide) in paragraph at lines 1392--1392
-[]|[]\T1/lmr/m/it/12 [Abierto/Cerrado][]| 
- []
-
-
-Overfull \hbox (34.23187pt too wide) in alignment at lines 1388--1394
- [] [] [] [] [] 
- []
-
-
-Overfull \hbox (21.8319pt too wide) in alignment at lines 1401--1415
- [] [] [] [] 
- []
-
-
-ignored: Infinite glue shrinkage found in box being split
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2602,40 +1098,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [56]
-Overfull \hbox (1.2057pt too wide) in paragraph at lines 1424--1424
-[]|\T1/lmr/bx/n/12 Requerimiento| 
- []
-
-
-Underfull \hbox (badness 1845) in paragraph at lines 1424--1425
-[]|\T1/lmr/bx/n/12 Estado de va-li-da-
- []
-
-
-Underfull \hbox (badness 5203) in paragraph at lines 1426--1426
-[]|[]\T1/lmr/m/it/12 [Descripción del re-
- []
-
-
-Overfull \hbox (36.9046pt too wide) in paragraph at lines 1426--1427
-[]|[]\T1/lmr/m/it/12 [Validado/Pendiente/Fallido][]| 
- []
-
-
-Underfull \hbox (badness 5203) in paragraph at lines 1428--1428
-[]|[]\T1/lmr/m/it/12 [Descripción del re-
- []
-
-
-Underfull \hbox (badness 5203) in paragraph at lines 1430--1430
-[]|[]\T1/lmr/m/it/12 [Descripción del re-
- []
-
-
-Overfull \hbox (21.8319pt too wide) in alignment at lines 1422--1432
- [] [] [] [] 
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -2651,7 +1113,207 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[58] (./plantilla_plan_pruebas_easymarket.aux
+[58]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[59]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[60]
+Overfull \hbox (103.95366pt too wide) in paragraph at lines 2949--2950
+\T1/lmr/m/n/12 más, se ac-tua-li-za-ron do-cu-men-tos ope-ra-ti-vos del re-po-s
+i-to-rio, in-clu-yen-do \T1/lmtt/m/n/12 docs/operations/QA_P1_RESULTS.md\T1/lmr
+/m/n/12 ,
+ []
+
+
+Overfull \hbox (195.5616pt too wide) in paragraph at lines 2949--2950
+\T1/lmtt/m/n/12 docs/operations/LOAD_TESTING.md\T1/lmr/m/n/12 , \T1/lmtt/m/n/12
+ docs/operations/QA_BACKLOG_EXECUTION.md \T1/lmr/m/n/12 y \T1/lmtt/m/n/12 docs/
+test-traceability-matrix.md\T1/lmr/m/n/12 . 
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[61]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[62]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[63]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[64]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[65]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[66]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[67]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[68]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[69]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[70]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[71]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[72]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[73]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[74]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[75]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[76]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[77]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[78]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[79]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[80
+
+
+]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[81] (./Plan de Pruebas Secure Ticket.aux
 LaTeX Info: Redefining \. on input line 11.
 LaTeX Info: Redefining \% on input line 11.
 )
@@ -2659,64 +1321,34 @@ LaTeX Info: Redefining \% on input line 11.
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-Package rerunfilecheck Warning: File `plantilla_plan_pruebas_easymarket.out' ha
-s changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `plantilla_plan_pruebas_easymarket.o
-ut':
-(rerunfilecheck)             Before: 5BE255E6D4A1F18554F7797CD45CC43E;15450
-(rerunfilecheck)             After:  FAC9239E4735EFBE1B3D7673401695C8;15890.
+Package rerunfilecheck Info: File `"Plan de Pruebas Secure Ticket".out' has not
+ changed.
+(rerunfilecheck)             Checksum: B95675C7D72BA22B36379DD4AD7E3EEC;21635.
  ) 
 Here is how much of TeX's memory you used:
- 14359 strings out of 467525
- 230981 string characters out of 5418982
- 701534 words of memory out of 5000000
- 42906 multiletter control sequences out of 15000+600000
- 674796 words of font info for 65 fonts, out of 8000000 for 9000
+ 14588 strings out of 467525
+ 236478 string characters out of 5418982
+ 699630 words of memory out of 5000000
+ 43053 multiletter control sequences out of 15000+600000
+ 712387 words of font info for 83 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,585b,791s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,842b,791s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/lo
+cal/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texliv
+e/2026/texmf-dist/fonts/type1/public/lm/lmbx8.pfb></usr/local/texlive/2026/texm
+f-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2026/texmf-dist/font
+s/type1/public/lm/lmr12.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/pub
+lic/lm/lmr17.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr8
+.pfb></usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr
+/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/tex
+live/2026/texmf-dist/fonts/type1/public/lm/lmri8.pfb></usr/local/texlive/2026/t
+exmf-dist/fonts/type1/public/lm/lmtt12.pfb></usr/local/texlive/2026/texmf-dist/
+fonts/type1/public/lm/lmtt8.pfb>
+Output written on "Plan de Pruebas Secure Ticket.pdf" (82 pages, 513384 bytes).
 
-pdfTeX warning (dest): name{subsubsection.8.5.2} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.5.1} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.3.1} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.2.4} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.2.3} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.2.2} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.2.1} has been referenced but does n
-ot exist, replaced by a fixed one
-
-</usr/local/texlive/2026/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/loca
-l/texlive/2026/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2
-026/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2026/texmf-d
-ist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2026/texmf-dist/fonts/
-type1/public/lm/lmtt12.pfb>
-Output written on plantilla_plan_pruebas_easymarket.pdf (59 pages, 261984 bytes
-).
 PDF statistics:
- 760 PDF objects out of 1000 (max. 8388607)
- 681 compressed objects within 7 object streams
- 175 named destinations out of 1000 (max. 500000)
- 633 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1084 PDF objects out of 1200 (max. 8388607)
+ 965 compressed objects within 10 object streams
+ 232 named destinations out of 1000 (max. 500000)
+ 793 words of extra memory for PDF output out of 10000 (max. 10000000)
 

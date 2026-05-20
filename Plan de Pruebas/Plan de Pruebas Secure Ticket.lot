@@ -1,1 +1,53 @@
 \babel@toc {spanish}{}\relax 
+\contentsline {table}{\numberline {1}{\ignorespaces Referencias utilizadas en el plan de pruebas}}{11}{table.caption.1}%
+\contentsline {table}{\numberline {2}{\ignorespaces Criterios generales de éxito del plan de pruebas}}{14}{table.2}%
+\contentsline {table}{\numberline {3}{\ignorespaces Ítems de prueba definidos para Secure Ticket}}{17}{table.3}%
+\contentsline {table}{\numberline {4}{\ignorespaces Flujos funcionales incluidos en el alcance de pruebas}}{20}{table.caption.2}%
+\contentsline {table}{\numberline {5}{\ignorespaces Elementos con cobertura parcial por diseño}}{21}{table.caption.3}%
+\contentsline {table}{\numberline {6}{\ignorespaces Ambientes definidos para la ejecución de pruebas}}{31}{table.caption.4}%
+\contentsline {table}{\numberline {7}{\ignorespaces Configuración técnica del ambiente de pruebas}}{32}{table.caption.5}%
+\contentsline {table}{\numberline {8}{\ignorespaces Variables de entorno requeridas para pruebas}}{33}{table.caption.6}%
+\contentsline {table}{\numberline {9}{\ignorespaces Datos de prueba funcionales definidos para los escenarios principales}}{34}{table.caption.7}%
+\contentsline {table}{\numberline {10}{\ignorespaces Datos de prueba negativos y de integración}}{34}{table.caption.8}%
+\contentsline {table}{\numberline {11}{\ignorespaces Estados de ticket considerados durante las pruebas}}{35}{table.caption.9}%
+\contentsline {table}{\numberline {12}{\ignorespaces Datos requeridos para pruebas de carga}}{35}{table.caption.10}%
+\contentsline {table}{\numberline {13}{\ignorespaces Criterios generales de entrada para la ejecución de pruebas}}{37}{table.caption.11}%
+\contentsline {table}{\numberline {14}{\ignorespaces Criterios generales de salida del proceso de validación}}{38}{table.caption.12}%
+\contentsline {table}{\numberline {15}{\ignorespaces Criterios de entrada por tipo de prueba}}{39}{table.caption.13}%
+\contentsline {table}{\numberline {16}{\ignorespaces Criterios de salida por tipo de prueba}}{40}{table.caption.14}%
+\contentsline {table}{\numberline {17}{\ignorespaces Estados utilizados para registrar resultados de prueba}}{40}{table.caption.15}%
+\contentsline {table}{\numberline {18}{\ignorespaces Formato utilizado para documentar casos de prueba}}{42}{table.caption.16}%
+\contentsline {table}{\numberline {19}{\ignorespaces Casos de prueba de contratos inteligentes}}{43}{table.caption.17}%
+\contentsline {table}{\numberline {20}{\ignorespaces Casos de prueba backend/API}}{44}{table.caption.18}%
+\contentsline {table}{\numberline {21}{\ignorespaces Casos de prueba de integración}}{45}{table.caption.19}%
+\contentsline {table}{\numberline {22}{\ignorespaces Casos de prueba frontend y end-to-end}}{46}{table.caption.20}%
+\contentsline {table}{\numberline {23}{\ignorespaces Caso de prueba manual de reventa en Testnet}}{47}{table.caption.21}%
+\contentsline {table}{\numberline {24}{\ignorespaces Casos de prueba de carga}}{47}{table.caption.22}%
+\contentsline {table}{\numberline {25}{\ignorespaces Casos de prueba de smoke test de despliegue}}{48}{table.caption.23}%
+\contentsline {table}{\numberline {26}{\ignorespaces Casos de prueba de aceptación de usuario}}{48}{table.caption.24}%
+\contentsline {table}{\numberline {27}{\ignorespaces Casos documentales de trazabilidad}}{49}{table.caption.25}%
+\contentsline {table}{\numberline {28}{\ignorespaces Resumen de cobertura esperada por categoría de prueba}}{49}{table.caption.26}%
+\contentsline {table}{\numberline {29}{\ignorespaces Resumen general actualizado de resultados de pruebas}}{51}{table.caption.27}%
+\contentsline {table}{\numberline {30}{\ignorespaces Resultados de pruebas de contratos inteligentes}}{52}{table.caption.28}%
+\contentsline {table}{\numberline {31}{\ignorespaces Resultados actualizados de pruebas Backend/API}}{53}{table.caption.29}%
+\contentsline {table}{\numberline {32}{\ignorespaces Resultados actualizados de integración e indexador}}{53}{table.caption.30}%
+\contentsline {table}{\numberline {33}{\ignorespaces Resultados actualizados de pruebas frontend/E2E}}{54}{table.caption.31}%
+\contentsline {table}{\numberline {34}{\ignorespaces Estado de la prueba manual de reventa en Testnet}}{55}{table.caption.32}%
+\contentsline {table}{\numberline {35}{\ignorespaces Resultados actualizados del escáner QR}}{55}{table.caption.33}%
+\contentsline {table}{\numberline {36}{\ignorespaces Resultados actualizados de pruebas de carga}}{56}{table.caption.34}%
+\contentsline {table}{\numberline {37}{\ignorespaces Estado del smoke test autenticado en staging}}{57}{table.caption.35}%
+\contentsline {table}{\numberline {38}{\ignorespaces Estado actualizado de pruebas de aceptación de usuario}}{58}{table.caption.36}%
+\contentsline {table}{\numberline {39}{\ignorespaces Resultados actualizados de trazabilidad}}{59}{table.caption.37}%
+\contentsline {table}{\numberline {40}{\ignorespaces Bloqueos automatizables resueltos durante la segunda ejecución}}{60}{table.caption.38}%
+\contentsline {table}{\numberline {41}{\ignorespaces Pendientes, dependencias externas y limitaciones de alcance restantes}}{60}{table.caption.39}%
+\contentsline {table}{\numberline {42}{\ignorespaces Riesgos identificados durante el ciclo de pruebas, parte 1}}{63}{table.caption.40}%
+\contentsline {table}{\numberline {43}{\ignorespaces Riesgos identificados durante el ciclo de pruebas, parte 2}}{64}{table.caption.41}%
+\contentsline {table}{\numberline {44}{\ignorespaces Riesgos identificados durante el ciclo de pruebas, parte 3}}{64}{table.caption.42}%
+\contentsline {table}{\numberline {45}{\ignorespaces Plan de mitigación de riesgos, parte 1}}{65}{table.caption.43}%
+\contentsline {table}{\numberline {46}{\ignorespaces Plan de mitigación de riesgos, parte 2}}{65}{table.caption.44}%
+\contentsline {table}{\numberline {47}{\ignorespaces Plan de mitigación de riesgos, parte 3}}{66}{table.caption.45}%
+\contentsline {table}{\numberline {48}{\ignorespaces Riesgos materializados durante la ejecución, parte 1}}{66}{table.caption.46}%
+\contentsline {table}{\numberline {49}{\ignorespaces Riesgos materializados durante la ejecución, parte 2}}{67}{table.caption.47}%
+\contentsline {table}{\numberline {50}{\ignorespaces Riesgos residuales}}{68}{table.caption.48}%
+\contentsline {table}{\numberline {51}{\ignorespaces Estados utilizados en la matriz de trazabilidad}}{70}{table.caption.49}%
+\contentsline {table}{\numberline {52}{\ignorespaces Resumen de cobertura por categoría}}{71}{table.caption.50}%
