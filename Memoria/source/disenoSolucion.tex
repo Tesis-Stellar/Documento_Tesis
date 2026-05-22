@@ -1,0 +1,97 @@
+\newpage
+\setcounter{subsection}{0}
+\section{DISEÑO DE LA SOLUCIÓN}
+
+Esta sección presenta la arquitectura del sistema y los artefactos del diseño detallado. La justificación de las tecnologías seleccionadas frente a alternativas se documenta en el anexo de Diseño y Propuesta del Trabajo de Grado.
+
+El diagrama de contexto (Figura~\ref{fig:c4-contexto}) ubica al sistema dentro de su ecosistema: usuarios finales y organizadores interactúan con SecureTicket, que a su vez se comunica con la red Stellar (Soroban RPC y Horizon) y con la billetera Freighter como agente firmante del lado del usuario.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Imagenes/contextoSecureTicket.png}
+\caption{Diagrama de contexto C4 (nivel 1) del sistema SecureTicket.}
+\label{fig:c4-contexto}
+\end{figure}
+
+\subsection{Actores, roles y límites de confianza}
+
+El sistema separa dos planos de confianza. El plano \textit{on-chain} reúne a los actores que firman operaciones del contrato (organizador, propietario, comprador, verificador, plataforma, administrador del \textit{factory}); todas sus interacciones son validadas por el SCP y registradas en el ledger. El plano \textit{off-chain} reúne al backend, al indexador y a la base de datos relacional. El backend opera bajo un modelo \textit{XDR proxy stateless}: construye transacciones sin firmar cuando el firmante es el comprador, y firma con la llave del organizador únicamente las operaciones que corresponden a su rol. En ningún momento custodia llaves privadas de usuarios finales.
+
+\subsection{Modelo del ticket NFT}
+
+Cada boleto se modela en \texttt{event\_contract} mediante la estructura \texttt{Boleto}, con campos \texttt{ticket\_root\_id} (\texttt{u32}, estable), \texttt{version} (\texttt{u32}, incrementable en reventa), \texttt{id\_evento}, \texttt{propietario} (\texttt{Address}), \texttt{precio} (\texttt{i128}, almacenado en la unidad mínima de XLM por precisión entera), \texttt{en\_venta}, \texttt{es\_reventa}, \texttt{usado} e \texttt{invalidado}.
+
+La unicidad se garantiza por la clave de almacenamiento \texttt{Boleto(ticket\_root\_id, version)} y por el contador \texttt{ContadorBoletos} que asigna identificadores monotónicamente crecientes. La autenticidad se valida mediante la firma del organizador al emitir y por la firma del propietario en cada operación posterior. La trazabilidad se materializa mediante eventos on-chain persistidos por el indexador.
+
+\subsubsection{Identificador y separación de datos sensibles}
+
+El contrato almacena exclusivamente datos operacionales públicos (identificadores, propietario, precio, estados booleanos). Los datos personales del comprador se almacenan off-chain bajo el esquema \texttt{ticketing} de PostgreSQL, asociados por \texttt{user\_id} y nunca por la llave privada. La vinculación on-chain/off-chain se realiza por la dirección Stellar (\texttt{wallet\_address}) que el usuario asocia voluntariamente al conectar Freighter.
+
+\subsubsection{Estados y patrón burn/remint}
+
+El ciclo de vida se modela mediante tres estados: \texttt{ACTIVE} (\texttt{usado=false}, \texttt{invalidado=false}), \texttt{USED} (\texttt{redimir\_boleto} por verificador) y \texttt{CANCELLED} (\texttt{invalidar\_boleto} por organizador). En cada reventa se aplica el patrón \textit{burn/remint}: la versión vigente se marca como \texttt{invalidado=true} y se inserta una nueva entrada \texttt{Boleto(ticket\_root\_id, version+1)} con el comprador como propietario. El índice \texttt{VersionActual(ticket\_root\_id)} se actualiza para que las consultas apunten a la nueva versión. La Figura~\ref{fig:estados} ilustra las transiciones permitidas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/06_estados_ticket.png}
+\caption{Diagrama de estados del boleto: ACTIVE, USED y CANCELLED, con sus transiciones.}
+\label{fig:estados}
+\end{figure}
+
+\subsection{Diseño de contratos inteligentes}
+
+El sistema utiliza tres contratos Soroban con responsabilidades acotadas: \texttt{factory\_contract}, \texttt{event\_contract} y \texttt{ticket\_nft\_contract}. Esta separación responde al principio de aislamiento de fallos: el estado de cada evento queda confinado a su propio par de contratos y la lógica de emisión NFT se desacopla de las reglas comerciales.
+
+\subsubsection{factory\_contract}
+
+Implementa el patrón \textit{Factory} para el despliegue de un \texttt{event\_contract} independiente por cada evento. Su estructura \texttt{ConfiguracionEvento} agrupa \texttt{id\_evento}, \texttt{organizador}, \texttt{token\_pago}, \texttt{comision\_organizador}, \texttt{comision\_plataforma}, \texttt{wallet\_organizador}, \texttt{wallet\_plataforma} y \texttt{capacidad\_total}. La función \texttt{crear\_evento\_contrato} requiere doble autenticación (administrador del \textit{factory} y organizador) y emite el evento \texttt{EventoCreado}. El despliegue utiliza \texttt{deployer().with\_current\_contract(salt).deploy\_v2(hash, ())}.
+
+\subsubsection{event\_contract}
+
+Expone el conjunto funcional con identificadores en español por trazabilidad académica: \texttt{inicializar}, \texttt{crear\_boleto}, \texttt{listar\_boleto}, \texttt{cancelar\_venta}, \texttt{comprar\_boleto}, \texttt{agregar\_verificador}, \texttt{remover\_verificador}, \texttt{redimir\_boleto}, \texttt{invalidar\_boleto} y un conjunto de consultas de solo lectura.
+
+La operación \texttt{comprar\_boleto} aplica dos flujos según el campo \texttt{es\_reventa}:
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+    \item \textbf{Venta primaria} (\texttt{es\_reventa=false}): el 100\,\% del precio se transfiere al organizador y se marca \texttt{es\_reventa=true}.
+    \item \textbf{Reventa} (\texttt{es\_reventa=true}): el contrato calcula tres montos sobre el precio listado (\texttt{comision\_organizador} 5\,\%, \texttt{comision\_plataforma} 3\,\%, \texttt{monto\_vendedor} 92\,\%), ejecuta las tres transferencias y el cambio de propiedad en la misma invocación.
+\end{itemize}
+
+La constante \texttt{BASE\_PORCENTAJE} se fija en 100 (\texttt{i128}) para aritmética entera exacta. Las comisiones se validan en \texttt{inicializar} para que su suma no supere el 100\,\%.
+
+\subsubsection{ticket\_nft\_contract}
+
+Implementación SEP-41-compatible para la representación NFT del boleto en un contrato dedicado (aproximadamente 12\,KB de WASM, 10 pruebas unitarias). Expone las operaciones \texttt{mint(propietario, ticket\_root\_id, metadata\_url)}, \texttt{transfer(from, to, token\_id)} y \texttt{burn(token\_id)}. Cada evento despliega su propio \texttt{ticket\_nft\_contract}, en correspondencia uno a uno con su \texttt{event\_contract}. El \texttt{nft\_token\_id} se renueva en cada reventa para que las URLs cacheadas en Freighter del propietario anterior no sirvan como prueba válida en puerta.
+
+\subsubsection{Errores tipados y eventos on-chain}
+
+El enum \texttt{ErrorContrato} define dieciséis códigos: 1 \texttt{YaInicializado}, 2 \texttt{ComisionesMuyAltas}, 3 \texttt{ComisionesNegativas}, 4 \texttt{PrecioInvalido}, 5 \texttt{YaEnVenta}, 6 \texttt{BoletoUsado}, 7 \texttt{NoEnVenta}, 8 \texttt{AutoCompra}, 9 \texttt{YaUsado}, 10 \texttt{BoletoNoEncontrado}, 11 \texttt{NoAutorizado}, 12 \texttt{VersionInvalida}, 13 \texttt{BoletoInvalidado}, 14 \texttt{NoInicializado}, 15 \texttt{VerificadorYaExiste}, 16 \texttt{VerificadorNoEncontrado}. Los siete eventos emitidos son \texttt{boleto\_creado}, \texttt{boleto\_listado}, \texttt{venta\_cancelada}, \texttt{boleto\_comprado\_primario}, \texttt{boleto\_revendido}, \texttt{boleto\_redimido} y \texttt{boleto\_invalidado\_evt}.
+
+\subsection{Arquitectura distribuida (tres nodos)}
+
+El prototipo se despliega en tres nodos lógicos con responsabilidades diferenciadas, lo que permite escalar de forma independiente cada plano y aislar fallos por dominio. La Figura~\ref{fig:c4-contenedores} muestra el diagrama C4 de contenedores con los flujos de datos entre los nodos web, API y datos, y su conexión con la red Stellar.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Imagenes/02_c4_contenedores.png}
+\caption{Diagrama C4 de contenedores (nivel 2): nodos web, API y datos, y su acoplamiento con Soroban RPC y Horizon.}
+\label{fig:c4-contenedores}
+\end{figure}
+
+\subsubsection{Nodo web (frontend)}
+
+Aplicación React 18 con Vite, TypeScript, Tailwind CSS y la familia de componentes shadcn/ui (sobre Radix). La integración Web3 utiliza \texttt{@stellar/freighter-api} 6.0.1 para la firma del comprador y \texttt{@stellar/stellar-sdk} 14.6.1 para la construcción local de transacciones de validación. Expone 23 rutas que cubren el flujo de e-commerce (catálogo, carrito, \textit{checkout}, mis entradas, mis ventas P2P) y los flujos administrativos (panel y escáner QR).
+
+\subsubsection{Nodo API (backend)}
+
+Backend Node.js con Express y TypeScript, sobre Prisma como ORM contra PostgreSQL. El módulo de autenticación utiliza \texttt{bcryptjs} (factor 10) y \texttt{jsonwebtoken} (vigencia 7 días). La integración con Stellar utiliza \texttt{@stellar/stellar-sdk} 14.4.1 (versión fijada). Expone tres familias de endpoints: catálogo público con caché en memoria (TTL 30--60\,s), autenticación y \textit{checkout} fiat transaccional, e integración Soroban con los endpoints \texttt{secure-ticket}, \texttt{list-ticket}, \texttt{cancel-listing}, \texttt{build-buy-xdr}, \texttt{submit} y la cadena Stellar Classic.
+
+\subsubsection{Nodo datos (PostgreSQL + indexador)}
+
+PostgreSQL hospedado en Supabase, esquema \texttt{ticketing}, \texttt{connection\_limit=5}. El esquema comprende los modelos del dominio Web2 (\texttt{users}, \texttt{events}, \texttt{organizers}, \texttt{venues}, \texttt{event\_ticket\_types}, \texttt{event\_seat\_inventory}, \texttt{carts}, \texttt{orders}, \texttt{payments}, \texttt{tickets}) y los campos Web3 añadidos a \texttt{tickets}: \texttt{contract\_address}, \texttt{ticket\_root\_id}, \texttt{version}, \texttt{is\_for\_sale}, \texttt{resale\_price} (\texttt{BigInt}, unidad mínima de XLM), \texttt{owner\_wallet} y \texttt{asset\_code}. La unicidad on-chain se refleja en el índice único \((\texttt{contract\_address}, \texttt{ticket\_root\_id}, \texttt{version})\).
+
+El indexador es un proceso de larga duración que consulta el RPC cada 5 segundos. Mantiene un cursor en \texttt{indexer\_state.last\_ledger}, procesa los siete eventos del contrato con semántica idempotente y reposiciona el cursor automáticamente si cae fuera de la ventana de retención del RPC público.
+
+\subsection{Coleccionable Stellar Classic}
+
+Como capa visual adicional, el sistema emite un activo Stellar Classic asociado a cada boleto (código \texttt{T} + 11 hex derivados del UUID). El emisor es la dirección del organizador con flags \texttt{AUTH\_REVOCABLE} y \texttt{AUTH\_CLAWBACK\_ENABLED}. El flujo opera mediante cuatro endpoints: \texttt{build-trust-xdr}, \texttt{submit-classic}, \texttt{mint-collectible} (\texttt{PAYMENT} idempotente) y \texttt{transfer-collectible} (\texttt{CLAWBACK} + \texttt{PAYMENT}). Esta capa no sustituye al modelo Soroban como fuente de verdad.

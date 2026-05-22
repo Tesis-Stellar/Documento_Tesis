@@ -69,7 +69,7 @@
  % \@mainmattertrue
   \pagenumbering{arabic}
   \pagestyle{fancy}
-  \rhead[]{Stellar Tickets: Solución B2B de Contratos Inteligentes para la Reventa de Entradas}
+  \rhead[]{SecureTicket: Solución B2B de reventa basada en contratos inteligentes Stellar/Soroban}
   \lhead[]{}
   \lfoot[]{}
   \rfoot[]{}
@@ -101,3 +101,19 @@
 
 % Espacio visible entre párrafos sin sangría inicial.
 \usepackage{parskip}
+
+% --- Control de desbordes de margen ---
+% microtype mejora la justificación y reduce overfull hboxes con protrusión y expansión.
+\usepackage[expansion=false]{microtype}
+% Habilita hyphenación en fuentes monoespaciadas (\texttt) y en versalitas.
+\usepackage[htt]{hyphenat}
+% Permite separación más laxa entre palabras para preferir desbordes verticales pequeños sobre horizontales.
+\sloppy
+\emergencystretch=3em
+\tolerance=2000
+\hbadness=2000
+% Permite romper línea después de cada guion bajo, slash o punto dentro de identificadores en \texttt.
+\AtBeginDocument{%
+  \let\SecTktOrigUnderscore\_%
+  \renewcommand{\_}{\SecTktOrigUnderscore\allowbreak}%
+}

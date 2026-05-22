@@ -1,0 +1,54 @@
+\newpage
+\setcounter{subsection}{0}
+\section{CONTEXTO DEL PROYECTO}
+
+\subsection{Trasfondo}
+
+\subsubsection{Blockchain y contratos inteligentes}
+
+Una cadena de bloques es una estructura de datos distribuida, ordenada y enlazada criptográficamente, en la que un conjunto de nodos mantiene una réplica del registro y aplica un protocolo de consenso para acordar el orden y la validez de las transacciones. Cada bloque contiene un encabezado con la referencia al \textit{hash} del bloque anterior, una raíz de Merkle de las transacciones y metadatos del consenso, lo que permite la detección determinística de cualquier alteración posterior.
+
+Sobre esta infraestructura, los contratos inteligentes son programas con estado persistente y ejecución determinística cuyas transiciones se validan en cada nodo bajo el mismo conjunto de reglas. En el contexto de este trabajo, los contratos inteligentes se utilizan como mecanismo de coordinación entre la \textit{ticketera}, los compradores y la plataforma de reventa, trasladando al protocolo la verificación de propiedad, la unicidad del activo y la distribución de comisiones, sin requerir confianza unilateral en un intermediario.
+
+\subsubsection{Red Stellar y protocolo de consenso}
+
+Stellar es una red pública orientada a la transferencia de valor digital y a la emisión de activos tokenizados. La red opera bajo el \textit{Stellar Consensus Protocol} (SCP) e integra, desde el protocolo 20, una capa de contratos inteligentes denominada Soroban. Los parámetros operacionales relevantes para este trabajo son: capacidad teórica de 1\,000 a 3\,000 TPS según el tipo de operación, tiempo de cierre de \textit{ledger} de aproximadamente 5 segundos (finalidad de 3 a 5 segundos), costo base por operación de aproximadamente 0{,}02 COP a la tasa de referencia, y mecanismo de \textit{surge pricing} en condiciones de saturación.
+
+El SCP es una instancia del paradigma \textit{Federated Byzantine Agreement} (FBA) en la que el conjunto de nodos participantes y la composición de los quórums no son definidos por una autoridad central. Cada nodo declara su propia configuración de confianza mediante \textit{quorum slices}. La propiedad clave del modelo es la intersección de quórums: si todo par de quórums comparte al menos un nodo correcto, el sistema mantiene \textit{safety} incluso ante nodos bizantinos. El SCP prioriza \textit{safety} sobre \textit{liveness}, lo cual es consistente con el caso de uso de transferencia de valor.
+
+\subsubsection{Soroban, NFTs y tokens de pago}
+
+Soroban es la plataforma de contratos inteligentes de Stellar. Los contratos se escriben en Rust contra el crate \texttt{soroban-sdk} (versión 23 en este trabajo) y se compilan al target \texttt{wasm32v1-none}. El modelo de ejecución es determinístico, sin acceso a fuentes no reproducibles (relojes locales, aleatoriedad no derivada del ledger, llamadas al sistema operativo).
+
+Soroban gestiona tres tipos de almacenamiento: \texttt{Persistent}, \texttt{Temporary} e \texttt{Instance}, cada uno con un costo de \textit{rent} distinto. La emisión de eventos se realiza mediante \texttt{events().publish()}: cada evento contiene \textit{topics} indexables y un \textit{body} serializable, y se almacena en el meta del ledger, lo que permite a los indexadores externos consumirlo sin afectar el costo de \textit{rent} del contrato.
+
+El estándar NFT en Soroban define una representación de activos no fungibles con identificador único, propietario tipo \texttt{Address} y reglas de transferencia controladas por el contrato emisor. En este trabajo se extiende este estándar con un esquema de versionado: cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), donde \texttt{version} se incrementa en cada operación de reventa mediante un patrón \textit{burn/remint}.
+
+El activo nativo de la red, XLM, y cualquier activo emitido en Stellar se exponen como tokens compatibles con la interfaz estándar de Soroban a través del \textit{Stellar Asset Contract} (SAC). Esto permite que las operaciones de pago de la compra de reventa se ejecuten dentro del mismo flujo de invocación del contrato del evento, sin transacciones separadas para el pago y la transferencia de propiedad.
+
+\subsection{Análisis del Contexto}
+
+El análisis comparativo de soluciones del mercado y de la literatura técnica permite identificar tres categorías de antecedentes: (i) plataformas tradicionales de reventa basadas en QR estáticos y conciliación bancaria; (ii) soluciones NFT desplegadas sobre Ethereum 1.0 o sus capas 2; y (iii) propuestas académicas de \textit{ticketing} distribuido sin liquidación atómica. La Tabla~\ref{tab:analisis-contexto} contrasta los principales parámetros técnicos de cada categoría contra la propuesta de este trabajo.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Análisis comparativo de soluciones del contexto.}
+\label{tab:analisis-contexto}
+\begin{tabular}{p{3.2cm}p{2.7cm}p{2.7cm}p{2.7cm}p{2.7cm}}
+\toprule
+\textbf{Parámetro} & \textbf{Tradicional} & \textbf{NFT en ETH 1.0} & \textbf{Académica} & \textbf{Propuesta} \\
+\midrule
+Finalidad & 72--120 h & 1--6 min & Variable & 3--5 s \\
+Costo por op. & 1{,}5--3{,}5\,\% + fija & USD 5--50 (gas) & N/A & $\approx$\,0{,}02 COP \\
+Capacidad & --- & 15--30 TPS & --- & 1\,000--3\,000 TPS \\
+Atomicidad pago + propiedad & No & Parcial & No & Sí \\
+Trazabilidad pública & No & Sí & Parcial & Sí \\
+Unicidad por construcción & No & Sí & Variable & Sí (\textit{burn/remint}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+La principal ventaja de la propuesta frente al esquema NFT clásico sobre Ethereum es la liquidación atómica de pago, comisiones y propiedad dentro de una sola transacción, sin requerir patrones de \textit{commit-reveal} o \textit{escrow} externos. Frente a las plataformas tradicionales, la unicidad del NFT con versionado y el patrón \textit{burn/remint} eliminan por construcción la coexistencia de dos copias válidas del mismo activo, lo cual no es alcanzable mediante validación posterior de QR estáticos.
+
+Como referencia normativa local, la Ley 1493 de 2011 regula los espectáculos públicos de las artes escénicas en Colombia y establece una contribución parafiscal del 10\,\% sobre la boletería cuyo precio individual sea igual o superior a tres UVT. El modelo propuesto registra el precio efectivo on-chain en cada operación, lo que habilita el cálculo determinístico de la contribución mediante una agregación sobre el historial indexado. Este mapeo se utiliza como referencia académica y no constituye declaración de cumplimiento regulatorio productivo.

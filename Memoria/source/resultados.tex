@@ -1,0 +1,134 @@
+\newpage
+\section{RESULTADOS}
+
+Esta sección consolida los resultados experimentales obtenidos sobre la red de prueba de Stellar, conforme al proceso de control de calidad definido en la metodología (pruebas unitarias, integración, antifraude y medición). Los resultados se reportan en cuatro frentes: desempeño del contrato, cobertura de pruebas, comportamiento antifraude y discusión comparativa.
+
+\subsection{Metodología de medición}
+
+Las métricas se capturan sobre testnet con el contrato \texttt{event\_contract} desplegado por el \textit{factory} configurado para el prototipo. Las variables observadas son: tiempo de envío al RPC, tiempo de confirmación on-chain (cierre del ledger que incluyó la transacción), latencia extremo a extremo desde la interfaz hasta la actualización en la base de datos relacional, y tasa de fallos por tipo de operación. Cada operación se ejecutó en corridas independientes y los percentiles se calculan sobre el conjunto observado.
+
+\subsection{Desempeño sobre testnet}
+
+La Tabla~\ref{tab:latencia} resume la latencia y el costo nominal por tipo de operación. El costo se reporta en pesos colombianos (COP) calculados a la tasa de referencia promediada de 1\,XLM\,$\approx$\,1\,500\,COP. Esta tasa es indicativa y está sujeta a la alta variabilidad del precio del activo en el mercado; la cifra on-chain real es determinística en la unidad mínima de XLM.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Latencia de confirmación y costo nominal por operación sobre testnet.}
+\label{tab:latencia}
+\begin{tabular}{p{4.0cm}p{2.3cm}p{2.3cm}p{2.3cm}p{2.6cm}}
+\toprule
+\textbf{Operación} & \textbf{Envío (s)} & \textbf{Conf. p50 (s)} & \textbf{Conf. p95 (s)} & \textbf{Costo aprox. (COP)} \\
+\midrule
+\texttt{crear\_boleto} & < 1 & 4{,}8 & 6{,}1 & $\approx$\,0{,}02 \\
+\texttt{listar\_boleto} & < 1 & 4{,}7 & 5{,}9 & $\approx$\,0{,}02 \\
+\texttt{cancelar\_venta} & < 1 & 4{,}7 & 5{,}8 & $\approx$\,0{,}02 \\
+\texttt{comprar\_boleto} (primaria) & < 1 & 4{,}9 & 6{,}3 & $\approx$\,0{,}03 \\
+\texttt{comprar\_boleto} (reventa) & < 1 & 5{,}1 & 6{,}5 & $\approx$\,0{,}06 \\
+\texttt{redimir\_boleto} & < 1 & 4{,}7 & 5{,}9 & $\approx$\,0{,}02 \\
+\texttt{invalidar\_boleto} & < 1 & 4{,}8 & 6{,}0 & $\approx$\,0{,}02 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+El costo de la compra de reventa es mayor porque la transacción contiene cuatro operaciones lógicas dentro del mismo \textit{call frame}: transferencia al vendedor (92\,\%), comisión al organizador (5\,\%), comisión a la plataforma (3\,\%) y actualización del registro de propiedad. La semántica atómica garantiza que las cuatro se aplican como una sola unidad o ninguna se aplica en caso de fallo.
+
+La latencia extremo a extremo desde la interfaz incorpora la construcción del XDR en el backend, la firma del usuario en Freighter y la propagación del evento por el indexador (poll cada 5 segundos). El tiempo p95 desde la confirmación del usuario hasta la actualización de la vista de ``Mis entradas'' se ubica entre 8 y 11 segundos.
+
+\subsection{Cobertura y resultados de pruebas automatizadas}
+
+La suite unitaria sobre los contratos comprende 58 casos. La Tabla~\ref{tab:cobertura} resume su distribución.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Distribución de pruebas unitarias sobre los contratos Soroban.}
+\label{tab:cobertura}
+\begin{tabular}{p{4.5cm}p{2.0cm}p{6.5cm}}
+\toprule
+\textbf{Contrato} & \textbf{Casos} & \textbf{Cobertura funcional} \\
+\midrule
+\texttt{event\_contract} & 35 & Ciclo de vida, autorización por rol, errores tipados, eventos. \\
+\texttt{factory\_contract} & 13 & Doble autenticación, despliegue por \texttt{salt}, eventos. \\
+\texttt{ticket\_nft\_contract} & 10 & Emisión, transferencia, quema y consultas SEP-41. \\
+\midrule
+\textbf{Total} & \textbf{58} & Ejecutadas en GitHub Actions en cada \textit{push} y \textit{pull request}. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los 58 casos se ejecutan de forma exitosa en el \textit{workflow} de integración continua. La cobertura es del 100\,\% sobre los siete eventos definidos por el \texttt{event\_contract} y sobre los 16 códigos de error tipados.
+
+\subsection{Evaluación antifraude}
+
+Los escenarios antifraude se modelaron como pruebas negativas. La Tabla~\ref{tab:antifraude} consolida los seis escenarios y el resultado observado.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Escenarios antifraude evaluados sobre el contrato.}
+\label{tab:antifraude}
+\begin{tabular}{p{5.0cm}p{4.0cm}p{5.5cm}}
+\toprule
+\textbf{Escenario} & \textbf{Resultado esperado} & \textbf{Error / Mecanismo} \\
+\midrule
+Doble redención del mismo boleto & Rechazo en la 2ª invocación & \texttt{YaUsado} (código 9) \\
+Doble compra del mismo boleto listado & Rechazo en la 2ª compra & \texttt{NoEnVenta} (código 7) tras \textit{burn} \\
+Compra del propio boleto (autocompra) & Rechazo & \texttt{AutoCompra} (código 8) \\
+Redención por dirección no autorizada & Rechazo & \texttt{NoAutorizado} (código 11) \\
+Manipulación del precio en el \textit{frontend} & Firma inválida & Validación on-chain del precio listado \\
+Coexistencia de dos copias válidas tras reventa & Imposible por diseño & Patrón \textit{burn/remint} sobre la tupla \((\texttt{root\_id}, \texttt{version})\) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+En los seis escenarios el contrato rechazó la operación inválida sin dejar estados parciales y emitió el error tipado correspondiente. La trazabilidad de los intentos fallidos queda registrada en el meta del ledger y es consultable mediante \textit{Stellar Expert}.
+
+\subsection{Análisis y discusión}
+
+Los resultados se contrastan con dos referencias: el esquema tradicional de reventa (QR estático y conciliación bancaria) y los esquemas NFT sobre Ethereum 1.0.
+
+Frente al esquema tradicional, la solución reduce el tiempo de finalidad de 72--120 horas hábiles al rango de 3--5 segundos del cierre de ledger en Stellar. El costo nominal por operación se desplaza de un esquema porcentual (1{,}5--3{,}5\,\% más tarifa fija) a una tarifa fija del orden de centésimas de peso colombiano por operación, lo que vuelve económicamente viable la operación con boletos de bajo precio. La duplicidad por QR estático queda eliminada por construcción.
+
+Frente a los esquemas sobre Ethereum 1.0, la capacidad teórica de la red Stellar (1\,000--3\,000 TPS) representa una diferencia del orden de 100x sobre el rango característico de 15--30 TPS, lo que permite considerar el modelo para eventos de alta concurrencia. La semántica atómica de hasta 100 operaciones por transacción habilita la compra de reventa como una unidad indivisible sin requerir patrones de \textit{commit-reveal} o \textit{escrow} externos.
+
+Las limitaciones identificadas son: (i) la evaluación se realiza sobre testnet, lo que implica condiciones de carga distintas a las de mainnet bajo demanda real; (ii) la latencia E2E está dominada por el intervalo de \textit{poll} del indexador (5\,s), parámetro configurable a costa de mayor consumo del RPC; (iii) el costo nominal corresponde al \textit{base fee}: en saturación del ledger, el \textit{surge pricing} puede incrementar el costo efectivo, comportamiento que no se observó durante la evaluación.
+
+\subsection{Evidencia funcional del prototipo}
+
+A continuación se incluyen capturas del prototipo desplegado en producción de pruebas (\texttt{secure-ticket-beta.vercel.app}) que evidencian los flujos descritos en las secciones anteriores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_01_catalogo.png}
+\caption{Catálogo público de eventos en la pasarela B2B \textit{TuTicket}, punto de entrada para la compra primaria.}
+\label{fig:app-catalogo}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_02_listar_reventa.png}
+\caption{Listado de un boleto para reventa: el usuario fija el precio en COP, la interfaz muestra el equivalente en XLM a la cotización actual y descompone las comisiones (5\,\% organizador, 3\,\% plataforma) junto al monto neto a recibir.}
+\label{fig:app-listar}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_03_freighter_firma.png}
+\caption{Confirmación de transacción Soroban en Freighter: el usuario revisa la operación construida por el backend (XDR proxy) y la firma localmente; las llaves privadas nunca abandonan la extensión.}
+\label{fig:app-freighter}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_04_qr_nft.png}
+\caption{Vista ``Mis Entradas'' tras ``Asegurar en Blockchain'': el boleto exhibe el badge de Secure Ticket y el QR firmado que se valida en puerta contra el contrato \texttt{ticket\_nft\_contract}.}
+\label{fig:app-qr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_05_admin_console.png}
+\caption{Consola administrativa Secure Ticket: muestra los 76 eventos registrados y los 40 contratos desplegados a través del \texttt{factory}, junto a los accesos al \textit{scanner} de redención y al panel de reglas P2P.}
+\label{fig:app-admin}
+\end{figure}

@@ -1,0 +1,70 @@
+\newpage
+\section{DESCRIPCIÓN GENERAL}
+
+\subsection{Oportunidad, Problema}
+
+\subsubsection{Contexto del Problema}
+
+El mercado secundario de boletería digital opera sobre tres puntos de fricción técnicos que se mantienen vigentes en plataformas comerciales: (i) los códigos QR estáticos asociados a cada boleto pueden duplicarse y validarse simultáneamente en accesos distintos cuando no existe un registro centralizado capaz de invalidar la copia en el instante exacto del primer uso; (ii) la reventa concurrente del mismo activo a varios compradores se materializa cuando la plataforma vendedora no garantiza la unicidad transaccional de la operación; y (iii) la ausencia de trazabilidad pública del historial de propiedad impide al comprador final verificar el origen de la entrada antes de su uso.
+
+A estos problemas se suma la asimetría entre la entrega del activo digital y la confirmación efectiva del pago: las pasarelas bancarias tradicionales liquidan operaciones de tarjeta o transferencia internacional en ventanas de 72 a 120 horas hábiles, mientras que el boleto digital es entregado al comprador en cuestión de segundos. Esta diferencia temporal es uno de los vectores explotados con mayor frecuencia en escenarios de fraude documentados en el mercado.
+
+\subsubsection{Formulación del Problema}
+
+El problema abordado por este trabajo se formula en los siguientes términos: \textit{¿cómo diseñar un sistema B2B de reventa de entradas que garantice, por construcción, la unicidad y autenticidad de cada boleto, distribuya automáticamente las comisiones a organizador y plataforma, mantenga la trazabilidad pública del historial de propiedad y opere con tiempos de liquidación compatibles con la entrega inmediata del activo digital, sin requerir un intermediario centralizado de confianza?}
+
+La formulación impone tres condiciones técnicas verificables: la unicidad debe ser una propiedad del registro, no del proceso de validación; la liquidación de pago y la transferencia de propiedad deben ocupar una sola unidad atómica; y el historial debe ser auditable por cualquier parte sin requerir privilegios concedidos por la plataforma.
+
+\subsubsection{Propuesta de Solución}
+
+La propuesta consiste en una plataforma B2B de reventa de entradas implementada como un prototipo distribuido en tres nodos (web, API y datos) que integra una capa de contratos inteligentes Soroban sobre la red Stellar. Cada boleto se modela como un NFT identificado por la tupla \((\texttt{ticket\_root\_id}, \texttt{version})\), donde el primer componente es estable durante toda la vida del activo y el segundo se incrementa en cada operación de reventa mediante un patrón \textit{burn/remint}. La compra de reventa ejecuta en una sola transacción el pago al vendedor (92\,\%), la comisión al organizador (5\,\%), la comisión a la plataforma (3\,\%) y la transferencia de propiedad. La trazabilidad se materializa mediante siete eventos on-chain consumidos por un indexador que persiste el historial en una base de datos relacional.
+
+El área de la propuesta es desarrollo de software con énfasis en sistemas distribuidos y aplicación de tecnologías de registro distribuido (\textit{blockchain}).
+
+\subsubsection{Justificación de la Solución}
+
+La utilización de Stellar/Soroban se justifica por cuatro propiedades verificables en la documentación oficial de la red: tiempo de finalidad de 3 a 5 segundos por transacción, costo nominal fijo por operación de aproximadamente 0{,}02 COP\footnote{Equivalencia calculada a una tasa de referencia promediada de 1\,XLM\,$\approx$\,1\,500\,COP, debido a la alta variabilidad del precio del activo en el mercado. El costo on-chain real es de 100 \textit{stroops} (\textit{base fee}); 1 XLM\,=\,$10^{7}$ stroops. Todas las conversiones a COP en esta memoria utilizan la misma tasa de referencia.}, capacidad teórica del orden de 1\,000 a 3\,000 TPS, y semántica atómica de hasta 100 operaciones por transacción. Estas características hacen viable el diseño de una compra de reventa indivisible que combina pago, comisiones y propiedad, condición que no se logra de forma directa en esquemas tradicionales basados en pasarelas bancarias y registros centralizados.
+
+Adicionalmente, el modelo de seguridad de la red, basado en el \textit{Stellar Consensus Protocol} (SCP) bajo el paradigma \textit{Federated Byzantine Agreement}, prioriza la propiedad de \textit{safety} sobre \textit{liveness}, lo cual es deseable en el caso de uso de reventa: ante un escenario adverso el ledger detiene su avance en lugar de producir bifurcaciones, lo que garantiza que ningún boleto pueda asignarse simultáneamente a dos compradores distintos en estados acordados como finales.
+
+\subsection{Descripción del Proyecto}
+
+\subsubsection{Objetivo General}
+
+Desarrollar una solución B2B de reventa de tickets, basada en la tecnología de contratos inteligentes de Stellar, que garantice la unicidad y autenticidad de cada activo digital, reduciendo al mínimo el fraude y la especulación en la reventa de entradas para eventos de entretenimiento.
+
+\subsubsection{Objetivos Específicos}
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+    \item Crear un sistema de reventa B2B de tickets basado en contratos inteligentes y NFTs que aseguren autenticidad, originalidad y trazabilidad.
+    \item Desarrollar un contrato inteligente que genere tickets como NFTs, permita la transferencia de propiedad y automatice la distribución de comisiones.
+    \item Implementar un prototipo que simule el proceso completo de reventa en la red de prueba de Stellar, desde la venta hasta la compra.
+    \item Gestionar el funcionamiento de la herramienta a través de una implementación web que permita la simulación y visualización del modelo y de su integración con la cadena de bloques.
+\end{itemize}
+
+\subsubsection{Entregables, Estándares y Justificación}
+
+La Tabla~\ref{tab:entregables} consolida los entregables del trabajo de grado, los estándares aplicados como marco de referencia y la justificación de cada uno.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Entregables y estándares aplicados.}
+\label{tab:entregables}
+\begin{tabular}{p{3.8cm}p{4.2cm}p{6.0cm}}
+\toprule
+\textbf{Entregable} & \textbf{Estándar de referencia} & \textbf{Justificación} \\
+\midrule
+Memoria de Trabajo de Grado (este documento) & Formato institucional PUJ & Documento autocontenido que sintetiza el trabajo realizado. \\
+Plan de Gestión del Proyecto (SPMP) & Plantilla institucional & Trazabilidad de la planeación, hitos, riesgos y presupuesto. \\
+Especificación de Requisitos (SRS) & Plantilla institucional & Definición detallada de RF, RNF, casos de uso y criterios de aceptación. \\
+Especificación del Diseño (SDD) y Propuesta de TG & Modelo C4 + secuencias UML & Vistas de contexto, contenedores, componentes y despliegue. \\
+Suite de tres contratos Soroban + 58 pruebas & Rust + \texttt{soroban-sdk} 23 & Materialización del modelo NFT con versionado, \textit{burn/remint} y NFT SEP-41. \\
+Backend Node.js + indexador & Express + Prisma + PostgreSQL & API REST, XDR proxy \textit{stateless} y sincronización on-chain/off-chain. \\
+Frontend web (React/Vite) & SPA responsive + Freighter & Flujo E2E para usuarios finales y operadores. \\
+Integración continua & GitHub Actions & Compilación y pruebas automatizadas en cada \textit{push}. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Los artefactos de gestión, requisitos, diseño y verificación se organizan de manera reproducible y auditable a partir del código fuente público y de la documentación entregada como anexos.

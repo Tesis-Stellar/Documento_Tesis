@@ -7,23 +7,24 @@
 \usepackage{subcaption}
 \DeclareFloatingEnvironment[fileext=ldiag,placement={!ht},name=Diagrama]{diagrama}
 \usepackage[pdftex,
-            pdfauthor={Nombre del Autor},
-            pdftitle={Título del Documento},
-            pdfsubject={Temática o Campo del Conocimiento},
-            pdfkeywords={Palabras Clave},
+            pdfauthor={Grupo 12 - Pontificia Universidad Javeriana},
+            pdftitle={SecureTicket: Solucion B2B de reventa basada en contratos inteligentes Stellar/Soroban},
+            pdfsubject={Contratos inteligentes Soroban en Stellar},
+            pdfkeywords={blockchain, Stellar, Soroban, NFT, reventa, ticketing},
             pdfproducer={Latex},
             pdfcreator={pdflatex},
             hidelinks]{hyperref}
-            
+
 
 \begin{document}
+%------------------------------------------------------------------------------------------------------------------------------
+% Portada y preliminares
+%------------------------------------------------------------------------------------------------------------------------------
 \input{source/_cover}
-%------------------------------------------------------------------------------------------------------------------------------
-%------------------------------------------------------------------------------------------------------------------------------
 \input{source/RECTOR}
 \input{source/ARTICULO23}
 \input{source/AGRADECIMIENTOS}
-%--------------------------------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------------------------------------
 \frontmatter
 \input{source/_table_of_contents}
 \input{source/resumen}
@@ -31,26 +32,18 @@
 \mainmatter
 %------------------------------------------------------------------------------------------------------------------------------
 \input{source/introduccion}
-%------------------------------------------------------------------------------------------------------------------------------
-\input{source/generalidades del proyecto}
-%------------------------------------------------------------------------------------------------------------------------------
-\input{source/marco_teorico}
-%------------------------------------------------------------------------------------------------------------------------------
-\input{source/solucion}
-%------------------------------------------------------------------------------------------------------------------------------
-\input{source/sistema de arquitectura}
-%---------------------
-\input{source/Estandares de ingenieria}
-%---------------------
-\input{source/evaluacion y resultados}
-%---------------------
+\input{source/descripcionGeneral}
+\input{source/contextoProyecto}
+\input{source/analisisProblema}
+\input{source/disenoSolucion}
+\input{source/desarrolloSolucion}
+\input{source/resultados}
 \input{source/conclusiones}
-%---------------------
+%------------------------------------------------------------------------------------------------------------------------------
 \backmatter
 %------------------------------------------------------------------------------------------------------------------------------
 \input{source/referencias}
-%------------------------------------------------------------------------------------------------------------------------------
-\input{source/apendice_a}
+\input{source/anexos}
 %------------------------------------------------------------------------------------------------------------------------------
 
 \end{document}

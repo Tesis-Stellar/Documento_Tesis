@@ -1,40 +1,109 @@
 \newpage
-\section{Resumen}
+\section*{Resumen}
+\addcontentsline{toc}{section}{Resumen}
 
-Esta tesis presenta el diseño y validación de una solución B2B de reventa de entradas basada en contratos inteligentes sobre Stellar. El enfoque del trabajo es investigativo y busca evaluar la aplicabilidad técnica del modelo para reducir fraude por duplicidad y reventa múltiple mediante unicidad del ticket, trazabilidad de transferencias y verificación criptográfica.
+Esta tesis presenta el diseño, la implementación y la validación de una solución B2B de reventa de entradas para eventos de entretenimiento, construida sobre contratos inteligentes Soroban en la red Stellar. El trabajo aborda tres problemas técnicos del mercado secundario: la duplicidad de códigos QR estáticos, la reventa concurrente del mismo activo a varios compradores y la ausencia de trazabilidad pública de la cadena de propiedad.
 
-El sistema propuesto se implementa como un prototipo distribuido en testnet con tres nodos (web, API y datos), integrando contratos Soroban, indexación de eventos y persistencia off-chain para auditoría. Se define un modelo de ticket NFT con metadatos resumidos por hash, ciclo de vida de estados y reglas de compra atómica con comisiones parametrizadas.
+La propuesta materializa cada boleto como un token no fungible (NFT) identificado por la tupla \((\texttt{ticket\_root\_id}, \texttt{version})\), aplica un patrón \textit{burn/remint} en cada operación de reventa para preservar la unicidad y ejecuta la liquidación de pagos y comisiones de forma atómica dentro de la misma invocación del contrato. El prototipo se despliega como una arquitectura de tres nodos (web, API y datos) sobre la red de prueba de Stellar, con doce eventos desplegados a través de un contrato \textit{factory} (cada evento con su par \texttt{event\_contract} + \texttt{ticket\_nft\_contract}) y un módulo indexador que mantiene la coherencia entre el ledger y una base de datos relacional.
 
-La evaluación considera latencia extremo a extremo, tiempos de confirmación, tasa de fallos y escenarios antifraude. Los resultados permiten contrastar el prototipo frente a esquemas tradicionales de reventa y discutir sus implicaciones técnicas dentro del contexto académico.
+La evaluación se realiza sobre testnet con métricas reproducibles de latencia de confirmación, costo nominal por operación, cobertura de pruebas unitarias y comportamiento del contrato ante escenarios antifraude. Los resultados permiten contrastar la solución frente a esquemas tradicionales de reventa en términos de tiempo de liquidación, costo por transacción y trazabilidad operacional.
 
-\textbf{Palabras clave:} blockchain, Stellar, Soroban, contratos inteligentes, NFT, reventa de entradas.
-
-\newpage
-\section{Abstract}
-
-This thesis presents the design and validation of a B2B ticket resale solution based on smart contracts on Stellar. The research-oriented approach evaluates the technical applicability of the model to reduce fraud related to ticket duplication and multiple resale through ticket uniqueness, transfer traceability, and cryptographic verification.
-
-The proposed system is implemented as a distributed prototype on testnet with three nodes (web, API, and data), integrating Soroban contracts, event indexing, and off-chain persistence for auditing. An NFT ticket model is defined with metadata integrity through hashing, lifecycle states, and atomic purchase rules with parameterized commissions.
-
-The evaluation includes end-to-end latency, confirmation times, failure rate, and anti-fraud scenarios. The results enable comparison against traditional resale schemes and support technical discussion in an academic setting.
-
-\textbf{Keywords:} blockchain, Stellar, Soroban, smart contracts, NFT, ticket resale.
+\vspace{0.3cm}
+\noindent\textbf{Palabras clave:} blockchain, Stellar, Soroban, contratos inteligentes, NFT, reventa de entradas, antifraude, ticketing digital.
 
 \newpage
-\section{Lista de Acrónimos y Definiciones}
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
 
-\begin{itemize}
-	\item \textbf{API:} Application Programming Interface.
-	\item \textbf{B2B:} Business to Business.
-	\item \textbf{E2E:} End to End.
-	\item \textbf{FBA:} Federated Byzantine Agreement.
-	\item \textbf{NFT:} Non-Fungible Token.
-	\item \textbf{RPC:} Remote Procedure Call.
-	\item \textbf{SAC:} Stellar Asset Contract.
-	\item \textbf{SCP:} Stellar Consensus Protocol.
-	\item \textbf{SGSI:} Sistema de Gestión de Seguridad de la Información.
-	\item \textbf{TPS:} Transactions per Second.
-	\item \textbf{USDC\_SIM:} Token de prueba para simular pagos tipo stablecoin en testnet.
-\end{itemize}
+This thesis presents the design, implementation, and validation of a B2B ticket resale solution for entertainment events, built on Soroban smart contracts on the Stellar network. The work addresses three technical problems of the secondary market: duplication of static QR codes, concurrent resale of the same asset to multiple buyers, and the absence of public traceability of the ownership chain.
 
+The proposal materializes each ticket as a non-fungible token (NFT) identified by the tuple \((\texttt{ticket\_root\_id}, \texttt{version})\), applies a \textit{burn/remint} pattern on each resale operation to preserve uniqueness, and executes payment and commission settlement atomically within the same contract invocation. The prototype is deployed as a three-node architecture (web, API, data) on the Stellar testnet, with twelve events deployed through a factory contract (each event with its \texttt{event\_contract} + \texttt{ticket\_nft\_contract} pair) and an indexer module that maintains consistency between the ledger and a relational database.
+
+The evaluation is performed on testnet with reproducible metrics of confirmation latency, nominal cost per operation, unit-test coverage, and contract behavior under anti-fraud scenarios. The results enable comparison against traditional resale schemes in terms of settlement time, cost per transaction, and operational traceability.
+
+\vspace{0.3cm}
+\noindent\textbf{Keywords:} blockchain, Stellar, Soroban, smart contracts, NFT, ticket resale, anti-fraud, digital ticketing.
+
+\newpage
+\section*{Glosario}
+\addcontentsline{toc}{section}{Glosario}
+
+A continuación se definen los términos técnicos utilizados a lo largo del documento. Las definiciones se proporcionan con el nivel de detalle suficiente para que el lector pueda interpretar la memoria sin requerir conocimiento previo sobre tecnologías de registro distribuido.
+
+\subsection*{Conceptos generales de blockchain}
+
+\begin{description}\setlength{\itemsep}{2pt}
+\item[Blockchain (cadena de bloques)] Estructura de datos distribuida y enlazada criptográficamente en la que un conjunto de nodos mantiene una réplica del registro y acuerda el orden de las transacciones mediante un protocolo de consenso.
+\item[Ledger (libro mayor distribuido)] Registro inmutable y compartido entre los nodos de la red. En Stellar, cada cierre de \textit{ledger} consolida un conjunto de transacciones aprobadas por el protocolo de consenso.
+\item[Hash criptográfico] Función que transforma un dato de longitud arbitraria en una cadena de tamaño fijo, de forma determinística y resistente a colisiones. Se utiliza para identificar bloques, transacciones y módulos de contratos.
+\item[Árbol de Merkle] Estructura de árbol binario en la que cada nodo intermedio almacena el \textit{hash} de la concatenación de sus hijos. Permite verificar la pertenencia de una transacción al bloque sin recorrer toda la lista.
+\item[Consenso] Mecanismo por el cual los nodos de la red acuerdan el contenido de un nuevo bloque. Stellar utiliza el \textit{Stellar Consensus Protocol} (SCP), distinto a Proof of Work y Proof of Stake.
+\item[Finalidad (\textit{finality})] Propiedad por la cual una transacción confirmada no puede ser revertida. En Stellar la finalidad se alcanza en el cierre del \textit{ledger}, en un intervalo de 3 a 5 segundos.
+\item[Mainnet / Testnet] Redes operativas de Stellar. La \textit{mainnet} es la red de producción con activos de valor real; la \textit{testnet} es la red de pruebas con activos sin valor económico, utilizada en este trabajo.
+\end{description}
+
+\subsection*{Stellar y Soroban}
+
+\begin{description}\setlength{\itemsep}{2pt}
+\item[Stellar] Red pública descentralizada orientada a la transferencia de valor digital y a la emisión de activos tokenizados.
+\item[Soroban] Plataforma de contratos inteligentes de Stellar, integrada desde el protocolo 20. Los contratos se escriben en Rust y se compilan al formato WebAssembly.
+\item[SCP (Stellar Consensus Protocol)] Instancia del paradigma \textit{Federated Byzantine Agreement}. Cada nodo declara su propia configuración de confianza (\textit{quorum slices}) en lugar de depender de una membresía fija.
+\item[FBA (\textit{Federated Byzantine Agreement})] Modelo de consenso bizantino en el que la membresía y los quórums se definen de forma descentralizada por cada nodo.
+\item[Quórum / \textit{Quorum slice}] Subconjunto de nodos cuya colaboración basta para que un nodo acepte un valor como acordado. Un quórum contiene al menos un slice de cada uno de sus miembros.
+\item[Horizon] Interfaz HTTP que expone las operaciones clásicas de Stellar (pagos, líneas de confianza, manejo de activos).
+\item[Soroban RPC] Interfaz HTTP/JSON-RPC que expone simulación, envío y consulta de transacciones de contratos inteligentes.
+\item[Transacción y operación] Una transacción es la unidad atómica firmada y enviada al ledger; puede contener hasta 100 operaciones, todas las cuales se aplican en un solo cierre de ledger o ninguna se aplica.
+\item[XLM (Lumen)] Activo nativo de la red Stellar. Se utiliza para pagar las comisiones por transacción y, en este prototipo, como medio de pago de los boletos.
+\item[Stroop] Unidad mínima de XLM. Un XLM equivale a $10^{7}$ stroops. Se utiliza como unidad de almacenamiento por precisión entera; los costos en esta memoria se reportan convertidos a COP.
+\item[\textit{Base fee} y \textit{surge pricing}] Tarifa base por operación ($\approx$\,0{,}02 COP a la tasa de referencia) y mecanismo de precio dinámico que la red aplica en condiciones de saturación.
+\item[SAC (\textit{Stellar Asset Contract})] Contrato que expone los activos de Stellar bajo la interfaz estándar de tokens de Soroban (\texttt{transfer}, \texttt{balance}, \texttt{approve}).
+\item[SEP-41] Estándar de interfaz para tokens en Soroban, compatible con el SAC.
+\item[\textit{Trustline} (línea de confianza)] Operación clásica de Stellar mediante la cual una cuenta declara su intención de recibir un activo emitido por otra cuenta.
+\item[Friendbot] Servicio público de testnet que financia cuentas nuevas con XLM de prueba.
+\item[\textit{Ledger close time}] Intervalo entre cierres consecutivos del ledger; en Stellar es de aproximadamente 5 segundos.
+\end{description}
+
+\subsection*{Contratos inteligentes y NFT}
+
+\begin{description}\setlength{\itemsep}{2pt}
+\item[Contrato inteligente] Programa con estado persistente y ejecución determinística cuyas transiciones se validan en cada nodo bajo el mismo conjunto de reglas.
+\item[WASM (WebAssembly)] Formato binario al que se compilan los contratos Soroban. El target utilizado en este trabajo es \texttt{wasm32v1-none}.
+\item[NFT (\textit{Non-Fungible Token})] Token con identificador único, no intercambiable por otro del mismo tipo. En este trabajo cada boleto se representa como NFT.
+\item[\textit{Mint} (acuñación)] Operación de creación de un nuevo token. Equivale a la función \texttt{crear\_boleto} del contrato.
+\item[\textit{Burn} (quema)] Operación que retira un token del conjunto de tokens válidos. En el patrón \textit{burn/remint}, la versión vigente se marca como inválida en cada reventa.
+\item[\textit{Burn/remint}] Patrón de transferencia de propiedad que combina la invalidación de la versión anterior con la emisión de una nueva versión a nombre del comprador, en una sola operación atómica.
+\item[\textit{Clawback}] Operación de Stellar Classic que permite al emisor revocar un activo previamente entregado, utilizada en este trabajo para la transferencia del coleccionable.
+\item[Atomicidad] Propiedad por la cual una transacción o se ejecuta completamente o no se ejecuta en absoluto. Es la base de la compra de reventa, que combina pago, comisiones y cambio de propiedad.
+\item[\textit{Gas fee} / Comisión] Costo nominal asociado a la ejecución de una operación en la red. En Stellar es fijo ($\approx$\,0{,}02 COP por operación a la tasa de referencia), a diferencia de redes basadas en \textit{gas} variable.
+\item[Eventos (\textit{events})] Mensajes que un contrato emite durante su ejecución, almacenados en el meta del ledger. Los consume el indexador para reconstruir el historial.
+\item[XDR (\textit{External Data Representation})] Formato binario en el que Stellar serializa transacciones y respuestas. El \textit{XDR proxy} construye transacciones en formato XDR sin firmar para que el comprador las firme localmente.
+\end{description}
+
+\subsection*{Componentes del prototipo}
+
+\begin{description}\setlength{\itemsep}{2pt}
+\item[Freighter] Extensión de navegador que actúa como billetera de Stellar. Permite al usuario firmar transacciones sin que la llave privada salga del entorno local.
+\item[Indexer (indexador)] Proceso de larga duración que consulta el RPC y persiste los eventos del contrato en una base de datos relacional para consulta histórica.
+\item[\textit{XDR proxy} \textit{stateless}] Patrón de backend que construye transacciones sin firmar y nunca custodia llaves privadas de usuarios finales.
+\item[\textit{Factory contract}] Contrato que despliega instancias independientes de otros contratos (en este trabajo, un \texttt{event\_contract} por evento).
+\item[\textit{Verificador en puerta}] Rol autorizado por el organizador para invocar la operación de redención del boleto.
+\item[Redención] Operación que marca un boleto como utilizado en el momento del ingreso al evento.
+\end{description}
+
+\subsection*{Estándares, normativa y siglas}
+
+\begin{description}\setlength{\itemsep}{2pt}
+\item[SDLC (\textit{Software Development Life Cycle})] Ciclo de vida del desarrollo de software.
+\item[KYC / AML] \textit{Know Your Customer} y \textit{Anti-Money Laundering}. Procesos de identificación de usuarios y prevención de lavado de activos. Quedan fuera del alcance del prototipo.
+\item[Ley 1493 de 2011] Norma colombiana que regula los espectáculos públicos de las artes escénicas y establece una contribución parafiscal del 10\,\% sobre boletería que supera 3 UVT.
+\item[UVT (Unidad de Valor Tributario)] Unidad de referencia de la tributación colombiana, actualizada anualmente.
+\item[API] \textit{Application Programming Interface}.
+\item[B2B] \textit{Business to Business}.
+\item[E2E] \textit{End to End}.
+\item[JWT] \textit{JSON Web Token}. Mecanismo de autenticación utilizado por el backend.
+\item[ORM] \textit{Object-Relational Mapping}. En el prototipo se utiliza Prisma sobre PostgreSQL.
+\item[RPC] \textit{Remote Procedure Call}.
+\item[SPA] \textit{Single Page Application}. Modelo del frontend.
+\item[TPS] \textit{Transactions per Second}.
+\end{description}
 
