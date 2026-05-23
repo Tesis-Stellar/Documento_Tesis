@@ -1,0 +1,495 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{ticketfairy2024}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=2d31aa6b44d4189fc477be201b91d575}{%
+           family={{The Ticket Fairy}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{fullhash}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{fullhashraw}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{bibnamehash}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{authorbibnamehash}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{authornamehash}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{authorfullhash}{2d31aa6b44d4189fc477be201b91d575}
+      \strng{authorfullhashraw}{2d31aa6b44d4189fc477be201b91d575}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{How to Avoid Fake Tickets: The Rise of Secondary Market Scams}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.ticketfairy.com
+      \endverb
+      \verb{url}
+      \verb https://www.ticketfairy.com
+      \endverb
+    \endentry
+    \entry{dataintelo2024}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=4d4eae3355d0dba4e82d5d3a43e33995}{%
+           family={{DataIntelo}},
+           familyi={D\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {DataIntelo Insights}%
+      }
+      \strng{namehash}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{fullhash}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{fullhashraw}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{bibnamehash}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{authorbibnamehash}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{authornamehash}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{authorfullhash}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \strng{authorfullhashraw}{4d4eae3355d0dba4e82d5d3a43e33995}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Global Event Ticket Resale Market Size, Share, Trends and Forecast}
+      \field{type}{techreport}
+      \field{year}{2024}
+      \verb{urlraw}
+      \verb https://dataintelo.com
+      \endverb
+      \verb{url}
+      \verb https://dataintelo.com
+      \endverb
+    \endentry
+    \entry{sic2020}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=59e1d8b6a7e0b67c0b51a348d07489b8}{%
+           family={{Superintendencia de Industria y Comercio de Colombia}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{fullhash}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{fullhashraw}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{bibnamehash}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{authorbibnamehash}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{authornamehash}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{authorfullhash}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \strng{authorfullhashraw}{59e1d8b6a7e0b67c0b51a348d07489b8}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{howpublished}{Superintendencia de Industria y Comercio}
+      \field{title}{Resolución de Sanción por Cartelización en la Reventa de Boletas de las Eliminatorias al Mundial Rusia 2018}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.sic.gov.co
+      \endverb
+      \verb{url}
+      \verb https://www.sic.gov.co
+      \endverb
+    \endentry
+    \entry{sdf2024soroban}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=93b5be4f4d234444eb59f73f2f85db2c}{%
+           family={{Stellar Development Foundation}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{bibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorbibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authornamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \field{extraname}{1}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Soroban Smart Contracts: Getting Started}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://developers.stellar.org/docs/build/smart-contracts/getting-started
+      \endverb
+      \verb{url}
+      \verb https://developers.stellar.org/docs/build/smart-contracts/getting-started
+      \endverb
+    \endentry
+    \entry{sdf2024stablecoins}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=93b5be4f4d234444eb59f73f2f85db2c}{%
+           family={{Stellar Development Foundation}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{bibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorbibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authornamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \field{extraname}{2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{¿Qué son las Stablecoins y cómo funcionan?}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://stellar.org/es/aprender/que-son-las-stablecoins
+      \endverb
+      \verb{url}
+      \verb https://stellar.org/es/aprender/que-son-las-stablecoins
+      \endverb
+    \endentry
+    \entry{mazieres2015stellar}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=d95f845d2bc39e6d692ea4242278e0ef}{%
+           family={Mazières},
+           familyi={M\bibinitperiod},
+           given={David},
+           giveni={D\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Stellar Development Foundation}%
+      }
+      \strng{namehash}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{fullhash}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{fullhashraw}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{bibnamehash}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{authorbibnamehash}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{authornamehash}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{authorfullhash}{d95f845d2bc39e6d692ea4242278e0ef}
+      \strng{authorfullhashraw}{d95f845d2bc39e6d692ea4242278e0ef}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Stellar Consensus Protocol: A Federated Model for Internet-Level Consensus}
+      \field{type}{techreport}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://www.stellar.org/papers/stellar-consensus-protocol.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.stellar.org/papers/stellar-consensus-protocol.pdf
+      \endverb
+    \endentry
+    \entry{sdf2024sep41}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=93b5be4f4d234444eb59f73f2f85db2c}{%
+           family={{Stellar Development Foundation}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{bibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorbibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authornamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \field{extraname}{3}
+      \field{sortinit}{7}
+      \field{sortinithash}{108d0be1b1bee9773a1173443802c0a3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{SEP-0041: Token Interface for Soroban Smart Contracts}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://developers.stellar.org/docs/tokens/quickstart
+      \endverb
+      \verb{url}
+      \verb https://developers.stellar.org/docs/tokens/quickstart
+      \endverb
+    \endentry
+    \entry{binance2024stellar}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=796ec7394b8b67eddc7f8ba0f0d78050}{%
+           family={{Binance Academy}},
+           familyi={B\bibinitperiod}}}%
+      }
+      \strng{namehash}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{fullhash}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{fullhashraw}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{bibnamehash}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{authorbibnamehash}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{authornamehash}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{authorfullhash}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \strng{authorfullhashraw}{796ec7394b8b67eddc7f8ba0f0d78050}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{What Is Stellar (XLM)?}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://academy.binance.com/en/articles/what-is-stellar-xlm
+      \endverb
+      \verb{url}
+      \verb https://academy.binance.com/en/articles/what-is-stellar-xlm
+      \endverb
+    \endentry
+    \entry{visa2024tps}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=a7f8fa7d4a0d7b3bfa534a1eba01c158}{%
+           family={{Visa Inc.}},
+           familyi={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{fullhash}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{fullhashraw}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{bibnamehash}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{authorbibnamehash}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{authornamehash}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{authorfullhash}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \strng{authorfullhashraw}{a7f8fa7d4a0d7b3bfa534a1eba01c158}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Visa Fact Sheet: Global Infrastructure and Transaction Processing}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://usa.visa.com
+      \endverb
+      \verb{url}
+      \verb https://usa.visa.com
+      \endverb
+    \endentry
+    \entry{nakamoto2008bitcoin}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=1977190f018b398e43ede3de043de8ea}{%
+           family={Nakamoto},
+           familyi={N\bibinitperiod},
+           given={Satoshi},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{1977190f018b398e43ede3de043de8ea}
+      \strng{fullhash}{1977190f018b398e43ede3de043de8ea}
+      \strng{fullhashraw}{1977190f018b398e43ede3de043de8ea}
+      \strng{bibnamehash}{1977190f018b398e43ede3de043de8ea}
+      \strng{authorbibnamehash}{1977190f018b398e43ede3de043de8ea}
+      \strng{authornamehash}{1977190f018b398e43ede3de043de8ea}
+      \strng{authorfullhash}{1977190f018b398e43ede3de043de8ea}
+      \strng{authorfullhashraw}{1977190f018b398e43ede3de043de8ea}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Bitcoin: A Peer-to-Peer Electronic Cash System}
+      \field{type}{techreport}
+      \field{year}{2008}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://bitcoin.org/bitcoin.pdf
+      \endverb
+      \verb{url}
+      \verb https://bitcoin.org/bitcoin.pdf
+      \endverb
+    \endentry
+    \entry{sdf2024intro}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=93b5be4f4d234444eb59f73f2f85db2c}{%
+           family={{Stellar Development Foundation}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{bibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorbibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authornamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \field{extraname}{4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Introducción a Stellar: Conceptos Básicos y Arquitectura}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://stellar.org/es/aprender/intro-a-stellar
+      \endverb
+      \verb{url}
+      \verb https://stellar.org/es/aprender/intro-a-stellar
+      \endverb
+    \endentry
+    \entry{ley1493}{misc}{}{}
+      \name{author}{1}{}{%
+        {{hash=a8e9c8918df2f6e7135ef51eb86f868f}{%
+           family={{Congreso de la República de Colombia}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{fullhash}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{fullhashraw}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{bibnamehash}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{authorbibnamehash}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{authornamehash}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{authorfullhash}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \strng{authorfullhashraw}{a8e9c8918df2f6e7135ef51eb86f868f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Ley 1493 de 2011: Por la cual se regulan los espectáculos públicos de las artes escénicas, se reconocen formalmente los derechos de autor y se dictan otras disposiciones}
+      \field{year}{2011}
+      \true{nocite}
+      \verb{urlraw}
+      \verb http://secretariasenado.gov.co
+      \endverb
+      \verb{url}
+      \verb http://secretariasenado.gov.co
+      \endverb
+    \endentry
+    \entry{sdf2024sustainability}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=93b5be4f4d234444eb59f73f2f85db2c}{%
+           family={{Stellar Development Foundation}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Stellar Development Foundation \& PwC US}%
+      }
+      \strng{namehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{fullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{bibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorbibnamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authornamehash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhash}{93b5be4f4d234444eb59f73f2f85db2c}
+      \strng{authorfullhashraw}{93b5be4f4d234444eb59f73f2f85db2c}
+      \field{extraname}{5}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Stellar Carbon Footprint and Sustainability Assessment Framework}
+      \field{type}{techreport}
+      \field{year}{2024}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://stellar.org
+      \endverb
+      \verb{url}
+      \verb https://stellar.org
+      \endverb
+    \endentry
+    \entry{cbeci2024bitcoin}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=a677e91dfdfd1b8c799bbc2f2e546e08}{%
+           family={{Cambridge Centre for Alternative Finance}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{fullhash}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{fullhashraw}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{bibnamehash}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{authorbibnamehash}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{authornamehash}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{authorfullhash}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \strng{authorfullhashraw}{a677e91dfdfd1b8c799bbc2f2e546e08}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Cambridge Bitcoin Electricity Consumption Index (CBECI)}
+      \field{urlday}{22}
+      \field{urlmonth}{5}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://ccaf.io/cbeci
+      \endverb
+      \verb{url}
+      \verb https://ccaf.io/cbeci
+      \endverb
+    \endentry
+    \entry{iea2024electricity}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=b33b47b3008c8c47f90a77e0c2dd3060}{%
+           family={{International Energy Agency}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {International Energy Agency (IEA)}%
+      }
+      \strng{namehash}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{fullhash}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{fullhashraw}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{bibnamehash}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{authorbibnamehash}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{authornamehash}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{authorfullhash}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \strng{authorfullhashraw}{b33b47b3008c8c47f90a77e0c2dd3060}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Electricity 2024: Analysis and forecast to 2026}
+      \field{type}{techreport}
+      \field{year}{2024}
+      \true{nocite}
+      \verb{urlraw}
+      \verb https://www.iea.org/reports/electricity-2024
+      \endverb
+      \verb{url}
+      \verb https://www.iea.org/reports/electricity-2024
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

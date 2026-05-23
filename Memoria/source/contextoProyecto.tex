@@ -2,21 +2,149 @@
 \setcounter{subsection}{0}
 \section{CONTEXTO DEL PROYECTO}
 
-\subsection{Trasfondo}
+\subsection{Blockchain, contratos inteligentes y stablecoins}
 
-\subsubsection{Blockchain y contratos inteligentes}
+Una cadena de bloques es una estructura de datos distribuida, cronológica y enlazada criptográficamente, en la que 
+un conjunto de nodos independientes mantiene una réplica del registro y aplica un protocolo de consenso para acordar 
+el orden y la validez de las transacciones sin requerir una autoridad central. Para evitar ataques de denegación de 
+servicio y de doble gasto, las blockchains públicas tradicionales se apoyan en dos paradigmas principales de consenso:
 
-Una cadena de bloques es una estructura de datos distribuida, ordenada y enlazada criptográficamente, en la que un conjunto de nodos mantiene una réplica del registro y aplica un protocolo de consenso para acordar el orden y la validez de las transacciones. Cada bloque contiene un encabezado con la referencia al \textit{hash} del bloque anterior, una raíz de Merkle de las transacciones y metadatos del consenso, lo que permite la detección determinística de cualquier alteración posterior.
+\begin{itemize}
+    \item \textbf{Proof of Work (PoW):} Introducido por Bitcoin \cite{nakamoto2008bitcoin}, requiere que los nodos 
+    validadores (mineros) resuelvan complejos acertijos criptográficos utilizando potencia de cómputo. El primero 
+    en resolver el acertijo tiene el derecho de proponer el siguiente bloque, asegurando la red a través del gasto intensivo de energía.
 
-Sobre esta infraestructura, los contratos inteligentes son programas con estado persistente y ejecución determinística cuyas transiciones se validan en cada nodo bajo el mismo conjunto de reglas. En el contexto de este trabajo, los contratos inteligentes se utilizan como mecanismo de coordinación entre la \textit{ticketera}, los compradores y la plataforma de reventa, trasladando al protocolo la verificación de propiedad, la unicidad del activo y la distribución de comisiones, sin requerir confianza unilateral en un intermediario.
+    \item \textbf{Proof of Stake (PoS):} Alternativa que reemplaza el consumo energético por el compromiso financiero. 
+    Los validadores bloquean una cantidad de criptomonedas nativas (colateral) en la red para tener la probabilidad de proponer 
+    nuevos bloques, penalizando económicamente los comportamientos maliciosos.
+\end{itemize}
 
-\subsubsection{Red Stellar y protocolo de consenso}
+Sobre esta infraestructura descentralizada, los contratos inteligentes son programas informáticos con estado persistente 
+y ejecución determinística cuyas transiciones se ejecutan bajo el mismo conjunto de reglas en cada nodo. En el ámbito del 
+ticketing, el contrato inteligente actúa como una bóveda lógica auto-ejutable que regula la propiedad, transfiere el activo 
+y distribuye las regalías al organizador de forma automática al recibir el pago.
 
-Stellar es una red pública orientada a la transferencia de valor digital y a la emisión de activos tokenizados. La red opera bajo el \textit{Stellar Consensus Protocol} (SCP) e integra, desde el protocolo 20, una capa de contratos inteligentes denominada Soroban. Los parámetros operacionales relevantes para este trabajo son: capacidad teórica de 1\,000 a 3\,000 TPS según el tipo de operación, tiempo de cierre de \textit{ledger} de aproximadamente 5 segundos (finalidad de 3 a 5 segundos), costo base por operación de aproximadamente 0{,}02 COP a la tasa de referencia, y mecanismo de \textit{surge pricing} en condiciones de saturación.
+Sin embargo, las criptomonedas nativas presentan una volatilidad de precio que introduce fricción comercial en el e-commerce 
+cotidiano. Para mitigar esta problemática, el ecosistema blockchain introdujo las \textit{Stablecoins} (monedas estables), 
+tokens criptográficos cuyo valor se encuentra anclado en paridad $1:1$ a una moneda fiduciaria de curso legal 
+(como el dólar estadounidense). En este trabajo se adopta USDC (USD Coin) como token de pago, un criptoactivo respaldado 
+en su totalidad por reservas de efectivo y bonos del Tesoro de EE. UU. \cite{sdf2024stablecoins}, lo que permite que el comprador 
+de un boleto pague una tarifa fija en dinero estable mientras disfruta de la programabilidad y liquidación atómica on-chain.
 
-El SCP es una instancia del paradigma \textit{Federated Byzantine Agreement} (FBA) en la que el conjunto de nodos participantes y la composición de los quórums no son definidos por una autoridad central. Cada nodo declara su propia configuración de confianza mediante \textit{quorum slices}. La propiedad clave del modelo es la intersección de quórums: si todo par de quórums comparte al menos un nodo correcto, el sistema mantiene \textit{safety} incluso ante nodos bizantinos. El SCP prioriza \textit{safety} sobre \textit{liveness}, lo cual es consistente con el caso de uso de transferencia de valor.
+\subsection{Red Stellar y protocolo de consenso (SCP)}
 
-\subsubsection{Soroban, NFTs y tokens de pago}
+Stellar es una blockchain pública orientada a la transferencia rápida de valor digital y a la emisión de activos tokenizados. 
+A diferencia de las redes tradicionales basadas en PoW o PoS, la red Stellar opera bajo el \textit{Stellar Consensus Protocol} 
+(SCP), una implementación del modelo de Acuerdo Bizantino Federado (FBA, \textit{Federated Byzantine Agreement}) 
+\cite{mazieres2015stellar}. El FBA establece un paradigma descentralizado en el cual los participantes del sistema no son 
+preseleccionados por una autoridad central, sino que cada nodo declara individualmente sus propios círculos de confianza 
+denominados \textbf{rebanadas de quórum} (Quorum Slices).
+
+Un quórum global en SCP se define como un conjunto de nodos que contiene al menos una rebanada de quórum para cada uno de sus 
+miembros. Para ilustrar este concepto, la documentación oficial de Stellar propone un modelo de toma de decisiones locales 
+mediante un ejemplo compuesto por cuatro participantes: Bob, Cal, Cam y Deb. En este escenario, Bob desea acordar el estado 
+de una transacción y define sus condiciones de confianza de la siguiente manera:
+
+\begin{enumerate}
+    \item Confía de forma conjunta en la opinión de Cal y Cam.
+    \item Confía de forma independiente en la opinión de Deb.
+\end{enumerate}
+
+Esto significa que Bob posee dos rebanadas de quórum válidas: el conjunto $\{\text{Bob}, \text{Cal}, \text{Cam}\}$ y el conjunto 
+$\{\text{Bob}, \text{Deb}\}$. Para que Bob valide un bloque, es necesario que él y todos los miembros de al menos una de sus 
+rebanadas estén de acuerdo. Este flujo de confianza subjetiva y local se representa gráficamente en la Figura~\ref{fig:cal_cam_bob_deb}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{Imagenes/conjunto_cal_cam_deb.png}
+    \caption{Ejemplo de rebanadas de quórum (Quorum Slices) para el nodo Bob.}
+    \label{fig:cal_cam_bob_deb}
+\end{figure}
+
+El SCP garantiza que, a través de la superposición de estas rebanadas de confianza locales entre múltiples participantes en 
+la red, se formen quórums globales interconectados. La propiedad fundamental del SCP es la \textbf{intersección de quórums}: 
+si todo par de quórums de la red comparte al menos un nodo correcto (no defectuoso ni malicioso), el sistema mantendrá seguridad 
+absoluta (\textit{safety}) impidiendo la bifurcación del registro histórico (doble gasto), incluso en presencia de nodos bizantinos. 
+El SCP prioriza en todo momento la consistencia del registro sobre la disponibilidad temporal (\textit{liveness}), deteniendo la 
+red en caso de que no exista consenso en lugar de escribir transacciones inconsistentes. En la Figura~\ref{fig:consenso_scp} se 
+muestra la representación matemática del solapamiento de estas rebanadas y nodos.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=0.85\textwidth]{Imagenes/conjunto_matematico.png}
+        \caption{Intersección de quórums lógicos.}
+        \label{fig:conjunto_matematico}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=0.85\textwidth]{Imagenes/quorum.png}
+        \caption{Configuración de consenso entre nodos.}
+        \label{fig:quorum_nodos}
+    \end{subfigure}
+    \caption{Representación matemática e intersección de quórums en el protocolo SCP.}
+    \label{fig:consenso_scp}
+\end{figure}
+
+\subsection{Sostenibilidad y consumo de recursos en perspectiva industrial}
+
+La adopción de tecnologías descentralizadas se enfrenta de manera recurrente a debates de carácter ecológico. La minería 
+clásica de Bitcoin (PoW) consume aproximadamente $150$\,TWh de energía eléctrica al año \cite{cbeci2024bitcoin}, una huella 
+energética equiparable al consumo anual de países enteros como Argentina o Ucrania, lo cual se traduce en una emisión 
+significativa de gases de efecto invernadero si la matriz energética depende de combustibles fósiles.
+
+En contraste, el mecanismo SCP de Stellar no involucra minería por cómputo intensivo ni colateralización forzosa de validadores, 
+limitándose al intercambio asíncrono de mensajes firmados criptográficamente. Una evaluación del impacto ecológico comisionada 
+por la Stellar Development Foundation en conjunto con la consultora PwC US bajo el Marco de Evaluación de Sostenibilidad de 
+Blockchain (BSF, \textit{Blockchain Sustainability Framework}) determinó los siguientes valores operativos para la red 
+\cite{sdf2024sustainability}:
+
+\begin{itemize}
+    \item \textbf{Consumo de energía por transacción:} Aproximadamente $0{,}173$\,Wh (equivalente a $0{,}000173$\,kWh).
+    \item \textbf{Emisión de carbono por transacción:} Aproximadamente $0{,}062$ gramos de $CO_2$ equivalente ($g\,CO_2e$).
+    \item \textbf{Consumo total del ecosistema:} La energía eléctrica anual total requerida por el conjunto completo de validadores activos de Stellar equivale al consumo energético de un único servidor web convencional de gama media.
+\end{itemize}
+
+Para poner estas cifras en perspectiva dentro de la infraestructura tecnológica y económica moderna, la Tabla~\ref{tab:sostenibilidad} 
+contrasta el consumo de energía unitario estimado de diferentes actividades y sectores contra el procesamiento de una transacción 
+en Stellar.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
+\caption{Comparativa de consumo energético estimado por operación/unidad.}
+\label{tab:sostenibilidad}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{6.0cm} >{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{rowgray}
+\textbf{Actividad / Sector} & \textbf{Consumo de energía} & \textbf{Equivalencia en transacciones Stellar} \\
+\midrule
+Transacción en Stellar (SCP) & $0{,}173$\,Wh ($0{,}000173$\,kWh) & $1$ \\
+\rowcolor{rowgray}
+Consulta simple en buscador tradicional & $\approx$\,0{,}30\,Wh & $\approx$\,1{,}7 \\
+Consulta simple a modelo de IA (LLM) & $\approx$\,3{,}00--9{,}00\,Wh & $\approx$\,17--52 \cite{iea2024electricity} \\
+\rowcolor{rowgray}
+Transacción clásica de tarjeta de crédito & $\approx$\,1{,}50--2{,}50\,Wh & $\approx$\,8--14 \\
+Producción de $1$\,kg de cemento (Construcción) & $\approx$\,1\,300--1\,500\,Wh & $\approx$\,7\,500--8\,600 \\
+\rowcolor{rowgray}
+Transacción promedio de Bitcoin (PoW) & $\approx$\,800--1\,200\,kWh & $\approx$\,4\,600\,millones--6\,900\,millones \cite{cbeci2024bitcoin} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A nivel global, mientras que los centros de datos (impulsados en gran parte por el crecimiento exponencial del entrenamiento 
+e inferencia de modelos de inteligencia artificial y la computación en la nube) proyectan consumir más de $1\,000$\,TWh para 
+el año 2026 \cite{iea2024electricity} y el sector de la construcción tradicional aporta cerca del 37\,\% de las emisiones de 
+carbono mundiales, la red Stellar se establece como una de las infraestructuras de liquidación financiera más sostenibles de 
+la actualidad. La integración de este middleware Web2.5 no penaliza la huella de carbono de los eventos masivos, sino que la 
+optimiza en comparación con el despliegue de contratos inteligentes sobre cadenas heredadas basadas en PoW o redes centralizadas 
+de alta fricción física (transporte y tickets en papel).
+
+\subsection{Soroban, NFTs y tokens de pago}
 
 Soroban es la plataforma de contratos inteligentes de Stellar. Los contratos se escriben en Rust contra el crate \texttt{soroban-sdk} (versión 23 en este trabajo) y se compilan al target \texttt{wasm32v1-none}. El modelo de ejecución es determinístico, sin acceso a fuentes no reproducibles (relojes locales, aleatoriedad no derivada del ledger, llamadas al sistema operativo).
 
@@ -49,6 +177,6 @@ Unicidad por construcción & No & Sí & Variable & Sí (\textit{burn/remint}) \\
 \end{tabular}
 \end{table}
 
-La principal ventaja de la propuesta frente al esquema NFT clásico sobre Ethereum es la liquidación atómica de pago, comisiones y propiedad dentro de una sola transacción, sin requerir patrones de \textit{commit-reveal} o \textit{escrow} externos. Frente a las plataformas tradicionales, la unicidad del NFT con versionado y el patrón \textit{burn/remint} eliminan por construcción la coexistencia de dos copias válidas del mismo activo, lo cual no es alcanzable mediante validación posterior de QR estáticos.
+La principal ventaja de la propuesta frente al esquema NFT clásico sobre Ethereum es la liquidación atómica de pago, comisiones y propiedad dentro de una sola transacción, sin requerir patrones de \textit{commit-reveal} o \textit{escrow} externos. Frente a las plataformas tradicionales, la unicidad del NFT con versionado y el patrón \textit{burn/remint} conllevan a que no puedan coexistir dos copias válidas del mismo activo, lo cual no es alcanzable mediante validación posterior de QR estáticos.
 
 Como referencia normativa local, la Ley 1493 de 2011 regula los espectáculos públicos de las artes escénicas en Colombia y establece una contribución parafiscal del 10\,\% sobre la boletería cuyo precio individual sea igual o superior a tres UVT. El modelo propuesto registra el precio efectivo on-chain en cada operación, lo que habilita el cálculo determinístico de la contribución mediante una agregación sobre el historial indexado. Este mapeo se utiliza como referencia académica y no constituye declaración de cumplimiento regulatorio productivo.

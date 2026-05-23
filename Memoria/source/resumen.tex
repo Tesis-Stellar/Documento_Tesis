@@ -30,80 +30,86 @@ The evaluation is performed on testnet with reproducible metrics of confirmation
 
 A continuación se definen los términos técnicos utilizados a lo largo del documento. Las definiciones se proporcionan con el nivel de detalle suficiente para que el lector pueda interpretar la memoria sin requerir conocimiento previo sobre tecnologías de registro distribuido.
 
-\subsection*{Conceptos generales de blockchain}
+\subsection*{1. Conceptos Generales de Blockchain y Tokenización}
 
 \begin{description}\setlength{\itemsep}{2pt}
-\item[Blockchain (cadena de bloques)] Estructura de datos distribuida y enlazada criptográficamente en la que un conjunto de nodos mantiene una réplica del registro y acuerda el orden de las transacciones mediante un protocolo de consenso.
-\item[Ledger (libro mayor distribuido)] Registro inmutable y compartido entre los nodos de la red. En Stellar, cada cierre de \textit{ledger} consolida un conjunto de transacciones aprobadas por el protocolo de consenso.
-\item[Hash criptográfico] Función que transforma un dato de longitud arbitraria en una cadena de tamaño fijo, de forma determinística y resistente a colisiones. Se utiliza para identificar bloques, transacciones y módulos de contratos.
-\item[Árbol de Merkle] Estructura de árbol binario en la que cada nodo intermedio almacena el \textit{hash} de la concatenación de sus hijos. Permite verificar la pertenencia de una transacción al bloque sin recorrer toda la lista.
-\item[Consenso] Mecanismo por el cual los nodos de la red acuerdan el contenido de un nuevo bloque. Stellar utiliza el \textit{Stellar Consensus Protocol} (SCP), distinto a Proof of Work y Proof of Stake.
-\item[Finalidad (\textit{finality})] Propiedad por la cual una transacción confirmada no puede ser revertida. En Stellar la finalidad se alcanza en el cierre del \textit{ledger}, en un intervalo de 3 a 5 segundos.
-\item[Mainnet / Testnet] Redes operativas de Stellar. La \textit{mainnet} es la red de producción con activos de valor real; la \textit{testnet} es la red de pruebas con activos sin valor económico, utilizada en este trabajo.
+\item[Blockchain (cadena de bloques)]: Base de datos descentralizada y replicada formada por bloques de información enlazados criptográficamente de manera inmutable.
+\item[Ledger (libro mayor)]: Registro digital unificado del estado de la red (balances y transacciones) que los nodos sincronizan mediante un protocolo de consenso.
+\item[Hash criptográfico]: Algoritmo determinista que transforma un dato de longitud arbitraria en una cadena alfanumérica única de longitud fija, resistente a alteraciones.
+\item[Árbol de Merkle]: Estructura de datos binaria que resume de forma criptográfica un conjunto de transacciones en un solo hash raíz, permitiendo una verificación ágil.
+\item[Doble gasto]: Riesgo en sistemas digitales donde un mismo activo financiero o representación de propiedad es transferido a múltiples destinatarios de forma simultánea.
+\item[Tokenización]: Proceso de digitalización y representación de la propiedad o los derechos de un activo del mundo real mediante tokens transferibles en una blockchain.
+\item[Oráculo (\textit{Oracle})]: Canal que conecta y transmite información del mundo exterior en tiempo real hacia los contratos inteligentes en la cadena de bloques.
+\item[Web2.5]: Enfoque híbrido que combina la alta velocidad y facilidad de uso de la Web2 convencional con la descentralización y trazabilidad de la Web3.
+\item[Consenso]: Mecanismo por el cual los nodos de la red acuerdan el contenido de un nuevo bloque. Stellar utiliza el \textit{Stellar Consensus Protocol} (SCP), distinto a Proof of Work y Proof of Stake.
+\item[Finalidad (\textit{finality})]: Propiedad por la cual una transacción confirmada no puede ser revertida. En Stellar la finalidad se alcanza en el cierre del \textit{ledger}, en un intervalo de 3 a 5 segundos.
+\item[Mainnet / Testnet]: Redes operativas de Stellar. La \textit{mainnet} es la red de producción con activos de valor real; la \textit{testnet} es la red de pruebas con activos sin valor económico, utilizada en este trabajo.
 \end{description}
 
-\subsection*{Stellar y Soroban}
+\subsection*{2. Protocolo e Infraestructura de la Red Stellar}
 
 \begin{description}\setlength{\itemsep}{2pt}
-\item[Stellar] Red pública descentralizada orientada a la transferencia de valor digital y a la emisión de activos tokenizados.
-\item[Soroban] Plataforma de contratos inteligentes de Stellar, integrada desde el protocolo 20. Los contratos se escriben en Rust y se compilan al formato WebAssembly.
-\item[SCP (Stellar Consensus Protocol)] Instancia del paradigma \textit{Federated Byzantine Agreement}. Cada nodo declara su propia configuración de confianza (\textit{quorum slices}) en lugar de depender de una membresía fija.
-\item[FBA (\textit{Federated Byzantine Agreement})] Modelo de consenso bizantino en el que la membresía y los quórums se definen de forma descentralizada por cada nodo.
-\item[Quórum / \textit{Quorum slice}] Subconjunto de nodos cuya colaboración basta para que un nodo acepte un valor como acordado. Un quórum contiene al menos un slice de cada uno de sus miembros.
-\item[Horizon] Interfaz HTTP que expone las operaciones clásicas de Stellar (pagos, líneas de confianza, manejo de activos).
-\item[Soroban RPC] Interfaz HTTP/JSON-RPC que expone simulación, envío y consulta de transacciones de contratos inteligentes.
-\item[Transacción y operación] Una transacción es la unidad atómica firmada y enviada al ledger; puede contener hasta 100 operaciones, todas las cuales se aplican en un solo cierre de ledger o ninguna se aplica.
-\item[XLM (Lumen)] Activo nativo de la red Stellar. Se utiliza para pagar las comisiones por transacción y, en este prototipo, como medio de pago de los boletos.
-\item[Stroop] Unidad mínima de XLM. Un XLM equivale a $10^{7}$ stroops. Se utiliza como unidad de almacenamiento por precisión entera; los costos en esta memoria se reportan convertidos a COP.
-\item[\textit{Base fee} y \textit{surge pricing}] Tarifa base por operación ($\approx$\,0{,}02 COP a la tasa de referencia) y mecanismo de precio dinámico que la red aplica en condiciones de saturación.
-\item[SAC (\textit{Stellar Asset Contract})] Contrato que expone los activos de Stellar bajo la interfaz estándar de tokens de Soroban (\texttt{transfer}, \texttt{balance}, \texttt{approve}).
-\item[SEP-41] Estándar de interfaz para tokens en Soroban, compatible con el SAC.
-\item[\textit{Trustline} (línea de confianza)] Operación clásica de Stellar mediante la cual una cuenta declara su intención de recibir un activo emitido por otra cuenta.
-\item[Friendbot] Servicio público de testnet que financia cuentas nuevas con XLM de prueba.
-\item[\textit{Ledger close time}] Intervalo entre cierres consecutivos del ledger; en Stellar es de aproximadamente 5 segundos.
+\item[Stellar]: Red descentralizada y pública optimizada para la emisión de activos digitales y el envío transfronterizo de valor con alta velocidad y bajo costo.
+\item[Soroban]: Plataforma de contratos inteligentes de Stellar, integrada desde el protocolo 20. Los contratos se escriben en Rust y se compilan al formato WebAssembly.
+
+\item[Quórum / \textit{Quorum slice}]: Subconjunto de nodos cuya colaboración basta para que un nodo acepte un valor como acordado. Un quórum contiene al menos un pedazo de cada uno de sus miembros.
+\item[Stroop]: Unidad mínima de XLM. Un XLM equivale a $10^{7}$ stroops. Se utiliza como unidad de almacenamiento por precisión entera; los costos en esta memoria se reportan convertidos a COP.
+\item[FBA (\textit{Federated Byzantine Agreement})]: Modelo de consenso abierto donde cada nodo validador elige de forma autónoma a sus propios socios de confianza en lugar de depender de una membresía fija.
+\item[SCP (\textit{Stellar Consensus Protocol})]: Implementación del modelo FBA que prioriza la consistencia y seguridad del estado del ledger sobre la disponibilidad del servicio ante fallos.
+\item[Rebanada de quórum (\textit{Quorum slice})]: Grupo de nodos en el que un validador deposita su confianza. La superposición de estas rebanadas en la red determina el quórum global.
+\item[Anclaje (\textit{Anchor})]: Entidad regulada de la red Stellar que actúa como puente financiero para procesar depósitos fíat y emitir tokens equivalentes en el ledger.
+\item[AMM (\textit{Automated Market Maker})]: Creador de mercado automatizado en Stellar que permite intercambiar activos sin intermediarios mediante fondos de liquidez gobernados por algoritmo.
+\item[Horizon]: Capa de servicios HTTP que proporciona a las aplicaciones Web2 una API interactiva con las funcionalidades clásicas de Stellar.
+\item[Soroban RPC]: Interfaz que permite a los desarrolladores enviar transacciones, simular ejecuciones y consultar el estado operativo de los contratos inteligentes.
+\item[XLM (Lumen)]: Criptoactivo nativo de Stellar utilizado para cubrir tarifas de transacción en el ledger e impedir el spam en la red.
+\item[Stroop]: Unidad de medida mínima de la red Stellar, equivalente a la diezmillonésima parte ($10^{-7}$) de un Lumen (XLM).
+\item[\textit{Trustline} (línea de confianza)]: Registro operacional en el ledger de Stellar mediante el cual una cuenta aprueba explícitamente recibir y poseer un token emitido por un tercero.
+\item[Friendbot]: Herramienta automatizada en la red de pruebas (Testnet) de Stellar para acreditar fondos de XLM ficticios a cuentas en desarrollo.
 \end{description}
 
-\subsection*{Contratos inteligentes y NFT}
+\subsection*{3. Contratos Inteligentes Soroban y Estándares}
 
 \begin{description}\setlength{\itemsep}{2pt}
-\item[Contrato inteligente] Programa con estado persistente y ejecución determinística cuyas transiciones se validan en cada nodo bajo el mismo conjunto de reglas.
-\item[WASM (WebAssembly)] Formato binario al que se compilan los contratos Soroban. El target utilizado en este trabajo es \texttt{wasm32v1-none}.
-\item[NFT (\textit{Non-Fungible Token})] Token con identificador único, no intercambiable por otro del mismo tipo. En este trabajo cada boleto se representa como NFT.
-\item[\textit{Mint} (acuñación)] Operación de creación de un nuevo token. Equivale a la función \texttt{crear\_boleto} del contrato.
-\item[\textit{Burn} (quema)] Operación que retira un token del conjunto de tokens válidos. En el patrón \textit{burn/remint}, la versión vigente se marca como inválida en cada reventa.
-\item[\textit{Burn/remint}] Patrón de transferencia de propiedad que combina la invalidación de la versión anterior con la emisión de una nueva versión a nombre del comprador, en una sola operación atómica.
-\item[\textit{Clawback}] Operación de Stellar Classic que permite al emisor revocar un activo previamente entregado, utilizada en este trabajo para la transferencia del coleccionable.
-\item[Atomicidad] Propiedad por la cual una transacción o se ejecuta completamente o no se ejecuta en absoluto. Es la base de la compra de reventa, que combina pago, comisiones y cambio de propiedad.
-\item[\textit{Gas fee} / Comisión] Costo nominal asociado a la ejecución de una operación en la red. En Stellar es fijo ($\approx$\,0{,}02 COP por operación a la tasa de referencia), a diferencia de redes basadas en \textit{gas} variable.
-\item[Eventos (\textit{events})] Mensajes que un contrato emite durante su ejecución, almacenados en el meta del ledger. Los consume el indexador para reconstruir el historial.
-\item[XDR (\textit{External Data Representation})] Formato binario en el que Stellar serializa transacciones y respuestas. El \textit{XDR proxy} construye transacciones en formato XDR sin firmar para que el comprador las firme localmente.
+\item[Contrato inteligente Soroban]: Programa de ejecución lógica inmutable y determinista que corre en la máquina virtual segura de Soroban y está escrito en Rust.
+\item[WASM (WebAssembly)]: Formato de instrucciones binarias rápido y multiplataforma al que se compilan los contratos inteligentes para asegurar su reproducción unívoca en la red.
+\item[SAC (\textit{Stellar Asset Contract})]: Contrato nativo de Stellar que encapsula los tokens clásicos del protocolo para que puedan usarse de forma homogénea en Soroban.
+\item[SEP-41]: Propuesta de estándar oficial de Stellar que unifica la interfaz y firmas de las funciones típicas para tokens en el entorno de Soroban.
+\item[Almacenamiento de Soroban]: Esquema de tres niveles de persistencia de datos con costes de renta según su vida útil: \textit{Instance} (metadatos), \textit{Persistent} (datos restaurables) y \textit{Temporary} (datos efímeros).
+\item[NFT (\textit{Non-Fungible Token})]: Token digital único, identificable y no divisible que representa de forma verificable la propiedad de un activo en la red.
+\item[Acuñación (\textit{Mint})]: Acción de crear y registrar por primera vez un token criptográfico dentro del ledger de la cadena de bloques.
+\item[Quema (\textit{Burn})]: Acción de retirar de forma irreversible un token en circulación, marcándolo como inactivo o destruido en el storage del contrato.
+\item[Patrón \textit{Burn/Remint}]: Técnica transaccional atómica que invalida la versión actual de un boleto y crea de inmediato una nueva versión del mismo a nombre de su comprador.
+\item[Clawback (recuperación)]: Característica transaccional que faculta al administrador de un activo para retirar y reasignar un token sin requerir la firma de su titular actual.
+\item[Atomicidad]: Propiedad de una transacción en la que todas las operaciones agrupadas se validan conjuntamente o no se ejecuta ninguna (\textit{todo o nada}).
+\item[Eventos de Soroban]: Registros de log efímeros y económicos que emiten los contratos inteligentes en el ledger y que son leídos por aplicaciones externas de monitoreo.
+\item[XDR (\textit{External Data Representation})]: Estándar de serialización de datos binario empleado por Stellar para formatear transacciones de forma consistente entre plataformas.
 \end{description}
 
-\subsection*{Componentes del prototipo}
+\subsection*{4. Arquitectura y Componentes de la Solución (Stellar Tickets)}
 
 \begin{description}\setlength{\itemsep}{2pt}
-\item[Freighter] Extensión de navegador que actúa como billetera de Stellar. Permite al usuario firmar transacciones sin que la llave privada salga del entorno local.
-\item[Indexer (indexador)] Proceso de larga duración que consulta el RPC y persiste los eventos del contrato en una base de datos relacional para consulta histórica.
-\item[\textit{XDR proxy} \textit{stateless}] Patrón de backend que construye transacciones sin firmar y nunca custodia llaves privadas de usuarios finales.
-\item[\textit{Factory contract}] Contrato que despliega instancias independientes de otros contratos (en este trabajo, un \texttt{event\_contract} por evento).
-\item[\textit{Verificador en puerta}] Rol autorizado por el organizador para invocar la operación de redención del boleto.
-\item[Redención] Operación que marca un boleto como utilizado en el momento del ingreso al evento.
+\item[Freighter]: Extensión web que funciona como billetera digital segura y no custodial, permitiendo a los usuarios firmar localmente transacciones en la red Stellar.
+\item[Indexador (\textit{Indexer})]: Servicio backend permanente encargado de consultar el RPC de Soroban para reflejar las actualizaciones de la blockchain en la base de datos PostgreSQL.
+\item[Proxy XDR]: Componente del backend del sistema que modela transacciones crudas en XDR para que sean firmadas por el cliente sin custodiar sus llaves privadas.
+\item[Contrato fábrica (\textit{Factory contract})]: Contrato inteligente central encargado de desplegar e inicializar de forma programática un contrato independiente para cada evento creado.
+\item[Redención operativa]: Escaneo de un código QR y comprobación de su versión en una base de datos relacional para dar acceso rápido al recinto del evento.
+\item[Redención on-chain]: Llamada al método del contrato inteligente en Soroban para asentar e invalidar de forma inmutable el boleto utilizado en la blockchain.
 \end{description}
 
-\subsection*{Estándares, normativa y siglas}
+\subsection*{5. Siglas, Estándares y Abreviaturas}
 
 \begin{description}\setlength{\itemsep}{2pt}
-\item[SDLC (\textit{Software Development Life Cycle})] Ciclo de vida del desarrollo de software.
-\item[KYC / AML] \textit{Know Your Customer} y \textit{Anti-Money Laundering}. Procesos de identificación de usuarios y prevención de lavado de activos. Quedan fuera del alcance del prototipo.
-\item[Ley 1493 de 2011] Norma colombiana que regula los espectáculos públicos de las artes escénicas y establece una contribución parafiscal del 10\,\% sobre boletería que supera 3 UVT.
-\item[UVT (Unidad de Valor Tributario)] Unidad de referencia de la tributación colombiana, actualizada anualmente.
-\item[API] \textit{Application Programming Interface}.
-\item[B2B] \textit{Business to Business}.
-\item[E2E] \textit{End to End}.
-\item[JWT] \textit{JSON Web Token}. Mecanismo de autenticación utilizado por el backend.
-\item[ORM] \textit{Object-Relational Mapping}. En el prototipo se utiliza Prisma sobre PostgreSQL.
-\item[RPC] \textit{Remote Procedure Call}.
-\item[SPA] \textit{Single Page Application}. Modelo del frontend.
-\item[TPS] \textit{Transactions per Second}.
+\item[API]: \textit{Application Programming Interface} (Interfaz de Programación de Aplicaciones).
+\item[B2B]: \textit{Business to Business} (Relaciones comerciales de Empresa a Empresa).
+\item[E2E]: \textit{End to End} (Pruebas de flujo completo de Extremo a Extremo).
+\item[JWT]: \textit{JSON Web Token} (Método estándar de transmisión segura de identidad mediante tokens de corta duración).
+\item[KYC / AML]: \textit{Know Your Customer} (Conozca a su Cliente) y \textit{Anti-Money Laundering} (Prevención de Lavado de Activos).
+\item[ORM]: \textit{Object-Relational Mapping} (Mapeo de objetos a bases de datos relacionales; en el proyecto se emplea Prisma).
+\item[RPC]: \textit{Remote Procedure Call} (Llamada a Procedimiento Remoto para interacción con nodos blockchain).
+\item[SPA]: \textit{Single Page Application} (Aplicación web que carga en una única página interactiva sin recarga de navegador).
+\item[TPS]: \textit{Transactions per Second} (Capacidad de procesamiento de transacciones por segundo en una red).
+\item[USDC / USDC\_SIM]: Token estable emitido por Circle con paridad $1:1$ respecto al dólar estadounidense; en el proyecto se simula su comportamiento comercial.
+\item[UVT]: Unidad de Valor Tributario. Unidad de referencia monetaria en Colombia utilizada para establecer límites de contribuciones parafiscales de espectáculos.
 \end{description}
+
 

@@ -1,31 +1,98 @@
 \newpage
 \section{DESCRIPCIÓN GENERAL}
 
-\subsection{Oportunidad, Problema}
 
-\subsubsection{Contexto del Problema}
+\subsection{Contexto del Problema}
 
-El mercado secundario de boletería digital opera sobre tres puntos de fricción técnicos que se mantienen vigentes en plataformas comerciales: (i) los códigos QR estáticos asociados a cada boleto pueden duplicarse y validarse simultáneamente en accesos distintos cuando no existe un registro centralizado capaz de invalidar la copia en el instante exacto del primer uso; (ii) la reventa concurrente del mismo activo a varios compradores se materializa cuando la plataforma vendedora no garantiza la unicidad transaccional de la operación; y (iii) la ausencia de trazabilidad pública del historial de propiedad impide al comprador final verificar el origen de la entrada antes de su uso.
+El mercado secundario de boletería digital para espectáculos de entretenimiento y deportes opera actualmente sobre profundas carencias 
+de información y fallos de seguridad que afectan de forma sistemática a los consumidores, organizadores y artistas. 
+Aunque la transición tecnológica desde las entradas impresas tradicionales hacia los boletos con código QR dinámico o estático 
+optimizó los canales de distribución primaria, también introdujo nuevos vectores de explotación fraudulenta que las bases de datos 
+relacionales centralizadas y las pasarelas de pago tradicionales no han logrado erradicar por construcción.
 
-A estos problemas se suma la asimetría entre la entrega del activo digital y la confirmación efectiva del pago: las pasarelas bancarias tradicionales liquidan operaciones de tarjeta o transferencia internacional en ventanas de 72 a 120 horas hábiles, mientras que el boleto digital es entregado al comprador en cuestión de segundos. Esta diferencia temporal es uno de los vectores explotados con mayor frecuencia en escenarios de fraude documentados en el mercado.
+A nivel global, la industria de la reventa de boletos es un sector con una valoración estimada de entre $3\,000$ y más de $30\,000$\,millones de dólares anuales \cite{ticketfairy2024}. Paralelo a este crecimiento, los esquemas de fraude transaccional y falsificación de entradas generan pérdidas globales que superan los $1\,600$\,millones de dólares al año, afectando de manera directa a cerca de $5$\,millones de usuarios que adquieren boletos fraudulentos en canales no oficiales \cite{dataintelo2024}. Esta problemática se sustenta principalmente en tres puntos de fricción técnica y operativa:
+\begin{enumerate}
+    \item \textbf{Duplicación y Reventa Concurrente:} Un código QR estático o una representación en PDF de un boleto constituye una cadena de datos binaria susceptible de ser clonada indefinidamente a costo marginal cero. Si un revendedor comercializa el mismo archivo a múltiples compradores de forma paralela en mercados informales, el sistema de validación centralizado de la ticketera local solo detectará la duplicidad en el acceso físico al evento, denegando el ingreso al resto de los compradores de buena fe.
+    \item \textbf{Asimetría de Liquidación Financiera:} Las pasarelas de pago Web2 tradicionales liquidan los fondos de transacciones internacionales en ventanas temporales que oscilan entre $72$ y $120$ horas hábiles, mientras que el boleto digital es transferido al comprador de forma inmediata. Esta brecha temporal permite a revendedores maliciosos vender entradas, recibir el capital y posteriormente realizar contracargos bancarios o reclamaciones de fraude, dejando al comprador final sin el activo y sin los fondos.
+    \item \textbf{Ausencia de Trazabilidad Pública de la Cadena de Propiedad:} Al no existir un registro público y transparente que certifique el historial de transferencias del boleto desde su acuñación primaria por el organizador hasta el consumidor final, resulta imposible verificar la legitimidad de un boleto adquirido en el mercado secundario antes de la validación en puerta.
+\end{enumerate}
 
-\subsubsection{Formulación del Problema}
+A nivel regional y local en Colombia, la debilidad técnica de las plataformas tradicionales ha propiciado escenarios de fraude y 
+cartelización de alta visibilidad. Un caso representativo ocurrió en el año 2020, cuando la Superintendencia de Industria y 
+Comercio (SIC) sancionó a la Federación Colombiana de Fútbol (FCF) y a la tiquetera oficial Ticketshop con una multa superior a 
+los $4{,}6$\,millones de dólares por la estructuración de una red de reventa masiva y desvío de más de $42\,000$ entradas para las 
+eliminatorias de la Copa Mundial de la FIFA Rusia 2018, reportando sobrecostos especulativos de hasta el 350\,\% sobre la tarifa 
+nominal \cite{sic2020}. De igual forma, en conciertos multitudinarios celebrados en el país durante el año 2022, las autoridades 
+locales reportaron miles de casos de estafas masivas por duplicidad de códigos QR distribuidos a través de plataformas informales de 
+reventa P2P, evidenciando que las tiqueteras convencionales no disponen de mecanismos para invalidar copias previas al instante de una 
+transferencia.
 
-El problema abordado por este trabajo se formula en los siguientes términos: \textit{¿cómo diseñar un sistema B2B de reventa de entradas que garantice, por construcción, la unicidad y autenticidad de cada boleto, distribuya automáticamente las comisiones a organizador y plataforma, mantenga la trazabilidad pública del historial de propiedad y opere con tiempos de liquidación compatibles con la entrega inmediata del activo digital, sin requerir un intermediario centralizado de confianza?}
+\subsection{Formulación del Problema}
 
-La formulación impone tres condiciones técnicas verificables: la unicidad debe ser una propiedad del registro, no del proceso de validación; la liquidación de pago y la transferencia de propiedad deben ocupar una sola unidad atómica; y el historial debe ser auditable por cualquier parte sin requerir privilegios concedidos por la plataforma.
+El problema de investigación que aborda este trabajo se formula bajo la siguiente interrogante: 
+\textit{¿cómo diseñar e implementar un middleware B2B de arquitectura Web2.5 que se acople a las plataformas de boletería 
+digital existentes para garantizar, por construcción y de forma atómica, la unicidad y autenticidad del boleto en el mercado 
+secundario, permitiendo regular de manera flexible la especulación y asegurar la liquidación inmediata de pagos y comisiones, 
+sin forzar a los usuarios a interactuar directamente con la complejidad técnica de la Web3?}
 
-\subsubsection{Propuesta de Solución}
+Este planteamiento da a proponer tres condiciones de diseño: la inhabilitación física de códigos anteriores debe ocurrir de 
+forma atómica con la confirmación de pago; el sistema debe operar como un servicio de bajo costo que se acople a la infraestructura 
+existente en lugar de reemplazarla; y la propiedad del ticket debe validarse on-chain con el fin de eliminar la necesidad de un 
+intermediario de custodia financiera.
 
-La propuesta consiste en una plataforma B2B de reventa de entradas implementada como un prototipo distribuido en tres nodos (web, API y datos) que integra una capa de contratos inteligentes Soroban sobre la red Stellar. Cada boleto se modela como un NFT identificado por la tupla \((\texttt{ticket\_root\_id}, \texttt{version})\), donde el primer componente es estable durante toda la vida del activo y el segundo se incrementa en cada operación de reventa mediante un patrón \textit{burn/remint}. La compra de reventa ejecuta en una sola transacción el pago al vendedor (92\,\%), la comisión al organizador (5\,\%), la comisión a la plataforma (3\,\%) y la transferencia de propiedad. La trazabilidad se materializa mediante siete eventos on-chain consumidos por un indexador que persiste el historial en una base de datos relacional.
+\subsection{Propuesta de Solución}
 
-El área de la propuesta es desarrollo de software con énfasis en sistemas distribuidos y aplicación de tecnologías de registro distribuido (\textit{blockchain}).
+La propuesta consiste en una plataforma de boletería digital híbrida bajo una arquitectura Web 2.5 estructurada como un middleware B2B.
+El diseño del sistema no busca competir de manera directa con las ticketeras consolidadas del mercado, lo cual generaría resistencia 
+comercial e incrementaría la fricción técnica para el usuario final que suele tener desconfianza o desconocimiento frente a los 
+criptoactivos y billeteras Web3. En su lugar, el prototipo se concibe como un servicio auxiliar de bajo costo transaccional con 
+el que las ticketeras existentes se acoplan mediante APIs REST. 
 
-\subsubsection{Justificación de la Solución}
+Las plataformas de tickets tradicionales preservan su estructura Web2 (catálogo, reserva de asientos físicos, frontend tradicional 
+y autenticación JWT). Sin embargo, delegan en el middleware la liquidación transaccional y la transferencia de propiedad on-chain 
+sobre la red Stellar. Cada boleto se modela como un NFT en el entorno de Soroban \cite{sdf2024soroban} identificado por la 
+tupla \((\texttt{ticket\_root\_id}, \texttt{version})\). Durante la compra en reventa, el middleware construye un XDR que ejecuta 
+de forma atómica el patrón \textit{burn/remint} (invalidando la versión $v$ y emitiendo la versión $v+1$ al comprador) y la 
+distribución del pago en tokens estables USDC \cite{sdf2024stablecoins}.
 
-La utilización de Stellar/Soroban se justifica por cuatro propiedades verificables en la documentación oficial de la red: tiempo de finalidad de 3 a 5 segundos por transacción, costo nominal fijo por operación de aproximadamente 0{,}02 COP\footnote{Equivalencia calculada a una tasa de referencia promediada de 1\,XLM\,$\approx$\,1\,500\,COP, debido a la alta variabilidad del precio del activo en el mercado. El costo on-chain real es de 100 \textit{stroops} (\textit{base fee}); 1 XLM\,=\,$10^{7}$ stroops. Todas las conversiones a COP en esta memoria utilizan la misma tasa de referencia.}, capacidad teórica del orden de 1\,000 a 3\,000 TPS, y semántica atómica de hasta 100 operaciones por transacción. Estas características hacen viable el diseño de una compra de reventa indivisible que combina pago, comisiones y propiedad, condición que no se logra de forma directa en esquemas tradicionales basados en pasarelas bancarias y registros centralizados.
+La especulación de precios se maneja como una política moldeable. En lugar de imponer reglas que limiten la flexibilidad del 
+negocio, la restricción de precio máximo de reventa y el porcentaje de comisiones se establecen como opciones configurables 
+en el contrato inteligente al momento de su inicialización, supeditadas al acuerdo comercial exclusivo o a las políticas 
+operativas de la ticketera organizadora del evento.
 
-Adicionalmente, el modelo de seguridad de la red, basado en el \textit{Stellar Consensus Protocol} (SCP) bajo el paradigma \textit{Federated Byzantine Agreement}, prioriza la propiedad de \textit{safety} sobre \textit{liveness}, lo cual es deseable en el caso de uso de reventa: ante un escenario adverso el ledger detiene su avance en lugar de producir bifurcaciones, lo que garantiza que ningún boleto pueda asignarse simultáneamente a dos compradores distintos en estados acordados como finales.
+\subsection{Justificación de la Solución}
+
+La selección Stellar como blockchain y su motor de contratos inteligentes \textit{Soroban} como infraestructura de soporte se justifica 
+por sus propiedades orientadas al rápido procesamiento de transacciones financieras de manera económica:
+\begin{itemize}
+    \item \textbf{Latencia de Finalidad Determinista:} El algoritmo de consenso SCP de Stellar \cite{mazieres2015stellar} 
+    garantiza la finalidad absoluta de una transacción en un rango de $3$ a $5$ segundos. Esta velocidad es coherente 
+    con los tiempos de respuesta exigidos en pasarelas de pago y evita demoras en los accesos físicos del aforo.
+
+    \item \textbf{Bajo Costo Transaccional:} La comisión base en Stellar es de $100$ stroops ($\approx$\,0{,}02 COP a 
+    la tasa de referencia), lo que permite procesar miles de transacciones de reventa y distribución de regalías sin afectar
+    el valor comercial de la entrada.
+
+    \item \textbf{Atomicidad Nátiva y USDC via SAC:} A través del Stellar Asset Contract (SAC) \cite{sdf2024sep41}, las 
+    operaciones financieras de pago en USDC y las operaciones de estado del boleto (quema de la versión anterior y 
+    re-minteo del nuevo NFT) se ejecutan dentro del mismo marco de invocación transaccional de Soroban. Si alguna de las 
+    transferencias o validaciones de propiedad falla, la transacción se revierte en su totalidad, eliminando la necesidad 
+    de construir sistemas complejos de depósito en garantía (\textit{escrow}) que son vulnerables a fallos y retención 
+    indebida de fondos.
+
+    \item \textbf{Arquitectura de Proyección Relacional:} El acoplamiento Web2.5 se apoya en un indexador asíncrono que proyecta
+     el historial on-chain en una base de datos relacional PostgreSQL. Esto permite que las aplicaciones web de las tiqueteras 
+     realicen consultas con latencias de milisegundos, ofreciendo una experiencia convencional de alta velocidad de lectura sin 
+     obligar al usuario a lidiar directamente con las llamadas de solo lectura a la blockchain.
+
+    \item \textbf{Alta Capacidad de Procesamiento (TPS):} El protocolo Stellar soporta una tasa nominal de procesamiento de 
+    entre $1\,000$ y $3\,000$ transacciones por segundo (TPS) según la complejidad de las operaciones \cite{binance2024stellar}. 
+    Aunque esta cifra es inferior a la capacidad teórica de redes centralizadas tradicionales como Visa, que reporta picos de 
+    hasta $65\,000$\,TPS con promedios de procesamiento reales de entre $1\,700$ y $4\,000$\,TPS \cite{visa2024tps}, 
+    resulta órdenes de magnitud superior a otras redes blockchain públicas como Ethereum 1.0 (que oscila entre $15$ y $30$\,TPS) 
+    y es suficiente para absorber las demandas de alta concurrencia transaccional en eventos de boletería masivos.
+
+\end{itemize}
 
 \subsection{Descripción del Proyecto}
 
@@ -36,35 +103,48 @@ Desarrollar una solución B2B de reventa de tickets, basada en la tecnología de
 \subsubsection{Objetivos Específicos}
 
 \begin{itemize}\setlength{\itemsep}{2pt}
-    \item Crear un sistema de reventa B2B de tickets basado en contratos inteligentes y NFTs que aseguren autenticidad, originalidad y trazabilidad.
-    \item Desarrollar un contrato inteligente que genere tickets como NFTs, permita la transferencia de propiedad y automatice la distribución de comisiones.
-    \item Implementar un prototipo que simule el proceso completo de reventa en la red de prueba de Stellar, desde la venta hasta la compra.
-    \item Gestionar el funcionamiento de la herramienta a través de una implementación web que permita la simulación y visualización del modelo y de su integración con la cadena de bloques.
+    \item Crear un sistema de reventa B2B de tickets basado en contratos inteligentes y NFTs que aseguren autenticidad, 
+    originalidad y trazabilidad.
+    \item Desarrollar un contrato inteligente que genere tickets como NFTs, permita la transferencia de propiedad y 
+    automatice la distribución de comisiones.
+    \item Implementar un prototipo que simule el proceso completo de reventa en la red de prueba de Stellar, desde la 
+    venta hasta la compra.
+    \item Gestionar el funcionamiento de la herramienta a través de una implementación web que permita la simulación y 
+    visualización del modelo y de su integración con la cadena de bloques.
 \end{itemize}
 
 \subsubsection{Entregables, Estándares y Justificación}
 
-La Tabla~\ref{tab:entregables} consolida los entregables del trabajo de grado, los estándares aplicados como marco de referencia y la justificación de cada uno.
+La Tabla~\ref{tab:entregables} consolida los entregables del trabajo de grado, los estándares aplicados como marco de referencia 
+y la justificación de cada uno.
 
 \begin{table}[H]
 \centering
 \small
+\renewcommand{\arraystretch}{1.3} 
+\definecolor{rowgray}{gray}{0.96}
 \caption{Entregables y estándares aplicados.}
 \label{tab:entregables}
-\begin{tabular}{p{3.8cm}p{4.2cm}p{6.0cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}X}
 \toprule
+\rowcolor{rowgray}
 \textbf{Entregable} & \textbf{Estándar de referencia} & \textbf{Justificación} \\
 \midrule
 Memoria de Trabajo de Grado (este documento) & Formato institucional PUJ & Documento autocontenido que sintetiza el trabajo realizado. \\
+\rowcolor{rowgray}
 Plan de Gestión del Proyecto (SPMP) & Plantilla institucional & Trazabilidad de la planeación, hitos, riesgos y presupuesto. \\
 Especificación de Requisitos (SRS) & Plantilla institucional & Definición detallada de RF, RNF, casos de uso y criterios de aceptación. \\
+\rowcolor{rowgray}
 Especificación del Diseño (SDD) y Propuesta de TG & Modelo C4 + secuencias UML & Vistas de contexto, contenedores, componentes y despliegue. \\
 Suite de tres contratos Soroban + 58 pruebas & Rust + \texttt{soroban-sdk} 23 & Materialización del modelo NFT con versionado, \textit{burn/remint} y NFT SEP-41. \\
-Backend Node.js + indexador & Express + Prisma + PostgreSQL & API REST, XDR proxy \textit{stateless} y sincronización on-chain/off-chain. \\
+\rowcolor{rowgray}
+Backend Node.js + indexador & Express + Prisma + PostgreSQL & API REST, XDR proxy \textit{stateless} y Sincronización on-chain/off-chain. \\
 Frontend web (React/Vite) & SPA responsive + Freighter & Flujo E2E para usuarios finales y operadores. \\
+\rowcolor{rowgray}
 Integración continua & GitHub Actions & Compilación y pruebas automatizadas en cada \textit{push}. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-Los artefactos de gestión, requisitos, diseño y verificación se organizan de manera reproducible y auditable a partir del código fuente público y de la documentación entregada como anexos.
+Los artefactos de gestión, requisitos, diseño y verificación se organizan de manera reproducible y auditable a partir del código 
+fuente público y de la documentación entregada como anexos.
