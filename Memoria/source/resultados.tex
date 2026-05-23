@@ -101,8 +101,29 @@ A continuación se incluyen capturas del prototipo desplegado en producción de 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{Imagenes/app_01_catalogo.png}
-\caption{Catálogo público de eventos en la pasarela B2B \textit{TuTicket}, punto de entrada para la compra primaria.}
-\label{fig:app-catalogo}
+\caption{Consola del usuario administrador: panel desde el que se despliegan los contratos Soroban para eventos \textit{offchain} y se crean los eventos, vinculando cada evento de la pasarela tradicional con su contrato \textit{onchain} correspondiente a través del \texttt{factory}.}
+\label{fig:app-admin-consola}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_07_asegurar.png}
+\caption{Vista ``Mis Entradas'' del usuario final: los boletos que aún no han sido asegurados en la blockchain se manejan de forma tradicional, por lo que el usuario debe esperar a que el organizador libere el QR de acceso; el botón ``Asegurar en Blockchain'' permite acuñar el boleto como NFT y liberar el QR de inmediato.}
+\label{fig:app-asegurar}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_08_boleto_asegurado.png}
+\caption{Boleto ya asegurado en la blockchain: el QR firmado queda liberado de forma anticipada y la interfaz expone las opciones disponibles sobre el NFT (revender en el mercado P2P, guardar el QR como \textit{collectible} en la wallet, ver el detalle del contrato).}
+\label{fig:app-asegurado}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_04_qr_nft.png}
+\caption{Una vez asegurado el boleto, el usuario puede guardar su QR como NFT \textit{collectible} dentro de la wallet Freighter; la captura muestra cómo se visualiza el NFT del boleto dentro de la extensión.}
+\label{fig:app-qr-nft}
 \end{figure}
 
 \begin{figure}[H]
@@ -114,21 +135,35 @@ A continuación se incluyen capturas del prototipo desplegado en producción de 
 
 \begin{figure}[H]
 \centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_09_boleta_reventa_p2p.png}
+\caption{Vista pública del mercado secundario: así ve un usuario una boleta publicada en la red Stellar disponible para compra P2P, con el precio fijado por el revendedor, el detalle del evento y el botón para ejecutar la compra atómica contra el contrato.}
+\label{fig:app-reventa-p2p}
+\end{figure}
+
+\begin{figure}[H]
+\centering
 \includegraphics[width=0.85\textwidth]{Imagenes/app_03_freighter_firma.png}
-\caption{Confirmación de transacción Soroban en Freighter: el usuario revisa la operación construida por el backend (XDR proxy) y la firma localmente; las llaves privadas nunca abandonan la extensión.}
+\caption{Ejemplo de cómo el usuario ve en la extensión Freighter el detalle de la transacción Soroban construida por el backend (XDR proxy) y cómo esta solicita su firma con la llave privada local; esta confirmación se solicita tanto al publicar un boleto en reventa como al momento de comprarlo, y las llaves privadas nunca abandonan la extensión.}
 \label{fig:app-freighter}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{Imagenes/app_04_qr_nft.png}
-\caption{Vista ``Mis Entradas'' tras ``Asegurar en Blockchain'': el boleto exhibe el badge de Secure Ticket y el QR firmado que se valida en puerta contra el contrato \texttt{ticket\_nft\_contract}.}
-\label{fig:app-qr}
+\includegraphics[width=0.85\textwidth]{Imagenes/app_10_detalle_wallet.png}
+\caption{Detalle de la wallet del usuario una vez vinculada su sesión con la extensión Freighter: la interfaz muestra el saldo en XLM y su equivalente en COP a la cotización actual, integrando la información on-chain de la cuenta con la representación monetaria local.}
+\label{fig:app-wallet}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.85\textwidth]{Imagenes/app_05_admin_console.png}
-\caption{Consola administrativa Secure Ticket: muestra los 76 eventos registrados y los 40 contratos desplegados a través del \texttt{factory}, junto a los accesos al \textit{scanner} de redención y al panel de reglas P2P.}
-\label{fig:app-admin}
+\caption{Consola del personal de \textit{staff} (puerta de acceso): los validadores en puerta acceden a un panel reducido cuya única funcionalidad disponible es el ``Secure Ticket Scanner'', utilizado para escanear y validar los QR NFT presentados por los asistentes.}
+\label{fig:app-staff}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/app_06_ui_escanner.png}
+\caption{Vista del \textit{Secure Ticket Scanner} tal como la observa el personal de \textit{staff} en puerta: la cámara escanea el QR NFT del asistente y la interfaz reporta el resultado de la verificación contra el contrato \texttt{ticket\_nft\_contract}, marcando el boleto como redimido en caso de éxito.}
+\label{fig:app-scanner}
 \end{figure}
