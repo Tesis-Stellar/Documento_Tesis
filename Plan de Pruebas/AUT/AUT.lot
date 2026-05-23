@@ -1,0 +1,29 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {table}{\numberline {1}{\ignorespaces Historial de cambios del documento AUT/UAT}}{1}{table.caption.2}%
+\contentsline {table}{\numberline {2}{\ignorespaces Referencias utilizadas en el documento AUT/UAT}}{6}{table.caption.3}%
+\contentsline {table}{\numberline {3}{\ignorespaces Definiciones, acrónimos y abreviaciones}}{7}{table.caption.4}%
+\contentsline {table}{\numberline {4}{\ignorespaces Funcionalidades incluidas en las pruebas AUT/UAT}}{8}{table.caption.5}%
+\contentsline {table}{\numberline {5}{\ignorespaces Perfiles participantes en AUT/UAT}}{10}{table.caption.6}%
+\contentsline {table}{\numberline {6}{\ignorespaces Responsabilidades durante la ejecución AUT/UAT}}{10}{table.caption.7}%
+\contentsline {table}{\numberline {7}{\ignorespaces Configuración del ambiente AUT/UAT}}{11}{table.caption.8}%
+\contentsline {table}{\numberline {8}{\ignorespaces Datos de prueba definidos para AUT/UAT}}{12}{table.caption.9}%
+\contentsline {table}{\numberline {9}{\ignorespaces Criterios de aceptación general}}{13}{table.caption.10}%
+\contentsline {table}{\numberline {10}{\ignorespaces Formato de documentación de casos AUT/UAT}}{14}{table.caption.11}%
+\contentsline {table}{\numberline {11}{\ignorespaces Caso UAT-01: Inicio de sesión exitoso}}{14}{table.caption.12}%
+\contentsline {table}{\numberline {12}{\ignorespaces Caso UAT-02: Consulta de eventos disponibles}}{15}{table.caption.13}%
+\contentsline {table}{\numberline {13}{\ignorespaces Caso UAT-03: Compra primaria simulada de ticket}}{15}{table.caption.14}%
+\contentsline {table}{\numberline {14}{\ignorespaces Caso UAT-04: Consulta de tickets adquiridos}}{16}{table.caption.15}%
+\contentsline {table}{\numberline {15}{\ignorespaces Caso UAT-05: Publicación de ticket para reventa}}{17}{table.caption.16}%
+\contentsline {table}{\numberline {16}{\ignorespaces Caso UAT-06: Compra de ticket en reventa}}{18}{table.caption.17}%
+\contentsline {table}{\numberline {17}{\ignorespaces Caso UAT-07: Verificación de ticket mediante QR}}{19}{table.caption.18}%
+\contentsline {table}{\numberline {18}{\ignorespaces Caso UAT-08: Rechazo de ticket inválido o usado}}{20}{table.caption.19}%
+\contentsline {table}{\numberline {19}{\ignorespaces Caso UAT-09: Restricción por rol no autorizado}}{21}{table.caption.20}%
+\contentsline {table}{\numberline {20}{\ignorespaces Formulario de percepción de usuario}}{22}{table.caption.21}%
+\contentsline {table}{\numberline {21}{\ignorespaces Escala de interpretación del formulario}}{22}{table.caption.22}%
+\contentsline {table}{\numberline {22}{\ignorespaces Registro de ejecución de casos AUT/UAT}}{23}{table.caption.23}%
+\contentsline {table}{\numberline {23}{\ignorespaces Registro de incidencias identificadas durante AUT/UAT}}{24}{table.caption.24}%
+\contentsline {table}{\numberline {24}{\ignorespaces Resumen cuantitativo de resultados AUT/UAT}}{24}{table.caption.25}%
+\contentsline {table}{\numberline {25}{\ignorespaces Matriz de trazabilidad de aceptación}}{26}{table.caption.26}%
+\contentsline {table}{\numberline {26}{\ignorespaces Categorías de decisión de aceptación}}{27}{table.caption.27}%
+\contentsline {table}{\numberline {27}{\ignorespaces Consolidado de decisión de aceptación de usuario}}{28}{table.caption.28}%
+\contentsline {table}{\numberline {28}{\ignorespaces Consolidado de respuestas por participantes AUT/UAT}}{29}{table.caption.29}%
