@@ -14,21 +14,27 @@ La Tabla~\ref{tab:latencia} resume la latencia y el costo nominal por tipo de op
 \begin{table}[H]
 \centering
 \small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
 \caption{Latencia de confirmación y costo nominal por operación sobre testnet.}
 \label{tab:latencia}
-\begin{tabular}{p{4.0cm}p{2.3cm}p{2.3cm}p{2.3cm}p{2.6cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.0cm} >{\centering\arraybackslash}p{2.3cm} >{\centering\arraybackslash}p{2.3cm} >{\centering\arraybackslash}p{2.3cm} >{\centering\arraybackslash}X}
 \toprule
+\rowcolor{rowgray}
 \textbf{Operación} & \textbf{Envío (s)} & \textbf{Conf. p50 (s)} & \textbf{Conf. p95 (s)} & \textbf{Costo aprox. (COP)} \\
 \midrule
 \texttt{crear\_boleto} & < 1 & 4{,}8 & 6{,}1 & $\approx$\,0{,}02 \\
+\rowcolor{rowgray}
 \texttt{listar\_boleto} & < 1 & 4{,}7 & 5{,}9 & $\approx$\,0{,}02 \\
 \texttt{cancelar\_venta} & < 1 & 4{,}7 & 5{,}8 & $\approx$\,0{,}02 \\
+\rowcolor{rowgray}
 \texttt{comprar\_boleto} (primaria) & < 1 & 4{,}9 & 6{,}3 & $\approx$\,0{,}03 \\
 \texttt{comprar\_boleto} (reventa) & < 1 & 5{,}1 & 6{,}5 & $\approx$\,0{,}06 \\
+\rowcolor{rowgray}
 \texttt{redimir\_boleto} & < 1 & 4{,}7 & 5{,}9 & $\approx$\,0{,}02 \\
 \texttt{invalidar\_boleto} & < 1 & 4{,}8 & 6{,}0 & $\approx$\,0{,}02 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 El costo de la compra de reventa es mayor porque la transacción contiene cuatro operaciones lógicas dentro del mismo \textit{call frame}: transferencia al vendedor (92\,\%), comisión al organizador (5\,\%), comisión a la plataforma (3\,\%) y actualización del registro de propiedad. La semántica atómica garantiza que las cuatro se aplican como una sola unidad o ninguna se aplica en caso de fallo.
@@ -42,19 +48,24 @@ La suite unitaria sobre los contratos comprende 58 casos. La Tabla~\ref{tab:cobe
 \begin{table}[H]
 \centering
 \small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
 \caption{Distribución de pruebas unitarias sobre los contratos Soroban.}
 \label{tab:cobertura}
-\begin{tabular}{p{4.5cm}p{2.0cm}p{6.5cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.5cm} >{\centering\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}X}
 \toprule
+\rowcolor{rowgray}
 \textbf{Contrato} & \textbf{Casos} & \textbf{Cobertura funcional} \\
 \midrule
 \texttt{event\_contract} & 35 & Ciclo de vida, autorización por rol, errores tipados, eventos. \\
+\rowcolor{rowgray}
 \texttt{factory\_contract} & 13 & Doble autenticación, despliegue por \texttt{salt}, eventos. \\
 \texttt{ticket\_nft\_contract} & 10 & Emisión, transferencia, quema y consultas SEP-41. \\
 \midrule
+\rowcolor{rowgray}
 \textbf{Total} & \textbf{58} & Ejecutadas en GitHub Actions en cada \textit{push} y \textit{pull request}. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
 Los 58 casos se ejecutan de forma exitosa en el \textit{workflow} de integración continua. La cobertura es del 100\,\% sobre los siete eventos definidos por el \texttt{event\_contract} y sobre los 16 códigos de error tipados.
@@ -66,23 +77,29 @@ Los escenarios antifraude se modelaron como pruebas negativas. La Tabla~\ref{tab
 \begin{table}[H]
 \centering
 \small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
 \caption{Escenarios antifraude evaluados sobre el contrato.}
 \label{tab:antifraude}
-\begin{tabular}{p{5.0cm}p{4.0cm}p{5.5cm}}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{5.0cm} >{\raggedright\arraybackslash}p{4.0cm} >{\raggedright\arraybackslash}X}
 \toprule
+\rowcolor{rowgray}
 \textbf{Escenario} & \textbf{Resultado esperado} & \textbf{Error / Mecanismo} \\
 \midrule
 Doble redención del mismo boleto & Rechazo en la 2ª invocación & \texttt{YaUsado} (código 9) \\
+\rowcolor{rowgray}
 Doble compra del mismo boleto listado & Rechazo en la 2ª compra & \texttt{NoEnVenta} (código 7) tras \textit{burn} \\
 Compra del propio boleto (autocompra) & Rechazo & \texttt{AutoCompra} (código 8) \\
+\rowcolor{rowgray}
 Redención por dirección no autorizada & Rechazo & \texttt{NoAutorizado} (código 11) \\
 Manipulación del precio en el \textit{frontend} & Firma inválida & Validación on-chain del precio listado \\
+\rowcolor{rowgray}
 Coexistencia de dos copias válidas tras reventa & Imposible por diseño & Patrón \textit{burn/remint} sobre la tupla \((\texttt{root\_id}, \texttt{version})\) \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-En los seis escenarios el contrato rechazó la operación inválida sin dejar estados parciales y emitió el error tipado correspondiente. La trazabilidad de los intentos fallidos queda registrada en el meta del ledger y es consultable mediante \textit{Stellar Expert}.
+En los seis escenarios el contrato rechazó la operación inválida sin dejar estados parciales y emitió el error tipado correspondiente. La trazabilidad de los intentos fallidos queda registrada en el meta del ledger y es consultable mediante \textit{Stellar Expert} \cite{stellarexpert}.
 
 \subsection{Análisis y discusión}
 
@@ -90,7 +107,7 @@ Los resultados se contrastan con dos referencias: el esquema tradicional de reve
 
 Frente al esquema tradicional, la solución reduce el tiempo de finalidad de 72--120 horas hábiles al rango de 3--5 segundos del cierre de ledger en Stellar. El costo nominal por operación se desplaza de un esquema porcentual (1{,}5--3{,}5\,\% más tarifa fija) a una tarifa fija del orden de centésimas de peso colombiano por operación, lo que vuelve económicamente viable la operación con boletos de bajo precio. La duplicidad por QR estático queda eliminada por construcción.
 
-Frente a los esquemas sobre Ethereum 1.0, la capacidad teórica de la red Stellar (1\,000--3\,000 TPS) representa una diferencia del orden de 100x sobre el rango característico de 15--30 TPS, lo que permite considerar el modelo para eventos de alta concurrencia. La semántica atómica de hasta 100 operaciones por transacción habilita la compra de reventa como una unidad indivisible sin requerir patrones de \textit{commit-reveal} o \textit{escrow} externos.
+Frente a los esquemas sobre Ethereum 1.0, la capacidad teórica de la red Stellar (1\,000--3\,000 TPS) representa una diferencia del orden de 100x sobre el rango característico de 15--30 TPS \cite{ethereumtps}, lo que permite considerar el modelo para eventos de alta concurrencia. La semántica atómica de hasta 100 operaciones por transacción habilita la compra de reventa como una unidad indivisible sin requerir patrones de \textit{commit-reveal} o \textit{escrow} externos.
 
 Las limitaciones identificadas son: (i) la evaluación se realiza sobre testnet, lo que implica condiciones de carga distintas a las de mainnet bajo demanda real; (ii) la latencia E2E está dominada por el intervalo de \textit{poll} del indexador (5\,s), parámetro configurable a costa de mayor consumo del RPC; (iii) el costo nominal corresponde al \textit{base fee}: en saturación del ledger, el \textit{surge pricing} puede incrementar el costo efectivo, comportamiento que no se observó durante la evaluación.
 

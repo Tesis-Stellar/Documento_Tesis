@@ -6,17 +6,41 @@ Esta sección describe el proceso seguido para materializar el diseño en un pro
 
 \subsection{Implementación de contratos Soroban}
 
-Los contratos se desarrollan en Rust contra \texttt{soroban-sdk} versión 23, organizados como un Cargo \textit{workspace} con tres paquetes: \texttt{event\_contract}, \texttt{factory\_contract} y \texttt{ticket\_nft\_contract}. El perfil de compilación \texttt{release} aplica \texttt{opt-level="z"}, \textit{Link-Time Optimization}, eliminación de símbolos y \texttt{panic="abort"}, lo que produce módulos WASM compatibles con el target \texttt{wasm32v1-none}.
+Los contratos se desarrollan en Rust contra la versión~23 de \texttt{soroban-sdk}, organizados como un Cargo \textit{workspace} con tres paquetes correspondientes a los tres contratos del diseño. El perfil de compilación en modo \textit{release} aplica optimización por tamaño (\texttt{opt-level="z"}), \textit{Link-Time Optimization}, eliminación de símbolos y finalización por aborto, lo que produce módulos WASM compactos compatibles con el objetivo de compilación de Soroban. La Tabla~\ref{tab:metricas-contratos} resume las métricas de cada contrato.
 
-El contrato \texttt{event\_contract} comprende aproximadamente 1\,142 líneas de código fuente en \texttt{lib.rs} y 709 líneas de pruebas en \texttt{test.rs}, con 35 casos unitarios. El contrato \texttt{factory\_contract} comprende 431 líneas de código y 245 de pruebas, con 13 casos. El contrato \texttt{ticket\_nft\_contract} (introducido en la fase 4.5 del proyecto, estilo SEP-41) ocupa aproximadamente 12\,KB de WASM y agrega 10 casos. El total de pruebas automatizadas es de 58 casos, ejecutables mediante \texttt{cargo test} en el \textit{workspace}.
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
+\caption{Métricas de código fuente y pruebas por contrato.}
+\label{tab:metricas-contratos}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.0cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}p{2.5cm} >{\centering\arraybackslash}X}
+\toprule
+\rowcolor{rowgray}
+\textbf{Contrato} & \textbf{Líneas de código} & \textbf{Líneas de pruebas} & \textbf{Casos unitarios} \\
+\midrule
+Contrato de evento & $\approx$\,1\,142 & $\approx$\,709 & 35 \\
+\rowcolor{rowgray}
+Contrato \textit{factory} & $\approx$\,431 & $\approx$\,245 & 13 \\
+Contrato NFT (SEP-41) & $\approx$\,12\,KB WASM & --- & 10 \\
+\rowcolor{rowgray}
+\textbf{Total} & & & \textbf{58} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Las 58 pruebas se ejecutan de forma automatizada mediante el comando estándar de Cargo sobre el \textit{workspace} completo.
 
 \subsubsection{NFT del boleto: emisión, propiedad y versionado}
 
-El boleto se modela bajo la estructura \texttt{Boleto} y la clave de almacenamiento \texttt{ClaveDato::Boleto(u32, u32)}, donde la tupla corresponde a \((\texttt{ticket\_root\_id}, \texttt{version})\). La asignación del \texttt{ticket\_root\_id} se realiza en \texttt{crear\_boleto} mediante el contador \texttt{ContadorBoletos}, que se incrementa atómicamente por cada emisión. Cada cambio de propiedad en reventa incrementa \texttt{version} y actualiza el puntero \texttt{VersionActual(ticket\_root\_id)}.
+El boleto se modela bajo la estructura \texttt{Boleto} y una clave de almacenamiento compuesta por la tupla $(\textit{ticket\_root\_id}, \textit{version})$. La asignación del identificador raíz se realiza en la operación de creación mediante un contador que se incrementa atómicamente por cada emisión. Cada cambio de propiedad en reventa incrementa la versión y actualiza el puntero de versión actual, de modo que las consultas apunten siempre al ejemplar vigente del boleto.
 
 \subsubsection{Pagos atómicos vía SAC}
 
-El activo de pago utilizado es XLM expuesto vía \textit{Stellar Asset Contract} (SAC). La transferencia se realiza mediante invocación al método \texttt{transfer} del SAC dentro del mismo \textit{call frame} de \texttt{comprar\_boleto}, lo que garantiza que el pago, la distribución de comisiones y el cambio de propiedad ocupen una única transacción del ledger. La Figura~\ref{fig:seq-reventa} muestra el diagrama de secuencia del flujo crítico de compra en reventa atómica.
+El activo de pago utilizado es XLM, expuesto como token Soroban a través del \textit{Stellar Asset Contract} (SAC). La transferencia se realiza mediante la invocación al método de transferencia del SAC dentro del mismo marco de llamada de la operación de compra, lo que garantiza que el pago, la distribución de comisiones y el cambio de propiedad ocupen una única transacción del ledger. Si alguna de las sub-operaciones falla, la transacción se revierte en su totalidad sin efectos parciales.
+
+La Figura~\ref{fig:seq-reventa} muestra el diagrama de secuencia del flujo crítico de compra en reventa atómica.
 
 \begin{figure}[H]
 \centering
@@ -27,7 +51,9 @@ El activo de pago utilizado es XLM expuesto vía \textit{Stellar Asset Contract}
 
 \subsubsection{Redención y control de acceso}
 
-La redención se controla mediante el rol verificador. El organizador registra direcciones autorizadas con \texttt{agregar\_verificador} y las remueve con \texttt{remover\_verificador}. La operación \texttt{redimir\_boleto} valida la pertenencia con \texttt{es\_verificador}, marca \texttt{usado=true} y emite el evento correspondiente. En el prototipo, el flujo en puerta opera contra la base de datos relacional para minimizar la latencia frente al usuario final, y la invocación on-chain se reserva para auditoría posterior. La Figura~\ref{fig:seq-verificacion} resume la secuencia.
+La redención se controla mediante el rol de verificador. El organizador registra las direcciones autorizadas para validar boletos en puerta y puede revocarlas cuando lo requiera. La operación de redención valida que el invocante pertenezca al conjunto de verificadores, marca el boleto como usado y emite el evento on-chain correspondiente.
+
+En el prototipo, el flujo en puerta opera contra la base de datos relacional para minimizar la latencia frente al usuario final, y la invocación on-chain se reserva como respaldo de auditoría. La Figura~\ref{fig:seq-verificacion} resume la secuencia completa del proceso de verificación.
 
 \begin{figure}[H]
 \centering
@@ -38,19 +64,66 @@ La redención se controla mediante el rol verificador. El organizador registra d
 
 \subsection{Backend Node.js + Stellar SDK}
 
-El backend está implementado en Node.js con Express, TypeScript y Prisma como ORM. Las dependencias principales son \texttt{express}, \texttt{@prisma/client}, \texttt{@stellar/stellar-sdk} (14.4.1), \texttt{cors}, \texttt{dotenv}, \texttt{bcryptjs} y \texttt{jsonwebtoken}. Las variables de entorno requeridas son \texttt{DATABASE\_URL}, \texttt{SOROBAN\_RPC\_URL}, \texttt{HORIZON\_URL}, \texttt{PORT}, \texttt{JWT\_SECRET}, \texttt{ORGANIZER\_SECRET} y \texttt{FACTORY\_CONTRACT\_ID}.
+El backend está implementado en Node.js con Express, TypeScript y Prisma \cite{prisma2024} como ORM. La Tabla~\ref{tab:dependencias-backend} resume las dependencias principales y su propósito dentro de la arquitectura.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
+\caption{Dependencias principales del backend.}
+\label{tab:dependencias-backend}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.5cm} >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{rowgray}
+\textbf{Dependencia} & \textbf{Propósito} \\
+\midrule
+\texttt{express} + \texttt{cors} & Servidor HTTP y control de origen cruzado. \\
+\rowcolor{rowgray}
+\texttt{@prisma/client} & ORM con tipado estático contra PostgreSQL. \\
+\texttt{@stellar/stellar-sdk} (14.4.1) & Construcción y envío de transacciones Soroban y Classic. \\
+\rowcolor{rowgray}
+\texttt{bcryptjs} & Hashing de contraseñas con factor de costo configurable. \\
+\texttt{jsonwebtoken} & Emisión y verificación de tokens JWT de sesión. \\
+\rowcolor{rowgray}
+\texttt{dotenv} & Carga de variables de entorno desde archivo local. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+La configuración del entorno requiere siete variables: la cadena de conexión a la base de datos, las URLs del RPC de Soroban y de Horizon, el puerto del servidor, la clave secreta para firmar los JWT, la clave secreta del organizador (para firmar operaciones on-chain de su rol) y el identificador del contrato \textit{factory}.
 
 \subsubsection{API: usuarios, eventos, carrito, checkout y Soroban}
 
-La API expone seis familias de endpoints: catálogo público con caché en memoria; autenticación con \texttt{bcrypt} y JWT; carrito con aislamiento por \texttt{user\_id}; \textit{checkout} fiat transaccional (creación de \texttt{orders}, \texttt{order\_items}, \texttt{tickets} y \texttt{payments} en una transacción Prisma atómica); integración Soroban (\texttt{secure-ticket}, \texttt{list-ticket}, \texttt{cancel-listing}, \texttt{build-buy-xdr}, \texttt{submit}); y la cadena de coleccionable Stellar Classic. Adicionalmente expone endpoints de administración (\texttt{GET/POST /api/admin/events}, \texttt{POST /api/admin/events/:id/deploy}, \texttt{POST /api/admin/scan}).
+La API expone seis familias de endpoints, organizadas por responsabilidad funcional:
 
-\subsubsection{Indexador: ingesta de eventos}
+\begin{itemize}\setlength{\itemsep}{2pt}
+    \item \textbf{Catálogo público:} consultas de eventos y boletos disponibles, con caché en memoria cuyo tiempo de expiración oscila entre 30 y 60 segundos según el recurso.
 
-El indexador (\texttt{src/indexer.ts}) consulta Soroban RPC cada 5 segundos. Mantiene cursor en \texttt{indexer\_state.last\_ledger} con valor inicial 100 ledgers atrás. Procesa eventos en \textit{chunks} de hasta 1\,000 ledgers por solicitud y agrupa hasta cinco direcciones de contrato por filtro. Cada evento tiene un manejador idempotente: la verificación de existencia previa ante \texttt{boleto\_revendido} evita conflictos por reentrega; el manejador P2P preserva el campo \texttt{order\_item\_id} entre versiones. Ante errores transitorios el indexador reintenta tras 5 segundos; si el cursor cae fuera de la ventana de retención del RPC, parsea el error y se reposiciona al mínimo permitido.
+    \item \textbf{Autenticación:} registro de usuarios con hashing de contraseñas y emisión de JWT para las sesiones subsiguientes.
+
+    \item \textbf{Carrito:} gestión del carrito de compras con aislamiento por usuario, garantizando que las operaciones concurrentes de distintos compradores no interfieran entre sí.
+
+    \item \textbf{Checkout fiat:} flujo de compra primaria transaccional. La creación de la orden, los ítems, los boletos y el registro de pago se ejecutan dentro de una transacción Prisma atómica, de modo que una falla en cualquier paso no deje registros huérfanos.
+
+    \item \textbf{Integración Soroban:} construcción de transacciones XDR para los flujos Web3: asegurar un boleto en la blockchain, listar para reventa, cancelar un listado, generar la transacción de compra para firma del comprador y enviar la transacción firmada a la red.
+
+    \item \textbf{Administración:} panel del operador para la gestión de eventos, despliegue de contratos y validación de boletos en puerta mediante escaneo QR.
+\end{itemize}
+
+\subsubsection{Indexador: ingesta de eventos on-chain}
+
+El indexador consulta el RPC de Soroban cada 5 segundos y mantiene un cursor persistente con el último ledger procesado (valor inicial: 100 ledgers atrás del estado actual de la red). El procesamiento se realiza en bloques de hasta 1\,000 ledgers por solicitud, agrupando hasta cinco direcciones de contrato por filtro para reducir el número de llamadas al RPC.
+
+Cada uno de los siete eventos del contrato posee un manejador idempotente. En particular, el manejador del evento de reventa verifica la existencia previa del registro para evitar conflictos por reentrega, y preserva la vinculación con la orden original entre versiones sucesivas del boleto. Ante errores transitorios el indexador reintenta tras 5 segundos; si el cursor cae fuera de la ventana de retención del RPC público, el servicio analiza el mensaje de error y se reposiciona automáticamente al mínimo ledger permitido.
 
 \subsubsection{Persistencia: historial, listados y auditoría}
 
-El esquema relacional Prisma define los enumerados \texttt{user\_role}, \texttt{event\_status}, \texttt{cart\_status}, \texttt{order\_status}, \texttt{payment\_method}, \texttt{payment\_status}, \texttt{seat\_inventory\_status}, \texttt{ticket\_status} y \texttt{venue\_type}. Los campos Web3 añadidos al modelo \texttt{tickets} (\texttt{contract\_address}, \texttt{ticket\_root\_id}, \texttt{version}, \texttt{is\_for\_sale}, \texttt{resale\_price}, \texttt{owner\_wallet}, \texttt{asset\_code}) y el índice único \((\texttt{contract\_address}, \texttt{ticket\_root\_id}, \texttt{version})\) reflejan la unicidad on-chain en el plano relacional. La Figura~\ref{fig:erd} muestra el modelo entidad-relación de la capa off-chain.
+El esquema relacional de Prisma define nueve tipos enumerados que modelan los estados del dominio: roles de usuario, estados de evento, estados del carrito, estados de la orden, métodos de pago, estados de pago, estados del inventario de asientos, estados del boleto y tipos de recinto.
+
+Los campos Web3 añadidos al modelo de boletos --- dirección del contrato, identificador raíz, versión, indicador de venta, precio de reventa, dirección del propietario y código del activo --- reflejan la información on-chain necesaria para la sincronización bidireccional. La unicidad se garantiza mediante un índice único compuesto por la dirección del contrato, el identificador raíz y la versión, espejando la clave de almacenamiento del contrato Soroban.
+
+La Figura~\ref{fig:erd} muestra el modelo entidad-relación completo de la capa off-chain.
 
 \begin{figure}[H]
 \centering
@@ -61,9 +134,11 @@ El esquema relacional Prisma define los enumerados \texttt{user\_role}, \texttt{
 
 \subsection{Frontend web}
 
-La aplicación se ejecuta sobre Vite y emplea TanStack Query para gestión de caché HTTP, Framer Motion para transiciones y shadcn/ui sobre Radix para componentes. La integración con la billetera usa \texttt{@stellar/freighter-api} 6.0.1, cuya interfaz devuelve \texttt{isConnected}, \texttt{address} y \texttt{signedTxXdr}. El estado global vive en \texttt{AppContext.tsx} y comprende usuario autenticado, JWT (en \texttt{localStorage.authToken}), carrito, órdenes, entradas adquiridas, ventas P2P y dirección de la billetera vinculada. La función \texttt{apiFetch<T>} centraliza las llamadas con \texttt{Bearer} automático.
+La aplicación se ejecuta sobre Vite \cite{vite2024} y emplea TanStack Query para la gestión de caché HTTP, Framer Motion para transiciones y animaciones, y shadcn/ui \cite{shadcn2024} sobre Radix como sistema de componentes. La integración con la billetera Freighter se realiza mediante su API oficial, que expone tres funciones clave: consulta de conexión, obtención de la dirección pública y firma de transacciones serializadas en formato XDR.
 
-El componente \texttt{ConnectWallet.tsx} se renderiza solo si el usuario está autenticado y lee la dirección desde el contexto persistente. El componente \texttt{TicketCard.tsx} expone los flujos ``Asegurar en Blockchain'' (\textit{mint} on-chain y emisión del coleccionable) y ``Revender NFT'' (precio en COP, vista previa en XLM vía CoinGecko con caché de 5 min).
+El estado global de la aplicación reside en un contexto de React que comprende el usuario autenticado, el token JWT de sesión (almacenado en el almacenamiento local del navegador), el carrito, las órdenes, las entradas adquiridas, las ventas P2P activas y la dirección de la billetera vinculada. Todas las llamadas a la API se centralizan en una función utilitaria que inyecta automáticamente el encabezado de autorización.
+
+Los componentes principales del flujo del usuario incluyen la conexión de la billetera (visible solo para usuarios autenticados), la tarjeta del boleto con las acciones disponibles según su estado (asegurar en blockchain, revender como NFT, visualizar QR) y la vista previa del precio de reventa, que muestra el valor en pesos colombianos y su equivalente estimado en XLM mediante una consulta a la API de CoinGecko \cite{coingecko2024} con caché de 5 minutos.
 
 \subsection{Despliegue distribuido}
 
@@ -76,20 +151,39 @@ El despliegue se realiza sobre tres infraestructuras independientes, conforme al
 \label{fig:despliegue}
 \end{figure}
 
-Los tres nodos físicos son:
+Los tres nodos físicos del prototipo se describen a continuación:
 
 \begin{itemize}\setlength{\itemsep}{2pt}
-    \item \textbf{Frontend} en Vercel con \texttt{vercel.json} y reescrituras para el modelo SPA.
+    \item \textbf{Frontend} en Vercel, con configuración de reescrituras para el modelo de aplicación de página única (SPA).
     \item \textbf{Backend} en Railway como servicio web persistente, necesario porque el indexador requiere ejecución continua en segundo plano.
-    \item \textbf{Base de datos} PostgreSQL gestionada por Supabase, esquema \texttt{ticketing}, \texttt{connection\_limit=5}.
+    \item \textbf{Base de datos} PostgreSQL gestionada por Supabase, bajo el esquema \texttt{ticketing} con un límite de cinco conexiones simultáneas.
 \end{itemize}
 
-El despliegue de contratos en testnet se ejecuta mediante \texttt{backend/scripts/deploy-contracts.ts} y \texttt{deploy-nft-contracts.ts}: carga de \textit{keypairs} desde \texttt{.env.deploy}, financiación con \textit{friendbot}, carga del WASM al ledger, despliegue de un \texttt{event\_contract} y un \texttt{ticket\_nft\_contract} por evento mediante el \textit{factory} y el \textit{deployer} dedicado, invocación de \texttt{inicializar} con comisiones 5/3 y persistencia de las direcciones en \texttt{events.contract\_address} y \texttt{events.nft\_contract\_address}. Al cierre del trabajo hay doce eventos con su par de contratos desplegado bajo el \textit{factory} configurado.
+El despliegue de los contratos en la red de pruebas se ejecuta mediante scripts automatizados que realizan las siguientes operaciones en secuencia: carga de las llaves criptográficas desde las variables de entorno, financiación de las cuentas a través del servicio \textit{friendbot} de Stellar, carga de los módulos WASM al ledger, despliegue de un par de contratos (evento y NFT) por cada evento registrado a través del \textit{factory}, invocación de la función de inicialización con las comisiones configuradas (5\,\% organizador, 3\,\% plataforma) y persistencia de las direcciones resultantes en la base de datos. Al cierre del presente trabajo, el prototipo cuenta con doce eventos con su par de contratos desplegado.
 
 \subsection{Integración continua}
 
-El repositorio incluye un \textit{workflow} de GitHub Actions en \texttt{.github/workflows/soroban.yml} que se ejecuta en cada \textit{push} y \textit{pull request} contra \texttt{main}. Utiliza \texttt{cargo-binstall} para instalar \texttt{stellar-cli} sin compilación desde fuentes, compila por paquete (\texttt{--package event\_contract}, \texttt{--package factory\_contract}, \texttt{--package ticket\_nft\_contract}) para evitar colisiones de símbolos en el target \texttt{wasm32v1-none}, ejecuta \texttt{cargo test} y publica el módulo WASM como artefacto. Esta automatización constituye la evidencia operacional de la trazabilidad de cambios sobre el código fuente.
+El repositorio incluye un \textit{workflow} de GitHub Actions que se ejecuta en cada \textit{push} y \textit{pull request} contra la rama principal. El flujo de integración realiza las siguientes tareas:
+
+\begin{enumerate}\setlength{\itemsep}{2pt}
+    \item Instalación de la CLI de Stellar mediante descarga de binarios precompilados, sin compilación desde fuentes.
+    \item Compilación de cada contrato de forma individual para evitar colisiones de símbolos en el objetivo de compilación de Soroban.
+    \item Ejecución de la suite completa de 58 pruebas unitarias.
+    \item Publicación del módulo WASM compilado como artefacto del \textit{pipeline}.
+\end{enumerate}
+
+Esta automatización constituye la evidencia operacional de la trazabilidad de cambios sobre el código fuente y garantiza que toda modificación que ingrese a la rama principal haya superado la totalidad de las pruebas.
 
 \subsection{Pruebas}
 
-La estrategia se organiza en cuatro niveles: (i) \textit{pruebas unitarias} sobre contratos, 58 casos cubriendo ciclo de vida, precondiciones, 16 errores tipados, doble autenticación del \textit{factory} y emisión/transferencia/quema del NFT; (ii) \textit{pruebas de integración} E2E que cubren registro, navegación, compra fiat, ``Asegurar en Blockchain'', listado, compra de reventa con Freighter, redención y cancelación; (iii) \textit{pruebas antifraude} con escenarios negativos (doble redención, doble compra, autocompra, redención no autorizada, manipulación de precio); (iv) \textit{pruebas de medición} con captura de tiempos y costos sobre testnet, cuyos resultados alimentan la sección de Resultados.
+La estrategia de verificación se organiza en cuatro niveles complementarios:
+
+\begin{enumerate}\setlength{\itemsep}{2pt}
+    \item \textbf{Pruebas unitarias sobre contratos:} 58 casos que cubren el ciclo de vida completo del boleto, las precondiciones de cada operación, los dieciséis códigos de error tipados, la doble autenticación del \textit{factory} y las operaciones de emisión, transferencia y quema del NFT.
+
+    \item \textbf{Pruebas de integración E2E:} verificación del flujo completo desde la perspectiva del usuario, incluyendo registro, navegación por el catálogo, compra primaria, aseguramiento del boleto en la blockchain, listado para reventa, compra de reventa con firma desde Freighter, redención en puerta y cancelación administrativa.
+
+    \item \textbf{Pruebas antifraude:} escenarios negativos diseñados para validar que el contrato rechaza operaciones ilícitas. Se verifican los casos de doble redención, doble compra concurrente, intento de autocompra del propietario, redención por un usuario no autorizado y manipulación del precio de reventa.
+
+    \item \textbf{Pruebas de medición:} captura de tiempos de respuesta y costos de gas sobre la red de pruebas, cuyos resultados alimentan la sección de Resultados y permiten contrastar el desempeño real del prototipo contra los umbrales definidos en los requerimientos no funcionales.
+\end{enumerate}

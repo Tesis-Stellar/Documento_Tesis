@@ -9,70 +9,167 @@ El sistema se especifica mediante veinte requerimientos funcionales (RF) y veint
 \begin{table}[H]
 \centering
 \scriptsize
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
 \caption{Requerimientos funcionales del sistema (resumen).}
 \label{tab:rf}
-\begin{tabular}{p{1.2cm}p{11.2cm}p{1.6cm}}
+\begin{tabularx}{\textwidth}{>{}p{1.0cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.0cm}}
 \toprule
+\rowcolor{rowgray}
 \textbf{Id.} & \textbf{Descripción} & \textbf{Módulo} \\
 \midrule
 RF-01 & Comprar boletos para un evento mediante interfaz clara. & M1, M5 \\
+\rowcolor{rowgray}
 RF-02 & Validar que la compra sea autorizada (reglas, permisos, control de usuario). & M1, M4, M5 \\
 RF-03 & Generar identificador único para cada boleto, vinculable al NFT. & M1, M2 \\
+\rowcolor{rowgray}
 RF-04 & Permitir compra con flujo sencillo. & M1, M5 \\
 RF-05 & Autenticar al usuario antes de comprar. & M5 \\
+\rowcolor{rowgray}
 RF-06 & Registrar propietario inicial y final del boleto (trazabilidad). & M1, M2, M3, M5 \\
 RF-07 & Listar boleto para reventa. & M3, M4, M5 \\
+\rowcolor{rowgray}
 RF-08 & Verificar que el usuario sea dueño antes de revender. & M2, M3, M5 \\
 RF-09 & Ejecutar compra en reventa de forma atómica. & M2, M3, M4, M5 \\
+\rowcolor{rowgray}
 RF-10 & Evitar que el boleto se venda más de una vez. & M1, M2, M3 \\
 RF-11 & Ejecutar proceso de \textit{burn} del boleto vendido. & M2, M3 \\
+\rowcolor{rowgray}
 RF-12 & Generar nuevo token para nuevo propietario. & M2, M3, M5 \\
 RF-13 & Mantener historial de transferencias. & M1, M2, M3, M5 \\
+\rowcolor{rowgray}
 RF-14 & Consultar estado de boletos adquiridos. & M1, M2, M5 \\
 RF-15 & Verificación rápida del boleto. & M1, M2 \\
+\rowcolor{rowgray}
 RF-16 & Solo el propietario puede modificar el precio de reventa. & M3, M4, M5 \\
 RF-17 & Integrarse con contratos inteligentes Soroban. & M2, M3, M4 \\
+\rowcolor{rowgray}
 RF-18 & Modificar precio del boleto listado para reventa. & M3, M4, M5 \\
 RF-19 & Consultar disponibilidad de boletos. & M1 \\
+\rowcolor{rowgray}
 RF-20 & Registrar cada transacción realizada. & M1, M2, M3, M5 \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-Los RNF cubren desempeño, seguridad, usabilidad, disponibilidad, mantenibilidad e integración.
+Los veinte requerimientos funcionales se organizan a lo largo de cinco módulos que cubren el ciclo de vida completo del boleto digital, desde la adquisición inicial hasta la auditoría posterior al evento. A continuación se describe la lógica de cada módulo y su aporte al objetivo del sistema:
+
+\begin{itemize}
+    \item \textbf{M1 -- Gestión de eventos y tickets.} Agrupa las operaciones de catálogo, compra primaria y consulta 
+    de disponibilidad (RF-01, RF-03, RF-04, RF-10, RF-14, RF-19). Estos requerimientos garantizan que el usuario pueda 
+    explorar eventos, adquirir entradas y consultar su inventario dentro de una interfaz convencional, sin necesidad de 
+    interactuar de forma directa con la capa blockchain.
+
+    \item \textbf{M2 -- Emisión NFT.} Define la acuñación del boleto como activo no fungible en Soroban y las operaciones 
+    de \textit{burn/remint} asociadas al cambio de propiedad (RF-03, RF-06, RF-08, RF-11, RF-12, RF-13, RF-15, RF-17, RF-20). 
+    Cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), cuya integridad se verifica 
+    on-chain mediante \texttt{require\_auth()} sobre la dirección del propietario \cite{sdf2024soroban}.
+
+    \item \textbf{M3 -- Mercado secundario.} Cubre el flujo de reventa segura: listado del boleto, verificación de 
+    propiedad, ejecución atómica de la compra y distribución de comisiones (RF-07, RF-08, RF-09, RF-10, RF-11, RF-12, 
+    RF-13, RF-16, RF-18, RF-20). La atomicidad de la transacción constituye el requisito central de este módulo, dado 
+    que elimina la ventana de vulnerabilidad al doble gasto descrita en la formulación del problema.
+
+    \item \textbf{M4 -- Configuración y políticas.} Establece las reglas de negocio parametrizables del contrato: precio 
+    máximo de reventa, porcentaje de comisión del organizador y tarifa de plataforma (RF-02, RF-04, RF-07, RF-09, RF-16, 
+    RF-17, RF-18). Estos parámetros se fijan en la inicialización del contrato y son modificables exclusivamente por la 
+    dirección del organizador.
+
+    \item \textbf{M5 -- Usuarios y autenticación.} Gestiona la identidad del usuario en las dos capas del sistema: 
+    autenticación JWT en la capa Web2 y firma criptográfica mediante la extensión Freighter en la capa Web3 (RF-01, 
+    RF-02, RF-04, RF-05, RF-06, RF-07, RF-08, RF-09, RF-12, RF-13, RF-14, RF-16, RF-18, RF-20). La separación de 
+    responsabilidades entre ambas capas asegura que las llaves privadas del usuario nunca abandonen el entorno local 
+    de la extensión del navegador.
+\end{itemize}
+
+Los veinte requerimientos no funcionales (RNF) se clasifican conforme al modelo de calidad de producto de la norma ISO/IEC 25010 \cite{iso25010}, cubriendo seis atributos de calidad: desempeño, seguridad, usabilidad, disponibilidad, mantenibilidad e integración. La Tabla~\ref{tab:rnf} resume el conjunto completo.
 
 \begin{table}[H]
 \centering
 \scriptsize
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
 \caption{Requerimientos no funcionales del sistema (resumen).}
 \label{tab:rnf}
-\begin{tabular}{p{1.2cm}p{12.8cm}}
+\begin{tabularx}{\textwidth}{>{}p{1.0cm} >{\raggedright\arraybackslash}X}
 \toprule
+\rowcolor{rowgray}
 \textbf{Id.} & \textbf{Descripción} \\
 \midrule
 RNF-01 & Procesar la compra de boletos en menos de 5 segundos. \\
+\rowcolor{rowgray}
 RNF-02 & Soportar al menos 100 usuarios concurrentes. \\
 RNF-03 & Tener disponibilidad mínima del 99{,}5\,\% mensual. \\
+\rowcolor{rowgray}
 RNF-04 & Bloquear transacciones tras 3 intentos fallidos consecutivos. \\
 RNF-05 & Cifrar comunicaciones mediante TLS 1.2 o superior. \\
+\rowcolor{rowgray}
 RNF-06 & Soportar al menos 2\,400 transacciones diarias. \\
 RNF-07 & Completar el proceso de compra en máximo 5 pasos. \\
+\rowcolor{rowgray}
 RNF-08 & Permitir aprendizaje del usuario en menos de 15 minutos. \\
 RNF-09 & Mantener una tasa de fallos menor al 0{,}5\,\%. \\
+\rowcolor{rowgray}
 RNF-10 & Garantizar atomicidad en el 100\,\% de las transacciones. \\
 RNF-11 & Tener cobertura de pruebas mínima del 70\,\%. \\
+\rowcolor{rowgray}
 RNF-12 & Ser compatible con navegadores web modernos. \\
 RNF-13 & Integrarse con contratos Soroban mediante API REST. \\
+\rowcolor{rowgray}
 RNF-14 & Almacenar \textit{logs} por mínimo 12 meses. \\
 RNF-15 & Cerrar sesión tras 30 minutos de inactividad. \\
+\rowcolor{rowgray}
 RNF-16 & No superar 5 horas de inactividad mensual. \\
 RNF-17 & Verificar boletos en menos de 5 segundos. \\
+\rowcolor{rowgray}
 RNF-18 & Soportar varios eventos simultáneos. \\
 RNF-19 & Recuperarse de fallos en menos de 20 minutos. \\
+\rowcolor{rowgray}
 RNF-20 & Conservar historial de boletos por mínimo 5 años. \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
+
+La justificación de los umbrales definidos en cada requerimiento no funcional se organiza a continuación por atributo de calidad:
+
+\begin{itemize}
+    \item \textbf{Desempeño (RNF-01, RNF-02, RNF-06, RNF-17, RNF-18).} El umbral de 5 segundos para la compra y 
+    la verificación del boleto se deriva de la finalidad del protocolo SCP, que garantiza la confirmación de una 
+    transacción en un rango de 3 a 5 segundos \cite{mazieres2015stellar}. La concurrencia mínima de 100 usuarios 
+    simultáneos y las 2\,400 transacciones diarias se establecen como línea base para un evento de aforo mediano 
+    (aproximadamente 5\,000 asistentes), considerando que la mayor densidad transaccional se concentra en la 
+    apertura de la venta y en los 30 minutos previos al ingreso.
+
+    \item \textbf{Seguridad (RNF-04, RNF-05, RNF-10, RNF-15).} El bloqueo tras tres intentos fallidos mitiga 
+    ataques de fuerza bruta sobre las credenciales de sesión. El cifrado mediante TLS 1.2 o superior se alinea 
+    con las recomendaciones de la OWASP para la protección de datos en tránsito \cite{owasp2024tls}. La atomicidad 
+    total de las transacciones (RNF-10) se garantiza por el modelo de ejecución de Soroban, donde una invocación 
+    que falle en cualquiera de sus sub-operaciones revierte el estado completo del ledger sin efectos parciales 
+    \cite{sdf2024soroban}. El cierre de sesión por inactividad limita la exposición de la sesión JWT en equipos 
+    compartidos.
+
+    \item \textbf{Usabilidad (RNF-07, RNF-08, RNF-12).} La restricción de un máximo de cinco pasos para completar 
+    una compra responde al principio de diseño de que cada paso adicional en un flujo de pago incrementa la tasa 
+    de abandono del usuario. El tiempo de aprendizaje de 15 minutos sitúa la curva de adopción del sistema en un 
+    rango aceptable para usuarios sin experiencia previa en criptoactivos o billeteras Web3. La compatibilidad con 
+    navegadores modernos asegura que la extensión Freighter y las llamadas a Soroban RPC se ejecuten sin restricciones.
+
+    \item \textbf{Disponibilidad (RNF-03, RNF-16, RNF-19).} La disponibilidad del 99{,}5\,\% mensual admite un 
+    máximo acumulado de aproximadamente 3{,}6 horas de inactividad al mes, lo que se complementa con el techo 
+    explícito de 5 horas de RNF-16. El tiempo de recuperación de 20 minutos ante fallos establece un objetivo 
+    de \textit{Mean Time To Recovery} (MTTR) coherente con despliegues en plataformas de infraestructura como 
+    servicio (Railway, Vercel).
+
+    \item \textbf{Mantenibilidad (RNF-09, RNF-11, RNF-14, RNF-20).} La tasa de fallos inferior al 0{,}5\,\% y la 
+    cobertura de pruebas mínima del 70\,\% se establecen como indicadores de fiabilidad del código. El almacenamiento 
+    de logs durante 12 meses permite la trazabilidad operativa de incidentes, mientras que la conservación del historial 
+    de boletos por 5 años responde a la necesidad de auditoría y a la persistencia on-chain de los eventos indexados.
+
+    \item \textbf{Integración (RNF-13).} La comunicación entre la capa Web2 y la capa Web3 se canaliza a través de una 
+    API REST que actúa como proxy XDR \textit{stateless}. El backend construye la transacción Soroban, la serializa en 
+    formato XDR y la devuelve al frontend para que el usuario la firme localmente con Freighter, siguiendo el patrón de 
+    integración documentado en la guía oficial de desarrollo de aplicaciones sobre Stellar \cite{sdf2024developers}.
+\end{itemize}
 
 \subsection{Restricciones}
 
