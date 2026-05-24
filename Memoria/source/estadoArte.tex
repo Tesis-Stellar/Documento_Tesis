@@ -1,0 +1,101 @@
+\newpage
+\setcounter{subsection}{0}
+\section{ESTADO DEL ARTE}
+
+La infraestructura subyacente a la emisión y distribución de boletería digital experimenta en la actualidad una transición insoslayable. Dicho paradigma migratorio obedece a la imperativa necesidad técnica de mitigar el fraude sistémico, desincentivar el arbitraje especulativo y reestructurar la confianza del consumidor final. El presente capítulo disecciona de manera analítica los modelos operativos convencionales (arquitecturas Web2), escudriña el surgimiento de las alternativas descentralizadas sustentadas en registros distribuidos (Web3) y argumenta, desde una base empírica y conceptual, la pertinencia arquitectónica del ecosistema híbrido (Web2.5) desarrollado en esta investigación.
+
+\subsection{Sistemas Centralizados y Asimetría de Información (Web2)}
+
+Históricamente, los canales de distribución primaria y los mercados secundarios de reventa han sido monopolizados por consorcios tecnológicos que fungen como custodios absolutos tanto de la topología de la información como de la conciliación financiera. 
+
+\subsubsection{Estructuras de mercado primario (Ticketmaster, Eventbrite)}
+
+Los conglomerados líderes del sector, tales como Ticketmaster \cite{ticketmaster2024} y Eventbrite, sostienen sus operaciones sobre arquitecturas de microservicios o sistemas monolíticos donde el activo —el boleto— no es más que un registro inerte dentro de una base de datos relacional privada (generalmente clústeres PostgreSQL o MySQL) vinculada unívocamente a las credenciales de un usuario. En un esfuerzo por neutralizar la proliferación de archivos PDF falsificados, estas entidades implementaron esquemas criptográficos superficiales, ejemplificados en la rotación temporal de códigos QR dinámicos (como la patente \textit{SafeTix}).
+
+Pese a que tales contramedidas robustecen el control de acceso perimetral en la puerta del recinto, el modelo adolece de profundas fisuras estructurales en lo referente a la trazabilidad de la propiedad:
+\begin{enumerate}
+    \item \textbf{Hermetismo de datos (Silos):} La validación de la legitimidad del título de ingreso queda restringida a las fronteras del ecosistema cerrado del proveedor, impidiendo la verificación externa o la auditoría pública.
+    \item \textbf{Fricción en la interoperabilidad:} Al carecer de un canal oficial seguro para ceder el activo fuera del control de la entidad matriz, los usuarios recurren a métodos analógicos o cesión de credenciales, lo cual reintroduce el riesgo de duplicación paralela o \textit{double-spending} en el mercado gris.
+\end{enumerate}
+
+\subsubsection{Arbitraje desregulado en la reventa (StubHub, Viagogo)}
+
+Las infraestructuras concebidas para absorber la demanda secundaria, ejemplificadas por StubHub \cite{stubhub2024}, operan primordialmente como agentes fiduciarios o pasarelas de \textit{escrow}. Bajo este esquema, el capital del adquirente se pignora hasta la culminación del evento, procurando certificar empíricamente la validez del acceso. Si bien este mecanismo salvaguarda el patrimonio financiero del comprador ante estafas burdas, carece de la capacidad técnica para invalidar preventivamente un boleto que haya sido comercializado simultáneamente en múltiples foros. Consecuentemente, el usuario malicioso conserva la posibilidad de defraudar a varios actores, mientras la plataforma extrae rentabilidades operativas que frecuentemente oscilan entre el 15\,\% y el 30\,\% \cite{scand2023ticketing}, un modelo que inherentemente incentiva y capitaliza la especulación.
+
+\subsection{Alternativas Descentralizadas y la Promesa de los NFTs (Web3)}
+
+La irrupción de la tecnología de cadenas de bloques catalizó el modelo de \textit{NFT Ticketing}. Mediante este diseño, cada entrada se materializa como un token no fungible en una red pública, lo que provee, por mandato criptográfico, la anhelada escasez digital y una cronología inmutable sobre el historial de transferencias \cite{ieee2023nft}.
+
+\subsubsection{Protocolos de Infraestructura B2B (OPEN Ticketing Ecosystem)}
+
+El ecosistema OPEN, previamente consolidado bajo la denominación GET Protocol \cite{getprotocol2024}, constituye el marco de referencia más maduro para la emisión programable on-chain. Dicha infraestructura opera como una capa de marca blanca que habilita a las tiqueteras convencionales a acuñar activos sobre redes compatibles con la Máquina Virtual de Ethereum (EVM), con particular énfasis en cadenas laterales como Polygon.
+
+La principal aportación empírica de estas arquitecturas reside en la capacidad de los organizadores para incrustar lógicas de negocio directamente en el código del activo. Esto facilita la imposición de techos de precios algorítmicos y la ejecución determinista de regalías (\textit{royalties}) en transacciones secundarias \cite{scand2023ticketing}. No obstante, la dependencia de entornos EVM conlleva vulnerabilidades estructurales: la volatilidad estocástica de los costos de transacción (\textit{gas fees}) frente a picos de congestión y los riesgos derivados de mantener metadatos almacenados de forma paralela (\textit{off-chain}), lo cual puede ser explotado si los oráculos de sincronización son comprometidos \cite{ieee2023nft}.
+
+\subsubsection{Plataformas de Audiencia y Riesgos Inherentes (YellowHeart, SeatlabNFT)}
+
+En contraste, soluciones orientadas hacia el consumidor final como SeatlabNFT \cite{seatlab2024} y YellowHeart \cite{yellowheart2024} apostaron por expandir la utilidad del boleto más allá del acceso físico, transformándolo en un vector de fidelización (\textit{engagement}) mediante beneficios perpetuos y recompensas comunitarias. 
+
+Sin embargo, el consenso académico e industrial advierte que la adopción de plataformas Web3 puras impone barreras sistémicas severas. La responsabilidad de gestionar llaves criptográficas privadas transfiere una carga cognitiva inasumible para el usuario promedio \cite{wolfandco2023}. Aunado a ello, la propia inmutabilidad de los contratos inteligentes dicta que cualquier defecto en la compilación del código puede resultar en pérdidas irrevocables, y el usuario no técnico queda expuesto a ataques de ingeniería social o \textit{phishing} sofisticado frente a los cuales las arquitecturas descentralizadas no ofrecen mecanismos centralizados de restitución \cite{wolfandco2023}.
+
+\subsection{Posicionamiento Arquitectónico y Análisis Comparativo}
+
+El estado del arte revela una polarización ostensible: por un lado, la fluidez operativa de la Web2 que sacrifica la transparencia y fomenta el rentismo; por el otro, el rigor matemático de la Web3 que impone altos umbrales de fricción cognitiva y exposición a vectores de ataque no convencionales. El presente desarrollo tecnológico, denominado \textit{SecureTicket}, se ancla deliberadamente en la intersección de ambos paradigmas, estructurando una topología Web2.5.
+
+La Figura~\ref{fig:espectro-arquitecturas} ilustra de manera esquemática este espectro metodológico, demarcando el posicionamiento estratégico de los modelos previamente escrutados.
+
+\begin{figure}[H]
+\centering
+\vspace{0.5cm}
+\begin{tikzpicture}[
+    box/.style={draw, rounded corners, minimum width=4cm, minimum height=1.5cm, align=center, font=\small},
+    arrow/.style={thick, ->, >=stealth}
+]
+
+% Eje horizontal
+\draw[thick, <->] (0,0) -- (14,0) node[midway, below=0.5cm] {\textbf{Espectro Teórico de Descentralización}};
+
+% Cajas
+\node[box, fill=gray!10] (web2) at (2, 2) {\textbf{Web2 (Centralizado)}\\Bases de datos en silos.\\Alta usabilidad UX.\\Ej: Ticketmaster, StubHub};
+
+\node[box, fill=blue!10, draw=blue!50, very thick] (web25) at (7, 2) {\textbf{Web2.5 (Híbrido)}\\Gestión Web2 + Custodia Web3.\\Usabilidad + Transparencia.\\\textbf{Ej: SecureTicket (Propuesta)}};
+
+\node[box, fill=gray!10] (web3) at (12, 2) {\textbf{Web3 (Descentralizado)}\\Autocustodia absoluta.\\Alta fricción operativa.\\Ej: SeatlabNFT};
+
+% Líneas conectivas
+\draw[dotted, thick] (2, 1.2) -- (2, 0.2);
+\draw[dotted, thick, blue] (7, 1.2) -- (7, 0.2);
+\draw[dotted, thick] (12, 1.2) -- (12, 0.2);
+
+\end{tikzpicture}
+\vspace{0.5cm}
+\caption{Diagrama conceptual: Posicionamiento del modelo híbrido Web2.5 propuesto en contraste con los axiomas operativos de la industria actual.}
+\label{fig:espectro-arquitecturas}
+\end{figure}
+
+Con el propósito de sistematizar los contrastes técnicos entre las aproximaciones estudiadas, la Tabla~\ref{tab:comparativa-estado-arte} consolida la evaluación de cada modelo frente a las vulnerabilidades críticas del sector: proliferación de duplicados, distorsiones de precio, fricción transaccional y resiliencia de la experiencia del usuario.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
+\caption{Matriz comparativa de atributos arquitectónicos en plataformas de boletería digital.}
+\label{tab:comparativa-estado-arte}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.5cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}p{3.8cm} >{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{rowgray}
+\textbf{Atributo Evaluado} & \textbf{Sistemas Web2 (ej. Ticketmaster)} & \textbf{Redes Web3 Puras (ej. SeatlabNFT)} & \textbf{Modelo Híbrido Web2.5 (Propuesta Actual)} \\
+\midrule
+\textbf{Soporte de la verdad} & Repositorio central, opaco al escrutinio público. & Ledger criptográfico de estado global (EVM). & Ledger criptográfico (Stellar) con proyección relacional indexada. \\
+\rowcolor{rowgray}
+\textbf{Resolución de fraude} & Inoperante en reventas no oficiales (QR clonables). & Erradicado mediante la unicidad del token no fungible. & Erradicado mediante la semántica atómica \textit{burn/remint} de Soroban. \\
+\textbf{Políticas de precios} & Limitación incipiente, sujeta a deducciones arbitrarias. & Restricciones codificadas de forma inmutable en el contrato. & Topes de especulación inyectados dinámicamente desde el contrato fábrica. \\
+\rowcolor{rowgray}
+\textbf{Liquidación financiera} & Retardada, sujeta a ciclos bancarios (72--120h). & Ejecución instantánea en la capa base mediante criptoactivos. & Ejecución atómica y determinista utilizando dólares digitales (USDC). \\
+\textbf{Fricción de adopción} & Mínima (dependencia de correos y contraseñas). & Severa (necesidad de custodiar semillas y sufragar \textit{gas}). & Mitigada (autorización mediante \textit{signatures} delegadas, sin costo para el usuario). \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+A la luz de esta matriz, el ensamble Web2.5 orquestado sobre el protocolo Stellar emerge como el compromiso técnico óptimo. Conserva la elasticidad interactiva a la que está habituado el consumidor tradicional, mientras exilia el fraude P2P y la especulación desmedida delegando la lógica de propiedad y compensación al motor determinista de la cadena de bloques.
