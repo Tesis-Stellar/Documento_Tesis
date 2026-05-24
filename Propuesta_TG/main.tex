@@ -1,0 +1,637 @@
+\documentclass[12pt,a4paper]{article}
+\setlength{\parskip}{0.5em}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{hyperref}
+
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+
+
+\begin{document}
+
+\newgeometry{left=1.3cm,right=1.3cm,top=0.6cm,bottom=1.5cm}
+
+\noindent
+\includegraphics[width=6cm]{universidad-javeriana.png}
+
+\vspace{-1.1cm}
+
+\begin{center}
+    \textbf{\Large PROPUESTA PARA PROYECTO DE GRADO}
+\end{center}
+
+\vspace{-0.2cm}
+
+\begin{center}
+\scriptsize
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{3pt}
+
+\begin{tabular}{|p{0.18\textwidth}|p{0.18\textwidth}|p{0.28\textwidth}|p{0.30\textwidth}|}
+\hline
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{TÍTULO: }SecureTicket
+Solución B2B de reventa de entradas basada en
+contratos inteligentes sobre Stellar/Soroban} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{OBJETIVO GENERAL: } Desarrollar una solución B2B de reventa de tickets, basada en la tecnología de contratos inteligentes de Stellar, que garantice la unicidad y autenticidad de cada activo digital, reduciendo al
+mínimo el fraude y la especulación en la reventa de entradas para eventos de entretenimiento} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{ESTUDIANTE(S)}} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{Santiago Andres Mesa Niño}} \\ \hline
+\textbf{Documento} & \textbf{Celular} & \multicolumn{2}{p{0.60\textwidth}|}{\textbf{Correo Javeriano}} \\ \hline
+cc. 12345678 & 3203179088 & \multicolumn{2}{p{0.60\textwidth}|}{\scriptsize santiagoa.mesan@javeriana.edu.co} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{Juan Diego Arias Duran}} \\ \hline
+\textbf{Documento} & \textbf{Celular} & \multicolumn{2}{p{0.60\textwidth}|}{\textbf{Correo Javeriano}} \\ \hline
+cc. 12345678 & 3102111367 & \multicolumn{2}{p{0.60\textwidth}|}{\scriptsize ariasd.j@javeriana.edu.co} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{Juan Camilo Carvajal Rodríguez}} \\ \hline
+\textbf{Documento} & \textbf{Celular} & \multicolumn{2}{p{0.60\textwidth}|}{\textbf{Correo Javeriano}} \\ \hline
+cc. 1234678 & 3223374913 & \multicolumn{2}{p{0.60\textwidth}|}{\scriptsize carvajalr\_jc@javeriana.edu.co} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{Andres Felipe Manosalva Garzon}} \\ \hline
+\textbf{Documento} & \textbf{Celular} & \multicolumn{2}{p{0.60\textwidth}|}{\textbf{Correo Javeriano}} \\ \hline
+cc. 1000256302 & 3164709915 & \multicolumn{2}{p{0.60\textwidth}|}{\scriptsize a\_manosalva@javeriana.edu.co} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{DIRECTOR}} \\ \hline
+
+\multicolumn{4}{|p{0.96\textwidth}|}{\textbf{Ing. Rafael Vicente Páez Méndez, PhD}} \\ \hline
+\textbf{Documento} & \textbf{Celular} & \textbf{Correo Javeriano} & \textbf{Empresa y cargo} \\ \hline
+cc. 1234678 & 3208320 Ext. 5391 & \scriptsize paez-r@javeriana.edu.co & Pontificia Universidad Javeriana; Director de la Maestría en Seguridad Digital \\ \hline
+
+\end{tabular}
+
+\normalsize
+\end{center}
+\restoregeometry
+
+\clearpage
+\tableofcontents
+\clearpage
+
+\section{Visión global}
+
+\subsection{Antecedentes, problema y solución propuesta}
+
+\subsubsection{Descripción de la problemática u oportunidad}
+En Colombia, el fraude digital creció un 43,5\% durante el año 2024, consolidando a las plataformas de venta de boletería para conciertos y eventos masivos como uno de los focos más críticos de afectación cibernética [1]. La clonación de tiquetes y la proliferación de páginas web fraudulentas no solo han generado pérdidas económicas directas, sino también un profundo deterioro en la confianza de los consumidores [1]. Adicionalmente, las dinámicas de transacción en el mercado secundario carecen de garantías operativas robustas en los tiempos de entrega de los activos. En este contexto jurídico, si la compra se efectúa dentro de los cinco días anteriores a la realización del espectáculo, el derecho de retracto consagrado en el artículo 47 de la Ley 1480 de 2011 no resulta aplicable, lo que desprotege al comprador al privarlo de la posibilidad legal de desistir del negocio [2]. Esta problemática sistémica abre una oportunidad para introducir mecanismos de autenticidad y trazabilidad descentralizada que complementen a las tiqueteras tradicionales, robusteciendo los estándares de seguridad y transparencia sin alterar los canales de distribución actuales [3], [4]
+\subsubsection{Formulación del problema}
+El ecosistema de boletería para eventos en Colombia carece de un mecanismo verificable de autenticidad y trazabilidad en la reventa de boletas, lo que facilita la circulación de boletas falsas y ventas no cumplidas en plataformas secundarias. El problema se vuelve más crítico cuando faltan cinco días o menos para el evento, cuando no aplica el derecho de retracto, dejando a los compradores sin garantías de entrega, debilitando la confianza de los usuarios en el mercado y al mismo tiempo, las plataformas tienen menos visibilidad y control sobre estas transacciones.
+
+\subsubsection{Propuesta de solución}
+Se propone una solución de un software enmarcada en blockchain, un modelo basado en contratos inteligentes sobre la red Stellar (Soroban) para emitir cada ticket como un NFT que respalde la reventa. El contrato gestiona la propiedad, transferencia y distribución automática de comisiones, permitiendo a las plataformas de las tiqueteras ofrecer transacciones más rápidas, seguras y transparentes. El enfoque del proyecto es complementario y no busca sustituir la función de boleteria con la que cuentan las tiqueteras, para la simulación se realizo un prototipo de pagina web que busca mostrar el funcionamiento desde la perspectiva del usuario final, a su vez, el prototipo esta operando con \textit{testnet} para simular el ciclo completo de reventa e integrar la verificación de autenticidad/estado del ticket. Con ello, las plataformas recuperan visibilidad y control dentro de la amenaza que se presenta con el mercado secundario, mientras que los usuarios obtienen garantías de originalidad y trazabilidad.
+
+\subsubsection{Justificación de la solución}
+La solución propuesta busca representar cada boleta como un NFT y gestionar su ciclo de vida mediante contratos inteligentes en Soroban sobre la red Stellar. Esta alternativa resulta adecuada para abordar el fraude y la falta de trazabilidad en la reventa, ya que los NFT permiten asociar cada ticket con un activo digital único, verificable y transferible, mientras que la blockchain facilita el registro transparente de sus transacciones [5], [6]. Como se argumentó en la sección 5.2, las alternativas centralizadas, como bases de datos tradicionales o validación por QR, pueden mejorar controles puntuales, pero no resuelven completamente el problema de propiedad verificable, unicidad del ticket y trazabilidad pública de sus transferencias; además, dependen de un tercero y concentran riesgos operativos [7], [8].
+
+Por otro lado, implementar NFTs en redes de propósito general como Ethereum ofrece alta seguridad y transparencia, pero puede implicar mayores costos transaccionales y una complejidad técnica que dificulta su adopción masiva en escenarios de alto volumen, como la boletería [8], [9]. En contraste, Stellar/Soroban ofrece una alternativa más eficiente para este caso de uso, al permitir confirmaciones rápidas y comisiones bajas, lo que habilita validaciones casi en tiempo real y reduce barreras para usuarios y plataformas [10]. Además, los contratos inteligentes permiten automatizar reglas de reventa, como transferibilidad, ventanas de venta, límites y comisiones, disminuyendo la intervención manual, el error operativo y los incentivos al fraude [11], [12]. Al operar sobre una infraestructura descentralizada, la verificación no depende de un único servidor o proveedor, lo que incrementa la confianza entre compradores y vendedores y facilita auditorías independientes [7], [12].
+
+Finalmente, la arquitectura propuesta se integra de forma complementaria con sistemas de boletería existentes (vía APIs y flujos mínimos), lo que reduce el esfuerzo de adopción y mejora la productividad organizacional al bajar tickets de soporte, contracargos y tiempos de conciliación. En suma, frente a las alternativas evaluadas, la propuesta ofrece el mejor costo/beneficio técnico y social para mitigar el fraude y consolidar un canal de reventa seguro y trazable.
+
+
+\subsection{Descripción general del proyecto}
+El proyecto propone una solución para la reventa de boletas a eventos que permita a las plataformas de las tiqueteras verificar autenticidad, unicidad y trazabilidad de cada ticket y, con ello, reducir el fraude y el problema de que muchas veces las personas compran una boleta en reventa y nunca la reciben, algo que actualmente afecta de forma importante al mercado de la boleteria por este mercado secundario en Colombia. 
+
+La propuesta no sustituye a las boleterías actuales sino que las complementa para ofrecer transacciones más seguras, transparentes y rápidas y recuperar visibilidad, la solución se enmarca en ingeniería de software y sistemas distribuidos (blockchain). Técnicamente, se implementará un modelo sobre Stellar/Soroban que utiliza contratos inteligentes para emitir cada ticket como un NFT, gestionar su propiedad y transferencias y automatizar la distribución de comisiones entre actores autorizados, lo que nos permite esta arquitectura es habilitar la comprobación de estado y procedencia del ticket durante todo su ciclo de vida.
+
+Como entregables, se desarrolló: (1) el modelo y contrato inteligente para la reventa, (2) un prototipo de pagina web que simula el proceso completo en la red de prueba de Stellar desde publicación hasta la compra o transferencia y (3) la validación funcional mediante la visualización del modelo y su integración al flujo de blockchain. El trabajo seguirá una metodología ágil (Kanban) para iterar sobre el diseño y las pruebas. En cuanto a los usuarios finales obtienen garantías de originalidad y entrega y por ende las plataformas de las tiqueteras logran un control y trazabilidad del mercado secundario, en donde ademáslos organizadores mejoran su reputación y reducen pérdidas asociadas al fraude. Por otra parte, el alcance se limita al proceso de reventa de las boletas, a la integración con plataformas existentes mediante interfaces definidas por el proyecto.
+
+\subsubsection{Objetivo general}
+Desarrollar una solución de reventa de tickets, basada en contratos inteligentes de Stellar, que garantice que cada activo digital sea único, original y verificable, reduciendo la posibilidad de el fraude y la especulación en la reventa de entradas para eventos de entretenimiento en plataformas digitales.
+
+\subsubsection{Objetivos específicos}
+\begin{enumerate}[noitemsep]
+	\item Modelar un sistema de reventa de tickets basado en contratos inteligentes y NFTs que aseguren autenticidad, originalidad y trazabilidad. 
+
+	\item Desarrollar un contrato inteligente que genere tickets como NFTs, permita la transfrencia de propiedad y automatice la distribución de comisiones. 
+	 
+	\item Implementar un prototipo que simule el proceso completo de reventa en la red de prueba de Stellar, desde la venta hasta la compra.
+	
+	\item Validar el funcionamiento de la herramienta mediante una implementación web que permita la simulación y visualización del modelo y cómo este se incorpora al modelo de Blockchain
+	
+\end{enumerate}
+
+\subsubsection{Entregables, estándares utilizados y justificación}
+\vspace{-0.5cm}
+\begin{table}[H]
+\centering
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+
+\begin{tabularx}{\textwidth}{|p{3.8cm}|p{4cm}|X|}
+\hline
+\textbf{Entregable} & \textbf{Estándares asociados} & \textbf{Justificación} \\
+\hline
+
+\textbf{Memoria de trabajo de grado} &
+Normas institucionales PUJ, IEEE, ISO/IEC/IEEE 12207 &
+Documento principal que consolida el análisis, diseño, implementación, validación y resultados del proyecto, sintetizando todo el trabajo realizado. \\
+\hline
+
+\textbf{Propuesta de trabajo de grado} &
+ISO/IEC/IEEE 29148, buenas prácticas de formulación de proyectos de ingeniería &
+Sustenta el problema, objetivos, alcance y justificación de la solución basada en una plataforma Web2.5 de ticketing con NFTs en Stellar. \\
+\hline
+
+\textbf{Plan de Gestión del Proyecto (SPMP)} &
+PMBOK, ISO 21500, metodología Kanban y plantilla institucional &
+Permite la planificación, trazabilidad de actividades, hitos, recursos, riesgos y presupuesto, además del seguimiento continuo del flujo de trabajo mediante Kanban. \\
+\hline
+
+\textbf{Especificación de Requisitos (SRS)} &
+ISO/IEC/IEEE 29148, IEEE 830, plantilla institucional &
+Define detalladamente los requisitos funcionales, no funcionales, casos de uso, restricciones, criterios de aceptación e interfaces externas del sistema. Incluye autenticación JWT, roles CUSTOMER/ADMIN/STAFF, integración wallet Freighter, reventa P2P y validación QR. \\
+\hline
+
+\textbf{Especificación del Diseño (SDD) y propuesta de TG} &
+ISO/IEC/IEEE 42010, IEEE 1016, Modelo C4 y diagramas UML &
+Documenta las vistas de contexto, contenedores, componentes y despliegue del sistema, incluyendo frontend React/Vite, backend Node.js/Express, PostgreSQL, contratos Soroban y arquitectura Web2.5. \\
+\hline
+
+\textbf{Suite de tres contratos Soroban + pruebas} &
+Rust, Soroban SDK 23, estándar NFT SEP-41 &
+Materializa el modelo blockchain mediante contratos inteligentes para emisión, transferencia, reventa y validación de tickets NFT sobre Stellar Testnet. \\
+\hline
+
+\textbf{Backend Node.js + indexador} &
+Express, Prisma ORM, PostgreSQL, API REST sobre HTTPS &
+Implementa la lógica de negocio, autenticación JWT, sincronización on-chain/off-chain y persistencia de datos del sistema. \\
+\hline
+
+\textbf{Frontend web (React/Vite)} &
+SPA responsive, Tailwind CSS, shadcn/ui, buenas prácticas UX/UI &
+Proporciona una interfaz accesible y responsive para usuarios finales y administradores, permitiendo compra, reventa, gestión y validación de tickets. \\
+\hline
+
+\textbf{Integración continua} &
+GitHub Actions, buenas prácticas DevOps &
+Automatiza compilación, pruebas y validación continua del proyecto en cada actualización del repositorio. \\
+\hline
+
+\end{tabularx}
+
+\caption{Entregables, estándares asociados y justificación}
+\label{tab:entregables_completos}
+\normalsize
+\end{table}
+
+\section{Análisis de impacto}
+En el corto plazo (0–6 meses), el proyecto aumentará la confianza de los asistentes a eventos al comprar boletas en reventa, ya que permitirá verificar que cada entrada sea auténtica y válida, ademas de su trazabilidad antes de realizar la compra inmediata de cada ticket. Para los organizadores y las plataformas de boletería, esto significa menos problemas relacionados con fraudes en la reventa, menos quejas de los usuarios y una reducción en los contracargos o reclamos por compras inválidas. A nivel operativo, el hecho de que las entradas puedan entregarse en pocos minutos y que disminuyan los casos de fraude o de boletas que nunca se entregan demostrará una mejora en la eficiencia del proceso. Además, esto ayudará a cumplir el objetivo de brindar una experiencia de compra más segura, rápida y confiable para los usuarios.
+
+En el mediano plazo (6–18 meses), cuando la solución se conecte con las plataformas de boletería, más personas podrán comprar boletas de reventa de forma segura dentro del mismo sistema, además, los organizadores y productores podrán recuperar parte de los ingresos que antes se perdían por fraudes, estafas o ventas no controladas. A nivel social, la solución ayudará a promover una reventa más responsable y segura, ya que los usuarios podrán conocer claramente las reglas, condiciones y límites de cada entrada, reduciendo así el riesgo de estafas o engaños al comprar boletas. Para las organizaciones, automatizar la verificación de boletas, las transferencias y el pago de comisiones permitirá reducir de manera constante las solicitudes de soporte. Adicionalmente, la reventa legítima podrá convertirse en una nueva fuente de ingresos, fortaleciendo su propuesta de valor y su compromiso con ofrecer experiencias más seguras y confiables.
+
+En el largo plazo (18+ meses), el estándar de propiedad verificable permitirá que la mayoría de reventas se canalicen por vías seguras, con una disminución sostenida de estafas y controversias y por tanto, un mayor bienestar del consumidor. Para los organizadores y las plataformas, la incorporación de reglas de reventa como política corporativa y estandarizar los procesos de emisión, transferencia y verificación de entradas ayudará a disminuir costos operativos y legales, al tiempo que posicionarán a la organización como referente de reventa segura. El impacto global será un ecosistema más transparente y competitivo, con información simétrica para todas las partes y con indicadores de satisfacción del usuario por encima de los referentes del sector.
+
+
+\section{Proceso}
+El desarrollo del proyecto se gestionará mediante la metodología Kanban, la cual organiza el trabajo en un flujo visual de tareas que se mueven entre columnas de “Por Hacer”, “En Proceso” y “Terminado”. Cada tarea del tablero representa una funcionalidad, requerimiento o tarea específica del proyecto, conectando directamente las fases de análisis, diseño, desarrollo, pruebas y despliegue. Esta relación asegura que la planificación iterativa se mantenga alineada con los módulos del sistema. 
+
+Los requerimientos funcionales guían las tareas de desarrollo del frontend, backend, integración de blockchain y wallets, mientras que los requerimientos no funcionales y de desempeño se verifican mediante pruebas asignadas a tareas específicas y de esta manera la metodología Kanban permite visualizar cómo cada actividad afecta a otros módulos y fases, facilitando la priorización, el seguimiento continuo del progreso y la integración de ajustes de manera controlada, manteniendo coherencia y trazabilidad a lo largo de todo el proyecto.
+
+\subsection{Fase metodológica 1}
+\subsubsection{Método}
+Durante la primera fase del proyecto, se centró en identificar y documentar los requerimientos del sistema, estableciendo las bases para todo el desarrollo posterior, utilizando Kanban, para la definición de cada requerimiento funcional y no funcional , lo que permitió visualizar claramente el flujo de trabajo, asignar prioridades a cada tarea y funciones dentro de los marcos establecidos por el proyecto.
+\subsubsection{Actividades}
+\begin{itemize}
+    \item \textbf{Identificación de actores y roles:} Se definieron los usuarios del sistema
+    (\texttt{CUSTOMER}, \texttt{ADMIN} y \texttt{STAFF}) y sus responsabilidades
+    dentro de cada módulo, asegurando que todos los flujos de interacción fueran
+    considerados.
+
+    \item \textbf{Recolección de requerimientos funcionales y no funcionales:} Se
+    documentaron las funcionalidades del sistema, incluyendo gestión de eventos,
+    compra y reventa de boletos, integración con wallets Web3 y validación de
+    boletos mediante QR, así como atributos de desempeño, seguridad y trazabilidad.
+
+    \item \textbf{Mapeo de casos de uso:} Cada requerimiento se vinculó a un caso de
+    uso, estableciendo trazabilidad y asegurando que todas las funcionalidades
+    principales estuvieran contempladas.
+
+    \item \textbf{Organización en módulos:} Se estructuraron los requerimientos en
+    módulos claros: gestión de eventos, compra primaria, wallets,
+    blockchain/NFTs, reventa P2P y validación en puerta, lo que facilitó la
+    planificación de las siguientes fases de desarrollo.
+
+    \item \textbf{Definición de criterios de medición:} Se establecieron métricas para
+    evaluar el desempeño, tiempos de respuesta y cumplimiento de requerimientos,
+    permitiendo futuras verificaciones y validaciones.
+\end{itemize}
+
+\subsubsection{Resultados esperados}
+Como resultado de la primera fase, se espera contar con una base sólida de
+requerimientos claros, priorizados y trazables, así como la planificación del
+flujo de desarrollo mediante Kanban, lo que permitirá avanzar de forma organizada
+hacia la implementación del sistema. Estos resultados están directamente
+alineados con los objetivos específicos del proyecto:
+
+\begin{itemize}
+    \item \textbf{Modelado del sistema de reventa de tickets con NFTs y contratos inteligentes:}
+    Se espera tener definidos los actores, roles, módulos del sistema y
+    funcionalidades principales (gestión de eventos, compra, reventa P2P y
+    validación de boletos), asegurando que cada requerimiento funcional y no
+    funcional tenga trazabilidad para garantizar autenticidad, originalidad y
+    trazabilidad de los tickets.
+
+    \item \textbf{Desarrollo conceptual del contrato inteligente:}
+    Se espera haber documentado los requerimientos relacionados con la generación
+    de boletos como NFTs, la transferencia de propiedad y la distribución de
+    comisiones, estableciendo claramente los flujos \textit{on-chain} y
+    \textit{off-chain} que permitirán automatizar estas operaciones en fases
+    posteriores.
+
+    \item \textbf{Implementación conceptual del prototipo de reventa:}
+    Se espera tener un diseño preliminar del prototipo que simule el proceso
+    completo de reventa en la red de prueba de Stellar, contemplando los flujos
+    de publicación, compra y actualización de propiedad de boletos, incluyendo
+    las interacciones con el indexer y la base de datos.
+
+    \item \textbf{Validación conceptual de la herramienta mediante interfaz web:}
+    Se espera que la documentación y diseño del frontend, integración con backend
+    y conexión con wallets Web3 permitan planificar la implementación de la
+    interfaz web que simule y visualice el modelo de reventa, mostrando cómo se
+    incorpora al modelo de blockchain en fases posteriores.
+\end{itemize}
+
+En conjunto, estos resultados permiten garantizar que la fase inicial ha
+establecido la planificación, la trazabilidad y la claridad funcional,
+proporcionando una base estructurada que facilitará la construcción, prueba y
+despliegue del prototipo del sistema \textit{Stellar Tickets}.
+
+\subsection{Fase metodológica 2}
+\subsubsection{Método}
+Durante la segunda fase del proyecto, se centrará el trabajo en la construcción y puesta en marcha del prototipo funcional del sistema Stellar Tickets, aplicando la metodología Kanban para gestionar tareas de forma visual y priorizada. Cada funcionalidad, requisito o módulo se tuvo en cuenta a partir de el levantamiento y especificaciones de los mismos, permitiendo visualizar el progreso, identificar bloqueos y garantizar que todas las acciones estén alineadas con los requerimientos definidos en la primera fase
+\subsubsection{Actividades}
+\begin{itemize}
+    \item \textbf{Desarrollo del frontend y backend}
+    \begin{itemize}
+        \item Implementación de la interfaz de usuario en React 18 + TypeScript,
+        adaptada a dispositivos desktop y móviles.
+        \item Creación de las pantallas principales: catálogo de eventos, detalle
+        del evento, carrito de compras, Mis Entradas, Reventa P2P, Mis Ventas P2P
+        y panel administrativo.
+        \item Programación del backend en Node.js + Express + TypeScript,
+        incluyendo endpoints REST, conexión con PostgreSQL y control de permisos
+        por rol (\texttt{CUSTOMER}, \texttt{ADMIN}, \texttt{STAFF}).
+    \end{itemize}
+
+    \item \textbf{Implementación de blockchain y NFTs}
+    \begin{itemize}
+        \item Desarrollo de contratos inteligentes en Rust/Soroban, siguiendo los
+        flujos de emisión de boletos, reventa P2P, \textit{burn/remint} de
+        versiones y distribución de comisiones.
+        \item Integración del indexer, que sincroniza los eventos \textit{on-chain}
+        con la base de datos PostgreSQL cada 5 segundos.
+        \item Vinculación con wallets Freighter, permitiendo a los usuarios firmar
+        transacciones Web3 para asegurar boletos, comprar y revender entradas.
+    \end{itemize}
+
+    \item \textbf{Pruebas iniciales del prototipo}
+    \begin{itemize}
+        \item Verificación de que cada funcionalidad cumpla con los criterios de
+        desempeño y trazabilidad establecidos en la primera fase.
+        \item Pruebas unitarias y de integración de frontend, backend, blockchain y
+        wallet.
+        \item Validación de operaciones críticas, como compra primaria, publicación
+        y compra en reventa, actualización de propiedad y redención de boletos
+        mediante QR.
+    \end{itemize}
+
+    \item \textbf{Optimización de la comunicación y sincronización}
+    \begin{itemize}
+        \item Ajustes para asegurar que las consultas al catálogo, carrito, órdenes
+        y reventa P2P respondan dentro de los tiempos de respuesta establecidos.
+        \item Garantizar que la información entre la base de datos, indexer y
+        blockchain permanezca consistente durante las operaciones simultáneas de
+        múltiples usuarios.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Resultados esperados}
+En la segunda fase metodológica, los resultados esperados se enfocan en la construcción y funcionamiento del prototipo del sistema, reflejando la implementación práctica de los requerimientos definidos en la fase inicial. Esta fase busca consolidar la interacción entre los módulos del sistema, incluyendo frontend, backend, blockchain, wallets y reventa P2P, asegurando que las funcionalidades principales operen de manera integrada y coherente. Se espera que los resultados permitan demostrar la trazabilidad, autenticidad y consistencia de los boletos digitales, validar los flujos de emisión, compra y reventa, y verificar la interacción correcta con la red de prueba Stellar, proporcionando evidencia tangible de que el sistema cumple con los objetivos específicos planteados.
+
+\begin{itemize}
+    \item \textbf{Modelado funcional del sistema aplicado:}
+    El prototipo debe reflejar las interacciones entre usuarios, módulos y
+    funcionalidades, mostrando cómo se gestiona la reventa de boletos con
+    trazabilidad y autenticidad.
+
+    \item \textbf{Desarrollo de contratos inteligentes operativos:}
+    Los contratos deben permitir la emisión de boletos como NFTs, la transferencia
+    de propiedad y la automatización de la distribución de comisiones, ejecutándose
+    correctamente en Stellar Testnet.
+
+    \item \textbf{Implementación de un prototipo de reventa completo:}
+    Se espera un flujo funcional desde la publicación de boletos para reventa hasta
+    la compra por otro usuario, incluyendo \textit{burn/remint} de versión y
+    actualización de la propiedad en la base de datos.
+
+    \item \textbf{Validación de la herramienta mediante la interfaz web:}
+    La interfaz debe permitir simular y visualizar el modelo de blockchain,
+    mostrando la interacción entre frontend, backend, indexer, wallet y contratos
+    inteligentes, permitiendo observar la trazabilidad y la consistencia de los
+    datos.
+\end{itemize}
+
+\subsection{Fase metodológica 3}
+\subsubsection{Método}
+En esta fase, el proyecto se enfoca en asegurar la calidad, estabilidad y trazabilidad del sistema mediante la corrección de errores detectados durante la implementación y las pruebas, así como la documentación exhaustiva de requerimientos, diseño y código, esta etapa también contempla el levantamiento y resolución de caídas o incidencias reportadas en los entornos de prueba, garantizando que todos los módulos funcionen de manera coherente y segura.
+
+\subsubsection{Actividades}
+\begin{itemize}
+    \item \textbf{Revisión y corrección de requerimientos}
+    \begin{itemize}
+        \item Validar que todos los requerimientos funcionales y no funcionales
+        documentados estén completos, claros y alineados con los casos de uso.
+        \item Corregir inconsistencias, duplicidades o ambigüedades en la
+        documentación del SRS.
+        \item Registrar las modificaciones y actualizar la trazabilidad de los
+        requerimientos hacia los módulos correspondientes.
+    \end{itemize}
+
+    \item \textbf{Documentación del diseño y código}
+    \begin{itemize}
+        \item Revisar los diagramas de arquitectura cliente-servidor y
+        modelos de dominio para reflejar correctamente la implementación real.
+        \item Documentar funciones, métodos, endpoints API y contratos Soroban,
+        incluyendo sus entradas, salidas y efectos \textit{on-chain}.
+        \item Mantener la documentación sincronizada con el código fuente para
+        facilitar futuras modificaciones y revisiones académicas.
+    \end{itemize}
+
+    \item \textbf{Detección y corrección de errores en el prototipo}
+    \begin{itemize}
+        \item Identificar errores en el frontend, incluyendo interfaz, navegación
+        y validaciones de usuario, y en el backend, incluyendo API, lógica de
+        compra, reventa e indexer.
+        \item Detectar inconsistencias entre la base de datos y la blockchain,
+        incluyendo problemas de sincronización, duplicidad de boletos o fallos en
+        la actualización de propiedades.
+        \item Corregir errores de integración con la wallet Freighter y asegurar
+        la correcta firma de transacciones Web3.
+    \end{itemize}
+
+    \item \textbf{Levantamiento y resolución de incidencias}
+    \begin{itemize}
+        \item Monitorear caídas o bloqueos del sistema durante pruebas de carga y
+        operaciones simultáneas.
+        \item Clasificar las incidencias por prioridad alta, media o baja, y
+        asignarlas a tareas concretas para su corrección.
+        \item Realizar pruebas de regresión después de cada corrección para
+        asegurar que los cambios no afecten otros módulos.
+    \end{itemize}
+
+    \item \textbf{Actualización de criterios de desempeño y calidad}
+    \begin{itemize}
+        \item Revisar los tiempos de respuesta de consultas, checkout, reventa P2P
+        y validación QR.
+        \item Ajustar la configuración del indexer y la base de datos para mejorar
+        disponibilidad, sincronización y eficiencia de acceso concurrente.
+        \item Documentar los resultados de las pruebas y las métricas alcanzadas
+        para futuras fases de verificación y despliegue.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Resultados esperados}
+En la tercera fase metodológica, los resultados esperados se enfocan en consolidar la estabilidad, calidad y trazabilidad del prototipo, asegurando que todos los módulos y funcionalidades del sistema operen de manera correcta y coherente. Esta fase permite validar que los errores detectados durante la implementación y las pruebas iniciales hayan sido corregidos, que la documentación de requerimientos, diseño y código esté actualizada y que las incidencias del sistema sean correctamente registradas y resueltas. Los resultados obtenidos proporcionarán evidencia tangible de la funcionalidad completa del prototipo, garantizando que la plataforma Stellar Tickets cumpla con los criterios de desempeño, seguridad, integridad y disponibilidad previamente establecidos, dejando el sistema preparado para su verificación final y eventual despliegue.
+\begin{itemize}
+    \item Todos los errores críticos y bloqueos detectados durante pruebas
+    deben quedar resueltos.
+
+    \item La documentación de requerimientos, diseño y código debe mantenerse
+    actualizada y trazable hacia los casos de uso y módulos correspondientes.
+
+    \item Debe existir información registrada sobre incidencias y su resolución,
+    incluyendo evidencia de correcciones y pruebas de regresión realizadas.
+
+    \item El sistema debe quedar preparado para su verificación final y despliegue,
+    garantizando que todas las funcionalidades principales operen de manera
+    confiable y segura, reflejando la integridad entre frontend, backend,
+    blockchain, wallets y base de datos.
+\end{itemize}
+
+\section{Aspectos generales del proyecto}
+
+\subsection{Compromiso de apoyo de la Institución}
+La institución se ha comprometido a brindar apoyo al desarrollo del proyecto Stellar Tickets mediante la asesoría académica constante de los profesores tutores asignados, quienes han orientado al estudiante en el diseño, implementación y validación de los requerimientos del sistema. Aunque no se proporcionaron directamente herramientas o plataformas tecnológicas específicas, los tutores sugirieron los recursos más adecuados, permitiendo al estudiante avanzar eficazmente en el desarrollo del prototipo. 
+
+Adicionalmente, se ha proporcionado infraestructura física adecuada, incluyendo acceso a laboratorios de computación y conectividad a internet, para garantizar que el estudiante pueda trabajar en el desarrollo, pruebas y documentación del prototipo de manera óptima, este respaldo asegura que el proyecto pueda avanzar de manera organizada, con el soporte técnico y académico necesario para cumplir los objetivos específicos establecidos.
+
+\subsection{Derechos patrimoniales}
+Los derechos morales de toda producción intelectual derivada de este trabajo de grado corresponden de manera conjunta a los miembros del grupo de estudiantes que desarrollaron el proyecto Stellar Tickets. En cuanto a los derechos patrimoniales, el software será propiedad compartida del grupo, conservando cada integrante la titularidad del código fuente, la documentación y los modelos diseñados. 
+
+Sin embargo, se concede a la institución una licencia de uso no exclusiva y con fines académicos y de investigación, que le permite utilizar el software para apoyo didáctico, demostraciones o investigaciones futuras relacionadas, sin que esto implique la transferencia de la titularidad del proyecto, esta licencia asegura que la universidad pueda beneficiarse del prototipo desarrollado mientras se respetan los derechos y la autoría de cada integrante del grupo.
+
+\section{Marco teórico}
+
+\subsection{Fundamentos y conceptos relevantes para el proyecto}
+\subsubsection{Fundamentos Criptográficos de la Cadenas de Bloques}
+
+\textbf{Hash Criptográfico:}
+
+En el ámbito de la seguridad digital, el hash criptográfico constituye la función matemática algorítmica elemental que transforma un volumen de datos de entrada variable en una cadena alfanumérica única de longitud fija [3]. Este componente es crítico en el desarrollo de infraestructuras distribuidas, ya que actúa como una huella digital determinista e irreversible que asegura la integridad de los datos frente a alteraciones maliciosas [3].
+
+\textbf{Árbol de Merkle:}
+
+La escalabilidad y optimización del procesamiento de grandes volúmenes de transacciones se logra mediante la estructura del árbol de Merkle (o árbol de hashes) [13]. Este esquema organiza y resume de manera jerárquica las firmas criptográficas de los datos dentro de un bloque [13]. El uso del árbol de Merkle permite abreviar significativamente el tamaño de las firmas digitales requeridas y optimizar el proceso de verificación en nodos con capacidades de cómputo limitadas, garantizando que la información temporal del sistema permanezca protegida contra manipulaciones externas [13].
+
+\subsubsection{Mecanismos Operativos y Consenso en Redes Distribuidas}
+
+\textbf{Doble Gasto:}
+
+Uno de los desafíos históricos en los sistemas de intercambio de activos digitales es el problema del doble gasto, definido como el riesgo o vulnerabilidad de que un mismo token o activo digital pueda ser clonado o transferido de manera fraudulenta en más de una ocasión en la red [3]. Las arquitecturas distribuidas mitigan esta debilidad al eliminar entidades centralizadas intermediarias y reemplazar la confianza institucional por validaciones criptográficas compartidas que registran de forma definitiva la procedencia e inmutabilidad de cada transacción [3], [14].
+
+\textbf{Consenso:}
+
+Para mantener un registro único, coherente y legítimo en un entorno descentralizado se requiere un protocolo de consenso, el cual define el conjunto de reglas de votación, validación y coordinación matemática que permite a los nodos de la red acordar el estado exacto del libro contable [15],[16]. Dependiendo del tipo de arquitectura, se emplean esquemas como la Tolerancia a Fallas Bizantinas Práctica (PBFT) o su evolución, el Acuerdo Bizantino Federado (FBA), implementado en redes públicas con el objetivo de elevar las velocidades de validación y superar restricciones de escalabilidad operativa en la transferencia de valor.
+
+\textbf{Finality:}
+
+Estrechamente vinculada con los algoritmos de consenso se encuentra la finalidad o \textit{finality}, propiedad técnica que determina el momento exacto e irreversible en el cual una transacción se considera confirmada de forma permanente dentro de la cadena de bloques, impidiendo que sea revertida o modificada incluso ante fallas de conectividad o ataques dirigidos en la topología de la red [16]. La robustez de la \textit{finality} garantiza la seguridad e inmunidad de los datos, reduciendo el tiempo de espera para consolidar operaciones de alta concurrencia [17].
+
+\subsubsection{Entornos de Despliegue y Activos Digitales}
+
+\textbf{Mainnet y Testnet:}
+
+El ciclo de vida del desarrollo de software en plataformas de registro distribuido exige la segregación de entornos a través de redes secundarias de prueba (\textit{testnet}) y redes de producción real (\textit{mainnet}) [18]. Los entornos de \textit{testnet} permiten a los ingenieros desplegar, simular y medir de forma segura los costos de ejecución de contratos inteligentes sin comprometer recursos financieros verdaderos, antes de su lanzamiento definitivo en la red principal o \textit{mainnet}, donde las operaciones poseen impacto económico y operacional irreversible.
+
+\textbf{NFT (Tokens No Fungibles):}
+
+En el espectro de la representación de activos, los tokens no fungibles (\textit{NFTs}) emergen como unidades de datos digitales únicas y no intercambiables, programadas habitualmente bajo estándares criptográficos específicos como el ERC-721 [4]. A diferencia de los tokens convencionales, los NFTs incorporan metadatos cifrados y un identificador exclusivo que los hace irrepetibles, características ideales para su uso en plataformas avanzadas de boletaje y \textit{e-ticketing} debido a su capacidad para autenticar la propiedad, prevenir fraudes de duplicidad, rastrear la procedencia en mercados secundarios y automatizar regalías hacia los creadores originales .
+
+\subsubsection{Arquitectura de Software e Interoperabilidad Empresarial}
+
+\textbf{API (Interfaz de Programación de Aplicaciones):}
+
+Para garantizar la comunicación interactiva entre el núcleo de la cadena de bloques y las plataformas de software externas orientadas al usuario, se implementan interfaces de programación de aplicaciones (APIs). Estas interfaces estructuran las reglas, métodos y formatos de mensajería requeridos para que los sistemas de bases de datos tradicionales puedan realizar consultas, iniciar transferencias o desencadenar ejecuciones en contratos inteligentes de forma transparente [19].
+
+\textbf{JWT (JSON Web Token):}
+
+La seguridad en los canales de comunicación expuestos por las APIs se refuerza mediante el uso de JSON Web Tokens (JWT) para la gestión y control de accesos descentralizados. El estándar JWT permite transmitir de manera segura información compacta y firmada digitalmente entre cliente y servidor, permitiendo validar credenciales e identidad de los usuarios que interactúan con el sistema de boletaje [20].
+
+\textbf{B2B (Business-to-Business):}
+
+Finalmente, estas soluciones tecnológicas se enmarcan estratégicamente dentro del modelo de negocio de empresa a empresa o \textit{Business-to-Business (B2B)} . La interoperabilidad en redes de cadena de bloques con permisos controlados actúa como un facilitador clave para aplicaciones B2B, permitiendo que múltiples organizaciones independientes colaboren de manera segura, compartan registros inmutables y ejecuten contratos inteligentes conjuntos bajo condiciones comerciales preestablecidas [21].
+\subsection{Análisis de alternativas de solución}
+\subsubsection{Alternativas de solución e impacto}
+\textbf{Alternativa 1: Sistemas centralizados de verificación de boletas (bases de datos tradicionales)}
+
+Una alternativa es emplear una base de datos centralizada administrada por la
+plataforma de boletería. Cada boleta se registra con un identificador único y las
+transferencias se controlan desde un servidor central.
+
+\begin{itemize}
+    \item \textbf{Impacto técnico:} fácil implementación, pero vulnerable a
+    manipulación o duplicación de registros.
+    \item \textbf{Impacto organizacional:} mantiene la dependencia total del
+    proveedor, sin trazabilidad externa.
+    \item \textbf{Impacto social:} no genera confianza entre compradores y
+    vendedores en reventa, ya que la verificación depende de un tercero.
+\end{itemize}
+
+\textbf{Alternativa 2: Códigos QR con validación en línea}
+
+Otra alternativa consiste en generar códigos QR dinámicos vinculados a una base
+de datos en línea, que valida en tiempo real si una boleta está activa o ya fue
+utilizada.
+
+\begin{itemize}
+    \item \textbf{Impacto técnico:} mejora la autenticación visual, pero no evita
+    que un código sea revendido fraudulentamente si el comprador no tiene acceso
+    a la base de datos.
+    \item \textbf{Impacto organizacional:} requiere servidores disponibles
+    permanentemente y medidas anti-manipulación.
+    \item \textbf{Impacto social:} incrementa la confianza en la entrada física,
+    pero no resuelve el problema del fraude en la reventa digital.
+\end{itemize}
+
+\textbf{Alternativa 3: Uso de blockchain en redes de propósito general (Ethereum u otras EVM)}
+
+El uso de redes como Ethereum, Polygon o Binance Smart Chain permite representar
+las boletas como NFTs mediante contratos inteligentes estándar (ERC-721).
+
+\begin{itemize}
+    \item \textbf{Impacto técnico:} alto nivel de seguridad y compatibilidad, pero
+    con costos elevados de transacción (\textit{gas}) y menor velocidad.
+    \item \textbf{Impacto organizacional:} requiere mayor inversión en
+    infraestructura y conocimiento técnico especializado.
+    \item \textbf{Impacto social:} ofrece transparencia y propiedad verificable,
+    pero puede dificultar la adopción masiva por su complejidad y costos para el
+    usuario final.
+\end{itemize}
+
+\subsubsection{Comparación de alternativas}
+
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.25}
+\setlength{\tabcolsep}{4pt}
+
+\begin{tabularx}{\textwidth}{|p{3.2cm}|X|X|X|X|}
+\hline
+\textbf{Criterio} &
+\textbf{Alternativa 1: Sistema centralizado} &
+\textbf{Alternativa 2: Códigos QR} &
+\textbf{Alternativa 3: Blockchain (Ethereum)} &
+\textbf{Propuesta: Stellar/Soroban (NFTs)} \\
+\hline
+
+\textbf{Seguridad y trazabilidad} & Baja (depende de servidor) & Media & Alta & Alta \\ \hline
+\textbf{Costos de operación} & Medios & Medios & Altos & Bajos \\ \hline
+\textbf{Velocidad de transacción} & Alta & Alta & Media/Baja & Alta \\ \hline
+\textbf{Descentralización} & Nula & Baja & Alta & Alta \\ \hline
+\textbf{Complejidad técnica} & Baja & Media & Alta & Media \\ \hline
+\textbf{Confianza del usuario final} & Baja & Media & Alta & Alta \\ \hline
+\textbf{Facilidad de integración} & Alta & Alta & Media & Alta \\ \hline
+\textbf{Costo para el usuario} & Bajo & Bajo & Alto & Bajo \\ \hline
+\textbf{Impacto social esperado} & Limitado & Moderado & Alto & Alto y sostenible \\ \hline
+
+\end{tabularx}
+
+\caption{Comparación de alternativas de solución}
+\label{tab:comparacion_alternativas}
+\end{table}
+
+\clearpage
+\section{Referencias}
+\begin{thebibliography}{99}
+
+\bibitem{dijin2025}
+Centro Cibernético Policial - DIJIN, ``Informe Estadístico de Cibercriminalidad en Colombia 2024,'' Policía Nacional de Colombia, Bogotá D.C., Informe Técnico, ene. 2025.
+
+\bibitem{ley1480}
+Congreso de la República de Colombia, ``Ley 1480 de 2011: Por medio de la cual se expide el Estatuto del Consumidor,'' Diario Oficial No. 48.220, Bogotá D.C., oct. 2011. [En línea]. Disponible en: \url{http://www.secretariasenado.gov.cl/}
+
+\bibitem{paik2019}
+H.-Y. Paik, X. Xu, H. M. N. D. Bandara, S. U. Lee, and S. K. Lo, ``Analysis of Data Management in Blockchain-Based Systems: From Architecture to Governance,'' \textit{IEEE Access}, vol. 7, pp. 186091--186107, 2019, doi: 10.1109/ACCESS.2019.2961404.
+
+\bibitem{sombat2023}
+P. Sombat and P. Ratanaworachan, ``A Blockchain-Based Ticket Sales Platform,'' in \textit{Proc. 2023 27th International Computer Science and Engineering Conference (ICSEC)}, 2023, pp. 226--230, doi: 10.1109/ICSEC59635.2023.10329682.
+
+\bibitem{omote2024}
+S. Omote, ``Is NFT the Future of Event Ticketing?,'' 2024.
+
+\bibitem{guayasamin2024traceability}
+M. N. Guayasamín, ``Blockchain-Enhanced Ticketing Systems: Improving Traceability and Fraud Prevention,'' 2024.
+
+\bibitem{harmanda2024}
+H. Harmanda, ``A Systematic Review of Blockchain Applications in Digital Asset Traceability,'' 2024.
+
+\bibitem{sung2023}
+A. Sung, ``AkaTick: NFT-Based Event Ticketing System Using Smart Contracts,'' 2023.
+
+\bibitem{zheng2020}
+Z. Zheng et al., ``An Overview of Blockchain Technology: Architecture, Consensus, and Future Trends,'' 2020.
+
+\bibitem{stellar2024}
+Stellar Development Foundation, ``Stellar and Soroban Documentation,'' 2024.
+
+\bibitem{taherdoost2023}
+M. Taherdoost, ``Smart Contracts in Blockchain Technology: Applications and Challenges,'' 2023.
+
+\bibitem{khan2021}
+K. Khan et al., ``Blockchain and Smart Contract Applications in Secure Digital Transactions,'' 2021.
+
+\bibitem{juliansyah2024}
+M. R. Juliansyah et al., ``A Performance Analysis of Hyperledger Fabric for Blockchain-Based Concert Ticketing Systems,'' in \textit{Proc. 2024 International Conference on Electrical Engineering and Computer Science (ICECOS)}, 2024, pp. 147--151, doi: 10.1109/ICECOS63900.2024.10791096.
+
+\bibitem{yu2024}
+B. Yu, Y. Guan, S. Geng, L. Miao, Y. Zhang, and Y. Gong, ``A Blockchain-Enhanced Secure and Reliable Data Transaction Scheme in MAS via HTLC,'' in \textit{Proc. 2024 3rd Conference on Fully Actuated System Theory and Applications (FASTA)}, 2024, pp. 494--499, doi: 10.1109/FASTA61401.2024.10595264.
+
+\bibitem{nugroho2023}
+E. W. Nugroho, ``Analyzing the Federated Byzantine Agreement Blockchain Network for Liveness Using Multiple Online Analytical Processing,'' in \textit{Proc. 2023 7th International Conference on Information Technology (InCIT)}, 2023, pp. 135--140, doi: 10.1109/InCIT60207.2023.10413163.
+
+\bibitem{yoo2019}
+J. Yoo, Y. Jung, D. Shin, M. Bae, and E. Jee, ``Formal Modeling and Verification of a Federated Byzantine Agreement Algorithm for Blockchain Platforms,'' in \textit{Proc. 2019 IEEE International Workshop on Blockchain Oriented Software Engineering (IWBOSE)}, 2019, pp. 11--21, doi: 10.1109/IWBOSE.2019.8666514.
+
+\bibitem{tumas2023}
+V. Tumas, S. Rivera, D. Magoni, and R. State, ``Federated Byzantine Agreement Protocol Robustness to Targeted Network Attacks,'' in \textit{Proc. 2023 IEEE Symposium on Computers and Communications (ISCC)}, 2023, pp. 443--449, doi: 10.1109/ISCC58397.2023.10217935.
+
+\bibitem{shah2024}
+S. A. Shah, S. Soni, M. S. Obaidat, N. K. J. Adav, J. J. Hathaliya, S. Tanwar, and N. Yamsani, ``Blockchain-Assisted Secure and Trusted Ticketing System for Outsourced Premier League,'' in \textit{Proc. 2024 International Conference on Communications, Computing, Cybersecurity, and Informatics (CCCI)}, 2024, pp. 1--6, doi: 10.1109/CCCI61916.2024.10736458.
+
+\bibitem{guayasamin2024eticket}
+A. Guayasamín, W. Fuertes, N. Carrera, L. Tello-Oquendo, and V. Suango, ``Blockchain-Enhanced E-Ticket Distribution System to Effective Transactions, Validation, and Audits,'' in \textit{Proc. 2024 8th Cyber Security in Networking Conference (CSNet)}, 2024, pp. 52--59, doi: 10.1109/CSNet64211.2024.10851765.
+
+\bibitem{zhang2022}
+L. Zhang, T. Wang, and Z. Wu, ``Access control method for air ticket distribution system based on blockchain,'' in \textit{Proc. 2022 IEEE Intl Conf on Parallel \& Distributed Processing with Applications, Big Data \& Cloud Computing, Sustainable Computing \& Communications, Social Computing \& Networking (ISPA/BDCloud/SocialCom/SustainCom)}, 2022, pp. 815--821, doi: 10.1109/ISPA-BDCloud-SocialCom-SustainCom57177.2022.00109.
+
+\bibitem{alhussayen2024}
+A. A. Alhussayen, K. Jambi, M. Khemakhem, and F. E. Eassa, ``A Blockchain Oracle Interoperability Technique for Permissioned Blockchain,'' \textit{IEEE Access}, vol. 12, pp. 68130--68148, 2024, doi: 10.1109/ACCESS.2024.3400672.
+
+\end{thebibliography}
+
+\end{document}
