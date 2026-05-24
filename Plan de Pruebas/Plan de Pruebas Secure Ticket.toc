@@ -1,100 +1,98 @@
 \babel@toc {spanish}{}\relax 
 \contentsline {section}{Historial de cambios}{1}{Doc-Start}%
-\contentsline {section}{\numberline {1}Introducción}{9}{section.1}%
-\contentsline {subsection}{\numberline {1.1}Propósito del documento}{9}{subsection.1.1}%
-\contentsline {subsection}{\numberline {1.2}Alcance del sistema}{9}{subsection.1.2}%
-\contentsline {subsection}{\numberline {1.3}Audiencia objetivo}{10}{subsection.1.3}%
-\contentsline {section}{\numberline {2}Objetivos del plan de pruebas}{11}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Objetivo general}{12}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Objetivos específicos}{12}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Metas de calidad}{13}{subsection.2.3}%
-\contentsline {subsection}{\numberline {2.4}Criterios generales de éxito}{14}{subsection.2.4}%
-\contentsline {section}{\numberline {3}Ítems de prueba}{14}{section.3}%
-\contentsline {section}{\numberline {4}Alcance de las pruebas}{18}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Componentes incluidos en el alcance}{18}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Flujos funcionales incluidos}{19}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Niveles de prueba incluidos}{20}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Cobertura parcial por diseño}{21}{subsection.4.4}%
-\contentsline {subsection}{\numberline {4.5}Elementos fuera del alcance}{22}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Criterio de delimitación del alcance}{22}{subsection.4.6}%
-\contentsline {section}{\numberline {5}Estrategia de pruebas}{22}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Pruebas unitarias de contratos inteligentes}{23}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Pruebas unitarias y de API del backend}{24}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Pruebas de integración}{24}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Pruebas end-to-end del frontend}{25}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Prueba manual guiada de reventa en Testnet}{26}{subsection.5.5}%
-\contentsline {subsection}{\numberline {5.6}Pruebas del escáner QR}{27}{subsection.5.6}%
-\contentsline {subsection}{\numberline {5.7}Pruebas de seguridad funcional}{27}{subsection.5.7}%
-\contentsline {subsection}{\numberline {5.8}Pruebas de carga}{28}{subsection.5.8}%
-\contentsline {subsection}{\numberline {5.9}Pruebas de humo de despliegue}{29}{subsection.5.9}%
-\contentsline {subsection}{\numberline {5.10}Pruebas de aceptación de usuario}{30}{subsection.5.10}%
-\contentsline {subsection}{\numberline {5.11}Trazabilidad de pruebas}{30}{subsection.5.11}%
-\contentsline {section}{\numberline {6}Ambiente y datos de prueba}{31}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Ambientes de prueba}{31}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Configuración técnica del ambiente}{32}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Variables de entorno}{32}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Datos de prueba}{33}{subsection.6.4}%
-\contentsline {subsection}{\numberline {6.5}Estados de ticket considerados}{34}{subsection.6.5}%
-\contentsline {subsection}{\numberline {6.6}Datos para pruebas de carga}{35}{subsection.6.6}%
-\contentsline {subsection}{\numberline {6.7}Consideraciones de seguridad sobre datos de prueba}{35}{subsection.6.7}%
-\contentsline {subsection}{\numberline {6.8}Criterios de preparación del ambiente}{36}{subsection.6.8}%
-\contentsline {section}{\numberline {7}Criterios de entrada y salida}{37}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Criterios generales de entrada}{37}{subsection.7.1}%
-\contentsline {subsection}{\numberline {7.2}Criterios generales de salida}{38}{subsection.7.2}%
-\contentsline {subsection}{\numberline {7.3}Criterios de entrada por tipo de prueba}{38}{subsection.7.3}%
-\contentsline {subsection}{\numberline {7.4}Criterios de salida por tipo de prueba}{39}{subsection.7.4}%
-\contentsline {subsection}{\numberline {7.5}Estados de resultado de prueba}{40}{subsection.7.5}%
-\contentsline {subsection}{\numberline {7.6}Criterio de suspensión y reanudación}{41}{subsection.7.6}%
-\contentsline {section}{\numberline {8}Casos de prueba}{41}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Formato de los casos de prueba}{42}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}Casos de prueba de contratos inteligentes}{42}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Casos de prueba backend/API}{43}{subsection.8.3}%
-\contentsline {subsection}{\numberline {8.4}Casos de prueba de integración}{44}{subsection.8.4}%
-\contentsline {subsection}{\numberline {8.5}Casos de prueba frontend y end-to-end}{45}{subsection.8.5}%
-\contentsline {subsection}{\numberline {8.6}Caso de prueba manual de reventa en Testnet}{46}{subsection.8.6}%
-\contentsline {subsection}{\numberline {8.7}Casos de prueba de carga}{47}{subsection.8.7}%
-\contentsline {subsection}{\numberline {8.8}Casos de prueba de smoke test de despliegue}{47}{subsection.8.8}%
-\contentsline {subsection}{\numberline {8.9}Casos de prueba de aceptación de usuario}{48}{subsection.8.9}%
-\contentsline {subsection}{\numberline {8.10}Casos documentales de trazabilidad}{48}{subsection.8.10}%
-\contentsline {subsection}{\numberline {8.11}Resumen de cobertura de casos}{49}{subsection.8.11}%
-\contentsline {section}{\numberline {9}Resultados y análisis}{50}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Resumen general de resultados}{50}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Resultados de pruebas de contratos inteligentes}{51}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Resultados de pruebas Backend/API}{52}{subsection.9.3}%
-\contentsline {subsection}{\numberline {9.4}Resultados de integración e indexador}{53}{subsection.9.4}%
-\contentsline {subsection}{\numberline {9.5}Resultados de frontend y pruebas end-to-end}{54}{subsection.9.5}%
-\contentsline {subsection}{\numberline {9.6}Resultados de reventa en Stellar/Soroban Testnet}{54}{subsection.9.6}%
-\contentsline {subsection}{\numberline {9.7}Resultados del escáner QR}{55}{subsection.9.7}%
-\contentsline {subsection}{\numberline {9.8}Resultados de pruebas de carga}{56}{subsection.9.8}%
-\contentsline {subsection}{\numberline {9.9}Resultados del smoke test de despliegue}{57}{subsection.9.9}%
-\contentsline {subsection}{\numberline {9.10}Resultados de aceptación de usuario}{57}{subsection.9.10}%
-\contentsline {subsection}{\numberline {9.11}Resultados de trazabilidad}{58}{subsection.9.11}%
-\contentsline {subsection}{\numberline {9.12}Fallos, bloqueos y limitaciones identificadas}{59}{subsection.9.12}%
-\contentsline {subsection}{\numberline {9.13}Análisis general}{60}{subsection.9.13}%
-\contentsline {subsection}{\numberline {9.14}Conclusión de resultados}{61}{subsection.9.14}%
-\contentsline {section}{\numberline {10}Riesgos y mitigaciones}{62}{section.10}%
-\contentsline {subsection}{\numberline {10.1}Riesgos identificados}{63}{subsection.10.1}%
-\contentsline {subsection}{\numberline {10.2}Plan de mitigación}{64}{subsection.10.2}%
-\contentsline {subsection}{\numberline {10.3}Riesgos materializados durante la ejecución}{66}{subsection.10.3}%
-\contentsline {subsection}{\numberline {10.4}Plan de contingencia}{67}{subsection.10.4}%
-\contentsline {subsection}{\numberline {10.5}Riesgo residual}{68}{subsection.10.5}%
-\contentsline {subsection}{\numberline {10.6}Conclusión de riesgos}{68}{subsection.10.6}%
-\contentsline {section}{\numberline {11}Matriz de trazabilidad}{68}{section.11}%
-\contentsline {subsection}{\numberline {11.1}Criterios de trazabilidad}{69}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Estados utilizados en la matriz}{70}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}Ubicación de la matriz completa}{70}{subsection.11.3}%
-\contentsline {subsection}{\numberline {11.4}Resumen de cobertura por categoría}{71}{subsection.11.4}%
-\contentsline {subsection}{\numberline {11.5}Análisis de brechas de trazabilidad}{71}{subsection.11.5}%
-\contentsline {subsection}{\numberline {11.6}Conclusión de trazabilidad}{72}{subsection.11.6}%
-\contentsline {section}{\numberline {12}Conclusiones}{73}{section.12}%
-\contentsline {subsection}{\numberline {12.1}Trabajo futuro}{74}{subsection.12.1}%
-\contentsline {section}{\numberline {13}Anexos}{75}{section.13}%
-\contentsline {subsection}{\numberline {13.1}Anexo A: Evidencias de pruebas de contratos inteligentes}{75}{subsection.13.1}%
-\contentsline {subsection}{\numberline {13.2}Anexo B: Evidencias de pruebas backend/API e integración}{75}{subsection.13.2}%
-\contentsline {subsection}{\numberline {13.3}Anexo C: Evidencias de pruebas frontend y end-to-end}{76}{subsection.13.3}%
-\contentsline {subsection}{\numberline {13.4}Anexo D: Evidencias de reventa en Stellar/Soroban Testnet}{77}{subsection.13.4}%
-\contentsline {subsection}{\numberline {13.5}Anexo E: Evidencias de pruebas de carga}{77}{subsection.13.5}%
-\contentsline {subsection}{\numberline {13.6}Anexo F: Matriz completa de trazabilidad}{78}{subsection.13.6}%
-\contentsline {subsection}{\numberline {13.7}Anexo G: Evidencias de smoke test de despliegue}{80}{subsection.13.7}%
-\contentsline {subsection}{\numberline {13.8}Anexo H: Formularios de aceptación de usuario}{80}{subsection.13.8}%
-\contentsline {subsection}{\numberline {13.9}Anexo I: Limitaciones y decisiones de alcance}{81}{subsection.13.9}%
+\contentsline {section}{\numberline {1}Introducción}{10}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Propósito del documento}{10}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Alcance del sistema}{10}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Audiencia objetivo}{11}{subsection.1.3}%
+\contentsline {section}{\numberline {2}Objetivos del plan de pruebas}{12}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Objetivo general}{13}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}Objetivos específicos}{13}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Metas de calidad}{14}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Criterios generales de éxito}{15}{subsection.2.4}%
+\contentsline {section}{\numberline {3}Ítems de prueba}{15}{section.3}%
+\contentsline {section}{\numberline {4}Alcance de las pruebas}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Componentes incluidos en el alcance}{19}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Flujos funcionales incluidos}{20}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Niveles de prueba incluidos}{21}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Cobertura parcial por diseño}{22}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Elementos fuera del alcance}{23}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Criterio de delimitación del alcance}{23}{subsection.4.6}%
+\contentsline {section}{\numberline {5}Estrategia de pruebas}{23}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Pruebas unitarias de contratos inteligentes}{24}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Pruebas unitarias y de API del backend}{25}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Pruebas de integración}{25}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Pruebas end-to-end del frontend}{26}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Prueba manual guiada de reventa en Testnet}{27}{subsection.5.5}%
+\contentsline {subsection}{\numberline {5.6}Pruebas del escáner QR}{28}{subsection.5.6}%
+\contentsline {subsection}{\numberline {5.7}Pruebas de seguridad funcional}{28}{subsection.5.7}%
+\contentsline {subsection}{\numberline {5.8}Pruebas de carga}{29}{subsection.5.8}%
+\contentsline {subsection}{\numberline {5.9}Pruebas de humo de despliegue}{30}{subsection.5.9}%
+\contentsline {subsection}{\numberline {5.10}Pruebas de aceptación de usuario}{31}{subsection.5.10}%
+\contentsline {subsection}{\numberline {5.11}Trazabilidad de pruebas}{31}{subsection.5.11}%
+\contentsline {section}{\numberline {6}Ambiente y datos de prueba}{32}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Ambientes de prueba}{32}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Configuración técnica del ambiente}{33}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Variables de entorno}{33}{subsection.6.3}%
+\contentsline {subsection}{\numberline {6.4}Datos de prueba}{34}{subsection.6.4}%
+\contentsline {subsection}{\numberline {6.5}Estados de ticket considerados}{35}{subsection.6.5}%
+\contentsline {subsection}{\numberline {6.6}Datos para pruebas de carga}{36}{subsection.6.6}%
+\contentsline {subsection}{\numberline {6.7}Consideraciones de seguridad sobre datos de prueba}{36}{subsection.6.7}%
+\contentsline {subsection}{\numberline {6.8}Criterios de preparación del ambiente}{37}{subsection.6.8}%
+\contentsline {section}{\numberline {7}Criterios de entrada y salida}{38}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Criterios generales de entrada}{38}{subsection.7.1}%
+\contentsline {subsection}{\numberline {7.2}Criterios generales de salida}{39}{subsection.7.2}%
+\contentsline {subsection}{\numberline {7.3}Criterios de entrada por tipo de prueba}{39}{subsection.7.3}%
+\contentsline {subsection}{\numberline {7.4}Criterios de salida por tipo de prueba}{40}{subsection.7.4}%
+\contentsline {subsection}{\numberline {7.5}Estados de resultado de prueba}{41}{subsection.7.5}%
+\contentsline {subsection}{\numberline {7.6}Criterio de suspensión y reanudación}{42}{subsection.7.6}%
+\contentsline {section}{\numberline {8}Casos de prueba}{42}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Formato de los casos de prueba}{43}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Casos de prueba de contratos inteligentes}{43}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Casos de prueba backend/API}{44}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}Casos de prueba de integración}{45}{subsection.8.4}%
+\contentsline {subsection}{\numberline {8.5}Casos de prueba frontend y end-to-end}{46}{subsection.8.5}%
+\contentsline {subsection}{\numberline {8.6}Caso de prueba manual de reventa en Testnet}{47}{subsection.8.6}%
+\contentsline {subsection}{\numberline {8.7}Casos de prueba de carga}{48}{subsection.8.7}%
+\contentsline {subsection}{\numberline {8.8}Casos de prueba de smoke test de despliegue}{48}{subsection.8.8}%
+\contentsline {subsection}{\numberline {8.9}Casos de prueba de aceptación de usuario}{49}{subsection.8.9}%
+\contentsline {subsection}{\numberline {8.10}Casos documentales de trazabilidad}{50}{subsection.8.10}%
+\contentsline {subsection}{\numberline {8.11}Resumen de cobertura de casos}{51}{subsection.8.11}%
+\contentsline {section}{\numberline {9}Resultados y análisis}{52}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Resumen general de resultados}{52}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Resultados de pruebas de contratos inteligentes}{53}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Resultados de pruebas Backend/API}{54}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Resultados de integración e indexador}{55}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Resultados de frontend y pruebas end-to-end}{56}{subsection.9.5}%
+\contentsline {subsection}{\numberline {9.6}Resultados de reventa en Stellar/Soroban Testnet}{57}{subsection.9.6}%
+\contentsline {subsection}{\numberline {9.7}Resultados del escáner QR}{57}{subsection.9.7}%
+\contentsline {subsection}{\numberline {9.8}Resultados de pruebas de carga}{58}{subsection.9.8}%
+\contentsline {subsection}{\numberline {9.9}Resultados del smoke test de despliegue}{59}{subsection.9.9}%
+\contentsline {subsection}{\numberline {9.10}Resultados de aceptación de usuario}{60}{subsection.9.10}%
+\contentsline {subsection}{\numberline {9.11}Resultados de trazabilidad}{61}{subsection.9.11}%
+\contentsline {subsection}{\numberline {9.12}Fallos, bloqueos y limitaciones identificadas}{62}{subsection.9.12}%
+\contentsline {subsection}{\numberline {9.13}Análisis general}{63}{subsection.9.13}%
+\contentsline {subsection}{\numberline {9.14}Conclusión de resultados}{64}{subsection.9.14}%
+\contentsline {section}{\numberline {10}Riesgos y mitigaciones}{65}{section.10}%
+\contentsline {subsection}{\numberline {10.1}Riesgos identificados}{66}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Plan de mitigación}{67}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}Riesgos materializados durante la ejecución}{69}{subsection.10.3}%
+\contentsline {subsection}{\numberline {10.4}Plan de contingencia}{70}{subsection.10.4}%
+\contentsline {subsection}{\numberline {10.5}Riesgo residual}{71}{subsection.10.5}%
+\contentsline {subsection}{\numberline {10.6}Conclusión de riesgos}{71}{subsection.10.6}%
+\contentsline {section}{\numberline {11}Matriz de trazabilidad}{72}{section.11}%
+\contentsline {subsection}{\numberline {11.1}Criterios de trazabilidad}{72}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Estados utilizados en la matriz}{73}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}Ubicación de la matriz completa}{73}{subsection.11.3}%
+\contentsline {subsection}{\numberline {11.4}Resumen de cobertura por categoría}{74}{subsection.11.4}%
+\contentsline {subsection}{\numberline {11.5}Análisis de brechas de trazabilidad}{74}{subsection.11.5}%
+\contentsline {subsection}{\numberline {11.6}Conclusión de trazabilidad}{75}{subsection.11.6}%
+\contentsline {section}{\numberline {12}Conclusiones}{76}{section.12}%
+\contentsline {subsection}{\numberline {12.1}Trabajo futuro}{77}{subsection.12.1}%
+\contentsline {section}{\numberline {13}Anexos}{78}{section.13}%
+\contentsline {subsection}{\numberline {13.1}Anexo A: Evidencias de pruebas de contratos inteligentes}{78}{subsection.13.1}%
+\contentsline {subsection}{\numberline {13.2}Anexo B: Evidencias de pruebas backend/API e integración}{78}{subsection.13.2}%
+\contentsline {subsection}{\numberline {13.3}Anexo C: Evidencias de pruebas frontend y end-to-end}{79}{subsection.13.3}%
+\contentsline {subsection}{\numberline {13.4}Anexo D: Evidencias de reventa en Stellar/Soroban Testnet}{80}{subsection.13.4}%
+\contentsline {subsection}{\numberline {13.5}Anexo E: Evidencias de pruebas de carga}{81}{subsection.13.5}%
+\contentsline {subsection}{\numberline {13.6}Anexo F: Evidencias de smoke test de despliegue}{83}{subsection.13.6}%
+\contentsline {subsection}{\numberline {13.7}Anexo G: Matriz completa de trazabilidad}{84}{subsection.13.7}%

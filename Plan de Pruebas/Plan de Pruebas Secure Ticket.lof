@@ -1,1 +1,23 @@
 \babel@toc {spanish}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Evidencia CONTRACT-01: ejecución de \texttt {cargo test} para contratos Soroban}}{78}{figure.caption.51}%
+\contentsline {figure}{\numberline {2}{\ignorespaces Evidencia CONTRACT-02: resumen de \texttt {cargo test} con 58 pruebas aprobadas y 0 fallidas}}{78}{figure.caption.51}%
+\contentsline {figure}{\numberline {3}{\ignorespaces Evidencia BACKEND-01: \texttt {npm run test:unit} con 103 pruebas aprobadas}}{79}{figure.caption.52}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Evidencia BACKEND-02: \texttt {npm run test:api} con 42 pruebas aprobadas}}{79}{figure.caption.52}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Evidencia FRONTEND-01: \texttt {npm test} con 22 pruebas aprobadas}}{79}{figure.caption.53}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Evidencia FRONTEND-02: \texttt {npm run e2e} con 4 pruebas Playwright aprobadas}}{79}{figure.caption.53}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Evidencia FRONTEND-03: \texttt {npm run e2e:real} con 1 prueba aprobada}}{80}{figure.caption.54}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Evidencia REV-01: marketplace con boleto publicado para reventa P2P}}{80}{figure.caption.55}%
+\contentsline {figure}{\numberline {9}{\ignorespaces Evidencia REV-02: inventario del comprador posterior a la compra en reventa}}{80}{figure.caption.55}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Evidencia REV-03: actividad del contrato en Stellar Expert Testnet}}{81}{figure.caption.56}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Evidencia REV-04: validación visual adicional del inventario posterior a la reventa}}{81}{figure.caption.56}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Evidencia REV-05: historial de ventas P2P del vendedor}}{81}{figure.caption.57}%
+\contentsline {figure}{\numberline {13}{\ignorespaces Evidencia LOAD-01: k6 lectura pública con 2240 solicitudes y 0.00\% de error}}{82}{figure.caption.58}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Evidencia LOAD-02: k6 autenticación con usuario \textit {CUSTOMER} y 0.00\% de error}}{82}{figure.caption.58}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Evidencia LOAD-03: k6 checkout controlado con 64 solicitudes y 0.00\% de error}}{82}{figure.caption.59}%
+\contentsline {figure}{\numberline {16}{\ignorespaces Evidencia LOAD-04: k6 escáner controlado con 31 solicitudes y 0.00\% de error}}{82}{figure.caption.59}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Evidencia LOAD-05: k6 transacciones controladas con 28 solicitudes y 0.00\% de error}}{82}{figure.caption.60}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Evidencia SMOKE-01: cuenta autenticada con usuario comprador}}{83}{figure.caption.61}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Evidencia SMOKE-02: carga de eventos en el ambiente de staging}}{83}{figure.caption.61}%
+\contentsline {figure}{\numberline {20}{\ignorespaces Evidencia SMOKE-03: inventario del usuario comprador en staging}}{83}{figure.caption.62}%
+\contentsline {figure}{\numberline {21}{\ignorespaces Evidencia SMOKE-04: cuenta autenticada con usuario staff}}{83}{figure.caption.62}%
+\contentsline {figure}{\numberline {22}{\ignorespaces Evidencia SMOKE-05: escáner QR con validación de acceso permitido}}{84}{figure.caption.63}%
