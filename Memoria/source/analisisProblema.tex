@@ -4,7 +4,11 @@
 
 \subsection{Requerimientos}
 
-El sistema se especifica mediante veinte requerimientos funcionales (RF) y veinte requerimientos no funcionales (RNF), organizados en cinco módulos: M1 gestión de eventos y tickets, M2 emisión NFT, M3 mercado secundario, M4 configuración y políticas, M5 usuarios y autenticación. La especificación detallada con criterios de aceptación y trazabilidad a casos de uso se entrega como anexo (SRS). Las Tablas~\ref{tab:rf} y~\ref{tab:rnf} resumen el conjunto completo.
+El sistema se especifica mediante veinte requerimientos funcionales (RF) y veinte requerimientos no
+funcionales (RNF), organizados en cinco módulos: M1 gestión de eventos y tickets, M2 emisión NFT, M3 mercado
+secundario, M4 configuración y políticas, M5 usuarios y autenticación. La especificación detallada con
+criterios de aceptación y trazabilidad a casos de uso se entrega como anexo (SRS). Las Tablas~\ref{tab:rf}
+y~\ref{tab:rnf} resumen el conjunto completo.
 
 \begin{table}[H]
 \centering
@@ -13,7 +17,8 @@ El sistema se especifica mediante veinte requerimientos funcionales (RF) y veint
 \definecolor{rowgray}{gray}{0.96}
 \caption{Requerimientos funcionales del sistema (resumen).}
 \label{tab:rf}
-\begin{tabularx}{\textwidth}{>{}p{1.0cm} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}p{2.0cm}}
+\begin{tabularx}{\textwidth}{>{}p{1.0cm} >{\raggedright\arraybackslash}X
+>{\raggedright\arraybackslash}p{2.0cm}}
 \toprule
 \rowcolor{rowgray}
 \textbf{Id.} & \textbf{Descripción} & \textbf{Módulo} \\
@@ -52,37 +57,57 @@ RF-20 & Registrar cada transacción realizada. & M1, M2, M3, M5 \\
 \end{tabularx}
 \end{table}
 
-Los veinte requerimientos funcionales se organizan a lo largo de cinco módulos que cubren el ciclo de vida completo del boleto digital, desde la adquisición inicial hasta la auditoría posterior al evento. A continuación se describe la lógica de cada módulo y su aporte al objetivo del sistema:
+Los veinte requerimientos funcionales se organizan a lo largo de cinco módulos que cubren el ciclo de vida
+completo del boleto digital, desde la adquisición inicial hasta la auditoría posterior al evento. A
+continuación se describe la lógica de cada módulo y su aporte al objetivo del sistema:
 
 \begin{itemize}
-    \item \textbf{M1 -- Gestión de eventos y tickets.} Agrupa las operaciones de catálogo, compra primaria y consulta 
-    de disponibilidad (RF-01, RF-03, RF-04, RF-10, RF-14, RF-19). Estos requerimientos garantizan que el usuario pueda 
-    explorar eventos, adquirir entradas y consultar su inventario dentro de una interfaz convencional, sin necesidad de 
+    \item \textbf{M1 -- Gestión de eventos y tickets.} Agrupa las operaciones de catálogo, compra primaria y
+consulta 
+    de disponibilidad (RF-01, RF-03, RF-04, RF-10, RF-14, RF-19). Estos requerimientos garantizan que el
+usuario pueda 
+    explorar eventos, adquirir entradas y consultar su inventario dentro de una interfaz convencional, sin
+necesidad de 
     interactuar de forma directa con la capa blockchain.
 
-    \item \textbf{M2 -- Emisión NFT.} Define la acuñación del boleto como activo no fungible en Soroban y las operaciones 
-    de \textit{burn/remint} asociadas al cambio de propiedad (RF-03, RF-06, RF-08, RF-11, RF-12, RF-13, RF-15, RF-17, RF-20). 
-    Cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), cuya integridad se verifica 
+    \item \textbf{M2 -- Emisión NFT.} Define la acuñación del boleto como activo no fungible en Soroban y las
+operaciones 
+    de \textit{burn/remint} asociadas al cambio de propiedad (RF-03, RF-06, RF-08, RF-11, RF-12, RF-13,
+RF-15, RF-17, RF-20). 
+    Cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), cuya integridad se
+verifica 
     on-chain mediante \texttt{require\_auth()} sobre la dirección del propietario \cite{sdf2024soroban}.
 
-    \item \textbf{M3 -- Mercado secundario.} Cubre el flujo de reventa segura: listado del boleto, verificación de 
-    propiedad, ejecución atómica de la compra y distribución de comisiones (RF-07, RF-08, RF-09, RF-10, RF-11, RF-12, 
-    RF-13, RF-16, RF-18, RF-20). La atomicidad de la transacción constituye el requisito central de este módulo, dado 
+    \item \textbf{M3 -- Mercado secundario.} Cubre el flujo de reventa segura: listado del boleto,
+verificación de 
+    propiedad, ejecución atómica de la compra y distribución de comisiones (RF-07, RF-08, RF-09, RF-10,
+RF-11, RF-12, 
+    RF-13, RF-16, RF-18, RF-20). La atomicidad de la transacción constituye el requisito central de este
+módulo, dado 
     que elimina la ventana de vulnerabilidad al doble gasto descrita en la formulación del problema.
 
-    \item \textbf{M4 -- Configuración y políticas.} Establece las reglas de negocio parametrizables del contrato: precio 
-    máximo de reventa, porcentaje de comisión del organizador y tarifa de plataforma (RF-02, RF-04, RF-07, RF-09, RF-16, 
-    RF-17, RF-18). Estos parámetros se fijan en la inicialización del contrato y son modificables exclusivamente por la 
+    \item \textbf{M4 -- Configuración y políticas.} Establece las reglas de negocio parametrizables del
+contrato: precio 
+    máximo de reventa, porcentaje de comisión del organizador y tarifa de plataforma (RF-02, RF-04, RF-07,
+RF-09, RF-16, 
+    RF-17, RF-18). Estos parámetros se fijan en la inicialización del contrato y son modificables
+exclusivamente por la 
     dirección del organizador.
 
-    \item \textbf{M5 -- Usuarios y autenticación.} Gestiona la identidad del usuario en las dos capas del sistema: 
-    autenticación JWT en la capa Web2 y firma criptográfica mediante la extensión Freighter en la capa Web3 (RF-01, 
-    RF-02, RF-04, RF-05, RF-06, RF-07, RF-08, RF-09, RF-12, RF-13, RF-14, RF-16, RF-18, RF-20). La separación de 
-    responsabilidades entre ambas capas asegura que las llaves privadas del usuario nunca abandonen el entorno local 
+    \item \textbf{M5 -- Usuarios y autenticación.} Gestiona la identidad del usuario en las dos capas del
+sistema: 
+    autenticación JWT en la capa Web2 y firma criptográfica mediante la extensión Freighter en la capa Web3
+(RF-01, 
+    RF-02, RF-04, RF-05, RF-06, RF-07, RF-08, RF-09, RF-12, RF-13, RF-14, RF-16, RF-18, RF-20). La separación
+de 
+    responsabilidades entre ambas capas asegura que las llaves privadas del usuario nunca abandonen el
+entorno local 
     de la extensión del navegador.
 \end{itemize}
 
-Los veinte requerimientos no funcionales (RNF) se clasifican conforme al modelo de calidad de producto de la norma ISO/IEC 25010 \cite{iso25010}, cubriendo seis atributos de calidad: desempeño, seguridad, usabilidad, disponibilidad, mantenibilidad e integración. La Tabla~\ref{tab:rnf} resume el conjunto completo.
+Los veinte requerimientos no funcionales (RNF) se clasifican conforme al modelo de calidad de producto de la
+norma ISO/IEC 25010 \cite{iso25010}, cubriendo seis atributos de calidad: desempeño, seguridad, usabilidad,
+disponibilidad, mantenibilidad e integración. La Tabla~\ref{tab:rnf} resume el conjunto completo.
 
 \begin{table}[H]
 \centering
@@ -91,7 +116,7 @@ Los veinte requerimientos no funcionales (RNF) se clasifican conforme al modelo 
 \definecolor{rowgray}{gray}{0.96}
 \caption{Requerimientos no funcionales del sistema (resumen).}
 \label{tab:rnf}
-\begin{tabularx}{\textwidth}{>{}p{1.0cm} >{\raggedright\arraybackslash}X}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.2cm} >{\raggedright\arraybackslash}X}
 \toprule
 \rowcolor{rowgray}
 \textbf{Id.} & \textbf{Descripción} \\
@@ -130,29 +155,44 @@ RNF-20 & Conservar historial de boletos por mínimo 5 años. \\
 \end{tabularx}
 \end{table}
 
-La justificación de los umbrales definidos en cada requerimiento no funcional se organiza a continuación por atributo de calidad:
+La justificación de los umbrales definidos en cada requerimiento no funcional se organiza a continuación por
+atributo de calidad:
 
 \begin{itemize}
-    \item \textbf{Desempeño (RNF-01, RNF-02, RNF-06, RNF-17, RNF-18).} El umbral de 5 segundos para la compra y 
-    la verificación del boleto se deriva de la finalidad del protocolo SCP, que garantiza la confirmación de una 
-    transacción en un rango de 3 a 5 segundos \cite{mazieres2015stellar}. La concurrencia mínima de 100 usuarios 
-    simultáneos y las 2\,400 transacciones diarias se establecen como línea base para un evento de aforo mediano 
+    \item \textbf{Desempeño (RNF-01, RNF-02, RNF-06, RNF-17, RNF-18).} El umbral de 5 segundos para la compra
+y 
+    la verificación del boleto se deriva de la finalidad del protocolo SCP, que garantiza la confirmación de
+una 
+    transacción en un rango de 3 a 5 segundos \cite{mazieres2015stellar}. La concurrencia mínima de 100
+usuarios 
+    simultáneos y las 2\,400 transacciones diarias se establecen como línea base para un evento de aforo
+mediano 
     (aproximadamente 5\,000 asistentes), considerando que la mayor densidad transaccional se concentra en la 
     apertura de la venta y en los 30 minutos previos al ingreso.
 
     \item \textbf{Seguridad (RNF-04, RNF-05, RNF-10, RNF-15).} El bloqueo tras tres intentos fallidos mitiga 
-    ataques de fuerza bruta sobre las credenciales de sesión. El cifrado mediante TLS 1.2 o superior se alinea 
-    con las recomendaciones de la OWASP para la protección de datos en tránsito \cite{owasp2024tls}. La atomicidad 
-    total de las transacciones (RNF-10) se garantiza por el modelo de ejecución de Soroban, donde una invocación 
-    que falle en cualquiera de sus sub-operaciones revierte el estado completo del ledger sin efectos parciales 
-    \cite{sdf2024soroban}. El cierre de sesión por inactividad limita la exposición de la sesión JWT en equipos 
+    ataques de fuerza bruta sobre las credenciales de sesión. El cifrado mediante TLS 1.2 o superior se
+alinea 
+    con las recomendaciones de la OWASP para la protección de datos en tránsito \cite{owasp2024tls}. La
+atomicidad 
+    total de las transacciones (RNF-10) se garantiza por el modelo de ejecución de Soroban, donde una
+invocación 
+    que falle en cualquiera de sus sub-operaciones revierte el estado completo del ledger sin efectos
+parciales 
+    \cite{sdf2024soroban}. El cierre de sesión por inactividad limita la exposición de la sesión JWT en
+equipos 
     compartidos.
 
-    \item \textbf{Usabilidad (RNF-07, RNF-08, RNF-12).} La restricción de un máximo de cinco pasos para completar 
-    una compra responde al principio de diseño de que cada paso adicional en un flujo de pago incrementa la tasa 
-    de abandono del usuario. El tiempo de aprendizaje de 15 minutos sitúa la curva de adopción del sistema en un 
-    rango aceptable para usuarios sin experiencia previa en criptoactivos o billeteras Web3. La compatibilidad con 
-    navegadores modernos asegura que la extensión Freighter y las llamadas a Soroban RPC se ejecuten sin restricciones.
+    \item \textbf{Usabilidad (RNF-07, RNF-08, RNF-12).} La restricción de un máximo de cinco pasos para
+completar 
+    una compra responde al principio de diseño de que cada paso adicional en un flujo de pago incrementa la
+tasa 
+    de abandono del usuario. El tiempo de aprendizaje de 15 minutos sitúa la curva de adopción del sistema en
+un 
+    rango aceptable para usuarios sin experiencia previa en criptoactivos o billeteras Web3. La
+compatibilidad con 
+    navegadores modernos asegura que la extensión Freighter y las llamadas a Soroban RPC se ejecuten sin
+restricciones.
 
     \item \textbf{Disponibilidad (RNF-03, RNF-16, RNF-19).} La disponibilidad del 99{,}5\,\% mensual admite un 
     máximo acumulado de aproximadamente 3{,}6 horas de inactividad al mes, lo que se complementa con el techo 
@@ -162,13 +202,19 @@ La justificación de los umbrales definidos en cada requerimiento no funcional s
 
     \item \textbf{Mantenibilidad (RNF-09, RNF-11, RNF-14, RNF-20).} La tasa de fallos inferior al 0{,}5\,\% y la 
     cobertura de pruebas mínima del 70\,\% se establecen como indicadores de fiabilidad del código. El almacenamiento 
-    de logs durante 12 meses permite la trazabilidad operativa de incidentes, mientras que la conservación del historial 
-    de boletos por 5 años responde a la necesidad de auditoría y a la persistencia on-chain de los eventos indexados.
+    de logs durante 12 meses permite la trazabilidad operativa de incidentes, mientras que la conservación
+del historial 
+    de boletos por 5 años responde a la necesidad de auditoría y a la persistencia on-chain de los eventos
+indexados.
 
-    \item \textbf{Integración (RNF-13).} La comunicación entre la capa Web2 y la capa Web3 se canaliza a través de una 
-    API REST que actúa como proxy XDR \textit{stateless}. El backend construye la transacción Soroban, la serializa en 
-    formato XDR y la devuelve al frontend para que el usuario la firme localmente con Freighter, siguiendo el patrón de 
-    integración documentado en la guía oficial de desarrollo de aplicaciones sobre Stellar \cite{sdf2024developers}.
+    \item \textbf{Integración (RNF-13).} La comunicación entre la capa Web2 y la capa Web3 se canaliza a
+través de una 
+    API REST que actúa como proxy XDR \textit{stateless}. El backend construye la transacción Soroban, la
+serializa en 
+    formato XDR y la devuelve al frontend para que el usuario la firme localmente con Freighter, siguiendo el
+patrón de 
+    integración documentado en la guía oficial de desarrollo de aplicaciones sobre Stellar
+\cite{sdf2024developers}.
 \end{itemize}
 
 \subsection{Restricciones}
@@ -176,24 +222,43 @@ La justificación de los umbrales definidos en cada requerimiento no funcional s
 Las restricciones del prototipo se agrupan en cuatro categorías:
 
 \begin{itemize}\setlength{\itemsep}{2pt}
-    \item \textbf{De alcance.} El sistema se limita al mercado secundario de entradas para eventos de entretenimiento. Quedan fuera la integración con pasarelas de pago fiat reales, los procesos KYC, el despliegue en \textit{mainnet} y el acoplamiento con plataformas comerciales de \textit{ticketing}.
-    \item \textbf{Técnicas.} El despliegue se realiza sobre la red de prueba (\textit{testnet}) de Stellar. La compra del comprador final se firma exclusivamente desde la extensión Freighter en el navegador. Las operaciones clásicas (\texttt{change\_trust}, \texttt{payment}) se enrutan por Horizon; las invocaciones de contrato, por Soroban RPC. El indexador no se ejecuta en entornos \textit{serverless} dado que requiere proceso de fondo persistente.
-    \item \textbf{Normativas.} La Ley 1493 de 2011 se incluye como referencia académica para la fiscalización digital de espectáculos públicos en Colombia.
+    \item \textbf{De alcance.} El sistema se limita al mercado secundario de entradas para eventos de
+entretenimiento. Quedan fuera la integración con pasarelas de pago fiat reales, los procesos KYC, el
+despliegue en \textit{mainnet} y el acoplamiento con plataformas comerciales de \textit{ticketing}.
+    \item \textbf{Técnicas.} El despliegue se realiza sobre la red de prueba (\textit{testnet}) de Stellar.
+La compra del comprador final se firma exclusivamente desde la extensión Freighter en el navegador. Las
+operaciones clásicas (\texttt{change\_trust}, \texttt{payment}) se enrutan por Horizon; las invocaciones de
+contrato, por Soroban RPC. El indexador no se ejecuta en entornos \textit{serverless} dado que requiere
+proceso de fondo persistente.
+    \item \textbf{Normativas.} La Ley 1493 de 2011 se incluye como referencia académica para la fiscalización
+digital de espectáculos públicos en Colombia.
     \item \textbf{Operativas.} La política de comisiones del prototipo se fija en 5\,\% organizador y 3\,\% plataforma; estos parámetros son configurables por contrato pero no se modifican durante la evaluación. La ventana de retención del método \texttt{getEvents} del RPC público obliga al indexador a poll-ear cada 5 segundos.
 \end{itemize}
 
 \subsection{Especificación Funcional}
 
-El sistema involucra cuatro actores principales, alineados con los casos de uso del SDD. Cada rol queda acotado y, cuando interviene on-chain, queda verificado por el contrato mediante \texttt{require\_auth()} sobre la dirección Stellar correspondiente:
+El sistema involucra cuatro actores principales, alineados con los casos de uso del SDD. Cada rol queda
+acotado y, cuando interviene on-chain, queda verificado por el contrato mediante \texttt{require\_auth()}
+sobre la dirección Stellar correspondiente:
 
 \begin{itemize}\setlength{\itemsep}{2pt}
-    \item \textbf{Administrador de la Plataforma.} Configura eventos en el panel administrativo y dispara el despliegue de contratos de evento mediante el \texttt{factory\_contract}.
-    \item \textbf{Organizador del evento (ticketera B2B).} Única dirección autorizada para invocar \texttt{crear\_boleto}, registrar verificadores e invalidar boletos en un contrato de evento. Es receptor de las comisiones de organizador.
-    \item \textbf{Usuario.} Comprador y vendedor del mercado primario y secundario. El propietario actual firma \texttt{listar\_boleto} y \texttt{cancelar\_venta}; el comprador firma \texttt{comprar\_boleto} desde Freighter.
-    \item \textbf{Personal del Evento (verificador en puerta).} Rol \texttt{STAFF} o \texttt{ADMIN} registrado por el organizador. Ejecuta la redención en puerta a través del endpoint \texttt{POST /api/admin/scan}, con respaldo on-chain mediante \texttt{redimir\_boleto}.
+    \item \textbf{Administrador de la Plataforma.} Configura eventos en el panel administrativo y dispara el
+despliegue de contratos de evento mediante el \texttt{factory\_contract}.
+    \item \textbf{Organizador del evento (ticketera B2B).} Única dirección autorizada para invocar
+\texttt{crear\_boleto}, registrar verificadores e invalidar boletos en un contrato de evento. Es receptor de
+las comisiones de organizador.
+    \item \textbf{Usuario.} Comprador y vendedor del mercado primario y secundario. El propietario actual
+firma \texttt{listar\_boleto} y \texttt{cancelar\_venta}; el comprador firma \texttt{comprar\_boleto} desde
+Freighter.
+    \item \textbf{Personal del Evento (verificador en puerta).} Rol \texttt{STAFF} o \texttt{ADMIN}
+registrado por el organizador. Ejecuta la redención en puerta a través del endpoint \texttt{POST
+/api/admin/scan}, con respaldo on-chain mediante \texttt{redimir\_boleto}.
 \end{itemize}
 
-El diagrama de casos de uso (Figura~\ref{fig:cu}) sintetiza la interacción de los cuatro actores con las funcionalidades principales del sistema, agrupadas por módulo. La especificación detallada de cada caso de uso (CU-01 Crear evento y desplegar contrato, CU-02 Compra primaria, CU-03 Listar para reventa, CU-04 Compra en reventa atómica, CU-05 Verificar en puerta, CU-06 Invalidar boleto) se documenta en el anexo SDD.
+El diagrama de casos de uso (Figura~\ref{fig:cu}) sintetiza la interacción de los cuatro actores con las
+funcionalidades principales del sistema, agrupadas por módulo. La especificación detallada de cada caso de
+uso (CU-01 Crear evento y desplegar contrato, CU-02 Compra primaria, CU-03 Listar para reventa, CU-04 Compra
+en reventa atómica, CU-05 Verificar en puerta, CU-06 Invalidar boleto) se documenta en el anexo SDD.
 
 \begin{figure}[H]
 \centering
@@ -202,6 +267,12 @@ El diagrama de casos de uso (Figura~\ref{fig:cu}) sintetiza la interacción de l
 \label{fig:cu}
 \end{figure}
 
-El ciclo de vida funcional del boleto comprende seis fases observables on-chain: \textit{creación} por parte del organizador; \textit{listado} en mercado secundario; \textit{compra} (primaria o reventa); \textit{transferencia de propiedad} mediante \textit{burn/remint}; \textit{redención} por un verificador autorizado; y \textit{cancelación administrativa} por el organizador en casos excepcionales. Las consultas de solo lectura cubren la verificación de propiedad, la versión vigente, el conjunto de boletos en reventa y el historial completo del evento.
+El ciclo de vida funcional del boleto comprende seis fases observables on-chain: \textit{creación} por parte
+del organizador; \textit{listado} en mercado secundario; \textit{compra} (primaria o reventa);
+\textit{transferencia de propiedad} mediante \textit{burn/remint}; \textit{redención} por un verificador
+autorizado; y \textit{cancelación administrativa} por el organizador en casos excepcionales. Las consultas de
+solo lectura cubren la verificación de propiedad, la versión vigente, el conjunto de boletos en reventa y el
+historial completo del evento.
 
-La especificación detallada de casos de uso, los criterios de aceptación por operación y la trazabilidad entre RF, operaciones del contrato y pruebas unitarias se documentan en el anexo SRS.
+La especificación detallada de casos de uso, los criterios de aceptación por operación y la trazabilidad
+entre RF, operaciones del contrato y pruebas unitarias se documentan en el anexo SRS.

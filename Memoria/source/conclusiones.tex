@@ -6,24 +6,70 @@
 
 \subsubsection{Impacto en ingeniería de sistemas}
 
-El trabajo aporta tres elementos verificables sobre el código fuente público del prototipo. En primer lugar, un modelo de boleto NFT con versionado y patrón \textit{burn/remint} que elimina por construcción la coexistencia de dos copias válidas del mismo activo, problema característico de los esquemas con QR estático. En segundo lugar, una arquitectura de tres nodos con un patrón \textit{XDR proxy stateless} en el backend, que garantiza que las llaves privadas de los usuarios finales nunca abandonen su entorno local: el comprador firma desde Freighter, mientras que el organizador firma server-side solo las operaciones que le competen por rol. En tercer lugar, un conjunto de mecanismos verificables de seguridad por construcción (autorización por rol on-chain, atomicidad de operaciones combinadas y trazabilidad pública del historial de propiedad) con evidencia localizable en el repositorio y en las pruebas automatizadas.
+El trabajo aporta tres elementos verificables sobre el código fuente público del prototipo. En primer lugar,
+un modelo de boleto NFT con versionado y patrón \textit{burn/remint} que elimina por construcción la
+coexistencia de dos copias válidas del mismo activo, problema característico de los esquemas con QR estático.
+En segundo lugar, una arquitectura de tres nodos con un patrón \textit{XDR proxy stateless} en el backend,
+que garantiza que las llaves privadas de los usuarios finales nunca abandonen su entorno local: el comprador
+firma desde Freighter, mientras que el organizador firma server-side solo las operaciones que le competen por
+rol. En tercer lugar, un conjunto de mecanismos verificables de seguridad por construcción (autorización por
+rol on-chain, atomicidad de operaciones combinadas y trazabilidad pública del historial de propiedad) con
+evidencia localizable en el repositorio y en las pruebas automatizadas.
 
-A corto plazo, el prototipo proporciona una base de referencia para grupos académicos interesados en patrones de \textit{ticketing} con contratos inteligentes sobre Stellar, particularmente en lo relativo al diseño de operaciones atómicas combinadas. A mediano plazo, la separación entre la fuente de verdad on-chain y la capa relacional indexada off-chain habilita la incorporación de analítica, gobernanza de precios y detección de patrones de especulación sin alterar el contrato. A largo plazo, la arquitectura es extensible a otros dominios donde la unicidad y la trazabilidad pública sean propiedades requeridas (membresías, certificaciones, activos coleccionables).
+A corto plazo, el prototipo proporciona una base de referencia para grupos académicos interesados en patrones
+de \textit{ticketing} con contratos inteligentes sobre Stellar, particularmente en lo relativo al diseño de
+operaciones atómicas combinadas. A mediano plazo, la separación entre la fuente de verdad on-chain y la capa
+relacional indexada off-chain habilita la incorporación de analítica, gobernanza de precios y detección de
+patrones de especulación sin alterar el contrato. A largo plazo, la arquitectura es extensible a otros
+dominios donde la unicidad y la trazabilidad pública sean propiedades requeridas (membresías,
+certificaciones, activos coleccionables).
 
 \subsubsection{Impacto global, económico, ambiental y social}
 
-En el plano \textbf{económico}, la reducción del costo nominal por operación de un esquema porcentual a una tarifa fija del orden de centésimas de peso colombiano ($\approx$\,0{,}02--0{,}06\,COP a la tasa de referencia) hace económicamente viable la reventa de boletos de bajo precio, segmento desatendido por las plataformas tradicionales debido a las comisiones mínimas absolutas de las pasarelas bancarias. La distribución automática de comisiones reduce la fricción operativa entre vendedor, organizador y plataforma.
+En el plano \textbf{económico}, la reducción del costo nominal por operación de un esquema porcentual a una
+tarifa fija del orden de centésimas de peso colombiano ($\approx$\,0{,}02--0{,}06\,COP a la tasa de
+referencia) hace económicamente viable la reventa de boletos de bajo precio, segmento desatendido por las
+plataformas tradicionales debido a las comisiones mínimas absolutas de las pasarelas bancarias. La
+distribución automática de comisiones reduce la fricción operativa entre vendedor, organizador y plataforma.
 
-En el plano \textbf{ambiental}, el SCP de Stellar no utiliza minería ni \textit{Proof of Work}: el consenso se alcanza mediante intercambio de mensajes firmados entre nodos, lo que elimina el costo energético asociado al cómputo intensivo característico de redes basadas en PoW. Esta propiedad es relevante en el contexto de la creciente preocupación por la huella energética de las tecnologías de registro distribuido.
+En el plano \textbf{ambiental}, el SCP de Stellar no utiliza minería ni \textit{Proof of Work}: el consenso
+se alcanza mediante intercambio de mensajes firmados entre nodos, lo que elimina el costo energético asociado
+al cómputo intensivo característico de redes basadas en PoW. Esta propiedad es relevante en el contexto de la
+creciente preocupación por la huella energética de las tecnologías de registro distribuido.
 
-En el plano \textbf{social}, la trazabilidad pública del historial de propiedad fortalece la posición del comprador final frente a la reventa fraudulenta y abre la posibilidad de mecanismos de cumplimiento automatizado de obligaciones parafiscales como la prevista en la Ley 1493 de 2011 colombiana. El modelo no-custodio del backend reduce la superficie de exposición ante incidentes de seguridad sobre el operador de la plataforma.
+En el plano \textbf{social}, la trazabilidad pública del historial de propiedad fortalece la posición del
+comprador final frente a la reventa fraudulenta y abre la posibilidad de mecanismos de cumplimiento
+automatizado de obligaciones parafiscales como la prevista en la Ley 1493 de 2011 colombiana. El modelo
+no-custodio del backend reduce la superficie de exposición ante incidentes de seguridad sobre el operador de
+la plataforma.
 
-A escala \textbf{global}, la propuesta inscribe el trabajo en una línea de investigación activa sobre aplicaciones B2B de tecnologías de registro distribuido en sectores con problemas de fraude y opacidad, sin requerir migración total del usuario final hacia esquemas Web3 puros: el flujo de e-commerce tradicional se conserva y la capa on-chain opera como complemento opt-in.
+A escala \textbf{global}, la propuesta inscribe el trabajo en una línea de investigación activa sobre
+aplicaciones B2B de tecnologías de registro distribuido en sectores con problemas de fraude y opacidad, sin
+requerir migración total del usuario final hacia esquemas Web3 puros: el flujo de e-commerce tradicional se
+conserva y la capa on-chain opera como complemento opt-in.
 
 \subsection{Conclusiones y Trabajo Futuro}
 
-Los cuatro objetivos específicos planteados al inicio del trabajo se cumplieron. La materialización de cada boleto como NFT identificado por \((\texttt{ticket\_root\_id}, \texttt{version})\), el contrato \texttt{event\_contract} con transferencia atómica de propiedad y distribución automática de comisiones, el prototipo desplegado sobre testnet con doce eventos independientes (cada uno con su par \texttt{event\_contract} + \texttt{ticket\_nft\_contract}) y la aplicación web con flujo E2E completo constituyen evidencias verificables del cumplimiento, todas localizables en el repositorio público y en las pruebas automatizadas que se ejecutan en GitHub Actions.
+Los cuatro objetivos específicos planteados al inicio del trabajo se cumplieron. La materialización de cada
+boleto como NFT identificado por \((\texttt{ticket\_root\_id}, \texttt{version})\), el contrato
+\texttt{event\_contract} con transferencia atómica de propiedad y distribución automática de comisiones, el
+prototipo desplegado sobre testnet con doce eventos independientes (cada uno con su par
+\texttt{event\_contract} + \texttt{ticket\_nft\_contract}) y la aplicación web con flujo E2E completo
+constituyen evidencias verificables del cumplimiento, todas localizables en el repositorio público y en las
+pruebas automatizadas que se ejecutan en GitHub Actions.
 
-La hipótesis técnica del trabajo, según la cual una solución basada en contratos inteligentes Soroban sobre Stellar es viable como sustento de un sistema B2B de reventa de entradas con garantías por construcción de unicidad, autenticidad y trazabilidad, queda respaldada por los resultados experimentales. La latencia de confirmación medida (4{,}7--5{,}1\,s en mediana), el costo nominal (del orden de 0{,}02--0{,}06 COP por operación a la tasa de referencia) y la cobertura de los 58 casos de prueba automatizados son consistentes con los parámetros declarados en la documentación oficial de la red y suficientes para soportar el caso de uso académico evaluado.
+La hipótesis técnica del trabajo, según la cual una solución basada en contratos inteligentes Soroban sobre
+Stellar es viable como sustento de un sistema B2B de reventa de entradas con garantías por construcción de
+unicidad, autenticidad y trazabilidad, queda respaldada por los resultados experimentales. La latencia de
+confirmación medida (4{,}7--5{,}1\,s en mediana), el costo nominal (del orden de 0{,}02--0{,}06 COP por
+operación a la tasa de referencia) y la cobertura de los 58 casos de prueba automatizados son consistentes
+con los parámetros declarados en la documentación oficial de la red y suficientes para soportar el caso de
+uso académico evaluado.
 
-Las extensiones identificadas como trabajo futuro se agrupan en cuatro líneas. \textbf{Despliegue productivo}: migración controlada a \textit{mainnet} con una pasarela de pago fiat real, procesos de identidad KYC y procedimientos de respuesta a incidentes. \textbf{Políticas de mercado avanzadas}: tope dinámico de reventa, devoluciones parciales, listas de bloqueo de direcciones y soporte para activos de pago adicionales (USDC vía SAC). \textbf{Interoperabilidad}: definición de una interfaz B2B documentada para integración con plataformas comerciales de \textit{ticketing}. \textbf{Analítica}: evaluación de patrones de detección de especulación y modelos de scoring de riesgo a partir del historial indexado en PostgreSQL.
+Las extensiones identificadas como trabajo futuro se agrupan en cuatro líneas. \textbf{Despliegue
+productivo}: migración controlada a \textit{mainnet} con una pasarela de pago fiat real, procesos de
+identidad KYC y procedimientos de respuesta a incidentes. \textbf{Políticas de mercado avanzadas}: tope
+dinámico de reventa, devoluciones parciales, listas de bloqueo de direcciones y soporte para activos de pago
+adicionales (USDC vía SAC). \textbf{Interoperabilidad}: definición de una interfaz B2B documentada para
+integración con plataformas comerciales de \textit{ticketing}. \textbf{Analítica}: evaluación de patrones de
+detección de especulación y modelos de scoring de riesgo a partir del historial indexado en PostgreSQL.

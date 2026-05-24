@@ -1,8 +1,38 @@
 \pagenumbering{arabic}
 \section{INTRODUCCIÓN}
 
-La digitalización del mercado de boletería ha facilitado la compra y la transferencia de entradas, pero también ha incrementado los riesgos asociados a la reventa fraudulenta: duplicidad de códigos de acceso, venta concurrente del mismo activo a varios compradores y opacidad del historial de propiedad. Estos vectores afectan la confianza del comprador, la liquidación efectiva entre los actores del mercado y la trazabilidad operacional del organizador.
+La digitalización del mercado de boletería ha facilitado la compra y la transferencia de entradas, pero
+también ha 
+incrementado los riesgos asociados a la reventa fraudulenta: duplicidad de códigos de acceso, venta
+concurrente del 
+mismo activo a varios compradores y opacidad del historial de propiedad. Estos vectores afectan la confianza
+del 
+comprador, la liquidación efectiva entre los actores del mercado y la trazabilidad operacional del
+organizador.
 
-Este documento presenta el diseño, la implementación y la validación de \textbf{SecureTicket}, una solución B2B de reventa de entradas basada en contratos inteligentes Soroban sobre la red Stellar. La propuesta materializa cada boleto como un \textit{token} no fungible (NFT) con versionado, aplica un patrón \textit{burn/remint} en cada reventa para preservar la unicidad y ejecuta la liquidación de pagos y comisiones de forma atómica dentro de la misma invocación del contrato.
+Este documento presenta el diseño, la implementación y la validación de \textbf{SecureTicket}, una solución
+B2B de 
+reventa de entradas basada en contratos inteligentes Soroban sobre la red Stellar. La propuesta materializa
+cada 
+boleto como un \textit{token} no fungible (NFT) con versionado, aplica un patrón \textit{burn/remint} en cada
+reventa 
+para preservar la unicidad y ejecuta la liquidación de pagos y comisiones de forma atómica dentro de la misma
+invocación del contrato.
 
-El documento se organiza en nueve secciones. La sección~2 presenta la descripción general del proyecto, incluyendo problema, propuesta de solución, objetivos y entregables. La sección~3 expone el contexto técnico y el análisis de soluciones comparables. La sección~4 detalla los requerimientos, restricciones y la especificación funcional del sistema. La sección~5 desarrolla la arquitectura y el diseño detallado de los contratos y los nodos de la solución. La sección~6 describe el proceso de implementación, despliegue e integración continua. La sección~7 consolida los resultados experimentales sobre la red de prueba (\textit{testnet}). La sección~8 analiza el impacto del trabajo y presenta las conclusiones y el trabajo futuro. La sección~9 lista las referencias bibliográficas. Finalmente, los anexos referencian el Plan de Gestión del Proyecto, la Especificación de Requisitos de Software y el documento de Diseño y Propuesta del Trabajo de Grado, entregados como artefactos independientes.
+El documento se organiza en nueve secciones. La sección~2 presenta la descripción general del proyecto,
+incluyendo 
+problema, propuesta de solución, objetivos y entregables. La sección~3 expone el contexto técnico y el
+análisis de 
+soluciones comparables. La sección~4 detalla los requerimientos, restricciones y la especificación funcional
+del sistema. 
+La sección~5 desarrolla la arquitectura y el diseño detallado de los contratos y los nodos de la solución. La
+sección~6 
+describe el proceso de implementación, despliegue e integración continua. La sección~7 consolida los
+resultados 
+experimentales sobre la red de prueba (\textit{testnet}). La sección~8 analiza el impacto del trabajo y
+presenta las 
+conclusiones y el trabajo futuro. La sección~9 lista las referencias bibliográficas. Finalmente, los anexos
+referencian 
+el Plan de Gestión del Proyecto, la Especificación de Requisitos de Software y el documento de Diseño y
+Propuesta del 
+Trabajo de Grado, entregados como artefactos independientes.
