@@ -235,3 +235,48 @@ puerta: la cámara escanea el QR NFT del asistente y la interfaz reporta el resu
 contra el contrato \texttt{ticket\_nft\_contract}, marcando el boleto como redimido en caso de éxito.}
 \label{fig:app-scanner}
 \end{figure}
+
+Como complemento a las capturas de la aplicación, se incluyen a continuación tres vistas tomadas del
+explorador público \textit{Stellar Expert}, que permiten contrastar el comportamiento de la interfaz con la
+actividad efectivamente registrada en la red. Estas evidencias documentan el flujo de reventa desde la
+perspectiva del ledger y verifican que las acciones del usuario se traducen en transacciones reales,
+auditables por cualquier tercero.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/stellar_expert_01_contrato.png}
+\caption{Vista general del contrato Soroban de SecureTicket (\texttt{CDPM\ldots G7CL}) en el explorador
+\textit{Stellar Expert}. El panel de resumen muestra los metadatos del contrato (\textit{hash} WASM, fecha
+de despliegue, tipo de instancia) y la pestaña \textit{History} expone la lista cronológica de
+invocaciones recibidas. La presencia de actividad reciente confirma que el contrato se encuentra
+desplegado, accesible y operando como punto único de coordinación \textit{onchain} de los flujos de
+boletería.}
+\label{fig:stellar-expert-contrato}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{Imagenes/stellar_expert_02_historial.png}
+\caption{Detalle del historial de transacciones asociadas al contrato durante una sesión de reventa. Se
+observa la secuencia de operaciones atómicas que componen el flujo: invocaciones a funciones del
+contrato, creación y actualización de entradas \textit{instance data} (estado del boleto y contadores) y
+operaciones de \textit{restore} del \textit{ledger}, propias del modelo de persistencia diferida de
+Soroban. Esta traza demuestra que el cambio de propiedad de un boleto en el mercado secundario no es una
+operación opaca, sino una sucesión verificable de mutaciones de estado registradas en la red Stellar.}
+\label{fig:stellar-expert-historial}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{Imagenes/stellar_expert_03_crear_boleto.png}
+\caption{Detalle expandido de una invocación a la función \texttt{crear\_boleto\_para} ejecutada el
+23 de mayo de 2026. La transacción acuña un boleto marcado como producto de reventa
+(\texttt{es\_reventa\,=\,true}) y lo asigna al nuevo propietario \texttt{GB5G\ldots IXFA} por un precio
+de 145\,000 \textit{stroops}, emitiendo el evento \texttt{boleto\_creado} que es consumido por el
+indexador del \textit{frontend}. La captura registra además las métricas de ejecución reportadas por la
+red: 248\,$\mu$s de tiempo de invocación, 1{,}9 millones de instrucciones, 1{,}6\,KB escritos en el
+\textit{ledger} y comisiones del orden de 78\,000 \textit{stroops} entre porción reembolsable, no
+reembolsable y \textit{rent}. Estos valores evidencian que la operación es funcionalmente correcta y
+económicamente viable bajo las condiciones de la red de pruebas.}
+\label{fig:stellar-expert-crear-boleto}
+\end{figure}
