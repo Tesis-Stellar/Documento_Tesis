@@ -23,36 +23,36 @@ y~\ref{tab:rnf} resumen el conjunto completo.
 \rowcolor{rowgray}
 \textbf{Id.} & \textbf{Descripción} & \textbf{Módulo} \\
 \midrule
-RF-01 & Comprar boletos para un evento mediante interfaz clara. & M1, M5 \\
+RF-01 & Crear evento y desplegar contrato Soroban. & M1, M2, M4 \\
 \rowcolor{rowgray}
-RF-02 & Validar que la compra sea autorizada (reglas, permisos, control de usuario). & M1, M4, M5 \\
-RF-03 & Generar identificador único para cada boleto, vinculable al NFT. & M1, M2 \\
+RF-02 & Comprar boleto en venta primaria. & M1, M5 \\
+RF-03 & Listar boleto propio para reventa. & M2, M3, M4, M5 \\
 \rowcolor{rowgray}
-RF-04 & Permitir compra con flujo sencillo. & M1, M5 \\
-RF-05 & Autenticar al usuario antes de comprar. & M5 \\
+RF-04 & Comprar boleto en reventa atómica. & M2, M3, M4, M5 \\
+RF-05 & Distribuir comisiones de reventa. & M2, M3, M4 \\
 \rowcolor{rowgray}
-RF-06 & Registrar propietario inicial y final del boleto (trazabilidad). & M1, M2, M3, M5 \\
-RF-07 & Listar boleto para reventa. & M3, M4, M5 \\
+RF-06 & Ejecutar \textit{burn/remint} de versión. & M2, M3 \\
+RF-07 & Verificar y redimir boleto en puerta. & M1, M2, M5 \\
 \rowcolor{rowgray}
-RF-08 & Verificar que el usuario sea dueño antes de revender. & M2, M3, M5 \\
-RF-09 & Ejecutar compra en reventa de forma atómica. & M2, M3, M4, M5 \\
+RF-08 & Invalidar boleto. & M1, M2, M4 \\
+RF-09 & Conectar wallet Freighter. & M2, M5 \\
 \rowcolor{rowgray}
-RF-10 & Evitar que el boleto se venda más de una vez. & M1, M2, M3 \\
-RF-11 & Ejecutar proceso de \textit{burn} del boleto vendido. & M2, M3 \\
+RF-10 & Asegurar boleto en blockchain. & M2, M3, M5 \\
+RF-11 & Publicar boleto propio en reventa. & M3, M4, M5 \\
 \rowcolor{rowgray}
-RF-12 & Generar nuevo token para nuevo propietario. & M2, M3, M5 \\
-RF-13 & Mantener historial de transferencias. & M1, M2, M3, M5 \\
+RF-12 & Cancelar publicación de reventa. & M3, M4, M5 \\
+RF-13 & Consultar boletos en reventa. & M3 \\
 \rowcolor{rowgray}
-RF-14 & Consultar estado de boletos adquiridos. & M1, M2, M5 \\
-RF-15 & Verificación rápida del boleto. & M1, M2 \\
+RF-14 & Comprar boleto en reventa mediante Freighter. & M2, M3, M4, M5 \\
+RF-15 & Invalidar versión anterior y generar nueva versión. & M2, M3 \\
 \rowcolor{rowgray}
-RF-16 & Solo el propietario puede modificar el precio de reventa. & M3, M4, M5 \\
-RF-17 & Integrarse con contratos inteligentes Soroban. & M2, M3, M4 \\
+RF-16 & Distribuir comisiones programadas. & M2, M3, M4 \\
+RF-17 & Consultar historial de ventas P2P. & M1, M2, M3, M5 \\
 \rowcolor{rowgray}
-RF-18 & Modificar precio del boleto listado para reventa. & M3, M4, M5 \\
-RF-19 & Consultar disponibilidad de boletos. & M1 \\
+RF-18 & Generar QR único para boleto válido. & M1, M2 \\
+RF-19 & Escanear QR en puerta. & M1, M5 \\
 \rowcolor{rowgray}
-RF-20 & Registrar cada transacción realizada. & M1, M2, M3, M5 \\
+RF-20 & Rechazar QR usados, invalidados o vencidos. & M1, M2, M4, M5 \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -62,47 +62,35 @@ completo del boleto digital, desde la adquisición inicial hasta la auditoría p
 continuación se describe la lógica de cada módulo y su aporte al objetivo del sistema:
 
 \begin{itemize}
-    \item \textbf{M1 -- Gestión de eventos y tickets.} Agrupa las operaciones de catálogo, compra primaria y
-consulta 
-    de disponibilidad (RF-01, RF-03, RF-04, RF-10, RF-14, RF-19). Estos requerimientos garantizan que el
-usuario pueda 
-    explorar eventos, adquirir entradas y consultar su inventario dentro de una interfaz convencional, sin
-necesidad de 
-    interactuar de forma directa con la capa blockchain.
+    \item \textbf{M1 -- Gestión de eventos y tickets.} Agrupa las operaciones de creación de eventos, compra
+primaria, consulta del inventario del usuario y verificación operativa en puerta (RF-01, RF-02, RF-07,
+RF-08, RF-17, RF-18, RF-19 y RF-20). Estos requerimientos garantizan que el usuario pueda explorar eventos,
+adquirir entradas y presentar su QR dentro de una interfaz convencional, sin necesidad de interactuar de
+forma directa con la capa blockchain.
 
-    \item \textbf{M2 -- Emisión NFT.} Define la acuñación del boleto como activo no fungible en Soroban y las
-operaciones 
-    de \textit{burn/remint} asociadas al cambio de propiedad (RF-03, RF-06, RF-08, RF-11, RF-12, RF-13,
-RF-15, RF-17, RF-20). 
-    Cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), cuya integridad se
-verifica 
-    on-chain mediante \texttt{require\_auth()} sobre la dirección del propietario \cite{sdf2024soroban}.
+    \item \textbf{M2 -- Emisión NFT.} Define la acuñación del boleto como activo no fungible en Soroban, la
+vinculación con Freighter y las operaciones de \textit{burn/remint} asociadas al cambio de propiedad
+(RF-01, RF-03, RF-04, RF-05, RF-06, RF-07, RF-08, RF-09, RF-10, RF-14, RF-15, RF-16, RF-17, RF-18 y RF-20).
+Cada boleto se identifica por la tupla (\texttt{ticket\_root\_id}, \texttt{version}), cuya integridad se
+verifica on-chain mediante \texttt{require\_auth()} sobre la dirección del propietario \cite{sdf2024soroban}.
 
     \item \textbf{M3 -- Mercado secundario.} Cubre el flujo de reventa segura: listado del boleto,
-verificación de 
-    propiedad, ejecución atómica de la compra y distribución de comisiones (RF-07, RF-08, RF-09, RF-10,
-RF-11, RF-12, 
-    RF-13, RF-16, RF-18, RF-20). La atomicidad de la transacción constituye el requisito central de este
-módulo, dado 
-    que elimina la ventana de vulnerabilidad al doble gasto descrita en la formulación del problema.
+cancelación de publicación, consulta del mercado, ejecución atómica de la compra, \textit{burn/remint},
+distribución de comisiones e historial de ventas (RF-03, RF-04, RF-05, RF-06, RF-10, RF-11, RF-12, RF-13,
+RF-14, RF-15, RF-16 y RF-17). La atomicidad de la transacción constituye el requisito central de este
+módulo, dado que elimina la ventana de vulnerabilidad al doble gasto descrita en la formulación del problema.
 
     \item \textbf{M4 -- Configuración y políticas.} Establece las reglas de negocio parametrizables del
-contrato: precio 
-    máximo de reventa, porcentaje de comisión del organizador y tarifa de plataforma (RF-02, RF-04, RF-07,
-RF-09, RF-16, 
-    RF-17, RF-18). Estos parámetros se fijan en la inicialización del contrato y son modificables
-exclusivamente por la 
-    dirección del organizador.
+contrato: precio máximo de reventa, porcentaje de comisión del organizador, tarifa de plataforma e
+invalidación administrativa de boletos (RF-01, RF-03, RF-04, RF-05, RF-08, RF-11, RF-12, RF-14, RF-16 y
+RF-20). Estos parámetros se fijan en la inicialización del contrato y son modificables exclusivamente por la
+dirección del organizador.
 
     \item \textbf{M5 -- Usuarios y autenticación.} Gestiona la identidad del usuario en las dos capas del
-sistema: 
-    autenticación JWT en la capa Web2 y firma criptográfica mediante la extensión Freighter en la capa Web3
-(RF-01, 
-    RF-02, RF-04, RF-05, RF-06, RF-07, RF-08, RF-09, RF-12, RF-13, RF-14, RF-16, RF-18, RF-20). La separación
-de 
-    responsabilidades entre ambas capas asegura que las llaves privadas del usuario nunca abandonen el
-entorno local 
-    de la extensión del navegador.
+sistema: autenticación JWT en la capa Web2 y firma criptográfica mediante la extensión Freighter en la capa
+Web3 (RF-02, RF-03, RF-04, RF-07, RF-09, RF-10, RF-11, RF-12, RF-14, RF-17, RF-19 y RF-20). La separación de
+responsabilidades entre ambas capas asegura que las llaves privadas del usuario nunca abandonen el entorno
+local de la extensión del navegador.
 \end{itemize}
 
 Los veinte requerimientos no funcionales (RNF) se clasifican conforme al modelo de calidad de producto de la
@@ -251,8 +239,9 @@ las comisiones de organizador.
 firma \texttt{listar\_boleto} y \texttt{cancelar\_venta}; el comprador firma \texttt{comprar\_boleto} desde
 Freighter.
     \item \textbf{Personal del Evento (verificador en puerta).} Rol \texttt{STAFF} o \texttt{ADMIN}
-registrado por el organizador. Ejecuta la redención en puerta a través del endpoint \texttt{POST
-/api/admin/scan}, con respaldo on-chain mediante \texttt{redimir\_boleto}.
+registrado por el organizador. Ejecuta la verificación operativa en puerta a través del endpoint
+\texttt{POST /api/admin/scan}, con validación DB-first sobre PostgreSQL; la redención on-chain mediante
+\texttt{redimir\_boleto} queda validada a nivel contractual.
 \end{itemize}
 
 El diagrama de casos de uso (Figura~\ref{fig:cu}) sintetiza la interacción de los cuatro actores con las

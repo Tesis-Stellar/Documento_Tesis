@@ -317,7 +317,7 @@ La Figura~\ref{fig:c4-contenedores} presenta el diagrama de contenedores de Stel
 \textbf{Zona Blockchain} (Stellar Testnet, lo que se ejecuta de forma descentralizada):
 \begin{itemize}
   \item \textbf{Contrato Factory} (\texttt{FabricaBoletos}): contrato Soroban que despliega un contrato de evento independiente por cada evento. Garantiza aislamiento de configuración y fondos entre eventos.
-  \item \textbf{Contrato de Evento} (\texttt{ContratoEvento}, 11 instancias desplegadas): contrato Soroban desplegado por evento que contiene toda la lógica de negocio on-chain: creación de boletos, venta primaria, reventa atómica con burn/remint, distribución de comisiones y gestión de verificadores. Es el componente más crítico del sistema.
+  \item \textbf{Contrato de Evento} (\texttt{ContratoEvento}, 12 instancias desplegadas): contrato Soroban desplegado por evento que contiene toda la lógica de negocio on-chain: creación de boletos, venta primaria, reventa atómica con burn/remint, distribución de comisiones y gestión de verificadores. Es el componente más crítico del sistema.
   \item \textbf{SAC XLM Nativo}: Stellar Asset Contract del token XLM nativo. El contrato de evento lo invoca para ejecutar transferencias atómicas de pago.
 \end{itemize}
 
@@ -644,7 +644,7 @@ El sistema se organiza en cuatro capas lógicas, cada una con responsabilidades 
     Presentación & Aplicación Web TuTicket (React/Vite) & Renderizar interfaces, capturar acciones del usuario, comunicarse con el Backend API.\\
     Servicios & Backend API (Express + Indexador Soroban) & Autenticar usuarios (JWT/bcrypt), orquestar operaciones de negocio, gestionar carrito, procesar checkout, exponer API REST. Firma server-side de \texttt{crear\_boleto}/\texttt{listar\_boleto}/\texttt{cancelar\_venta}. Construcción de XDR para firma por Freighter. Sincronización de eventos on-chain mediante indexador en segundo plano.\\
     Datos & PostgreSQL (schemas: public, ticketing) & Persistir usuarios, eventos, sedes, boletos, órdenes, pagos y auditoría. Fuente de datos para consultas del frontend.\\
-    Blockchain & Contrato Factory (\texttt{FabricaBoletos}), Contrato por Evento (\texttt{ContratoEvento}), SAC XLM nativo & Crear boletos, transferir propiedad, distribuir comisiones, redimir y invalidar boletos. Fuente de verdad inmutable. 11 contratos desplegados en Stellar Testnet.\\
+    Blockchain & Contrato Factory (\texttt{FabricaBoletos}), Contrato por Evento (\texttt{ContratoEvento}), Contrato NFT (\texttt{ticket\_nft\_contract}), SAC XLM nativo & Crear boletos, transferir propiedad, distribuir comisiones, redimir e invalidar boletos. Fuente de verdad inmutable. 12 contratos de evento desplegados en Stellar Testnet.\\
     \bottomrule
   \end{tabularx}
   \caption{Descomposición en capas lógicas}
@@ -1023,7 +1023,7 @@ Cliente & Navegador (Chrome + Freighter) & SPA React servida como archivos está
 Frontend & Vercel (CDN estático) & Bundle \texttt{/frontend/dist}. SPA con 23 rutas client-side. \\
 Backend + Indexador & Railway / Render (proceso long-lived) & \texttt{tsx src/server.ts}: API Express + Indexador Soroban en background. El Indexador requiere proceso persistente (no compatible con serverless). \\
 Base de datos & Supabase (PostgreSQL 16) & Schema \texttt{ticketing}: 26+ tablas Web2+Web3. Pool de conexiones vía pgbouncer (\texttt{connection\_limit=5}). \\
-Blockchain & Stellar Testnet (Soroban) & \texttt{FabricaBoletos} + 11 instancias de \texttt{ContratoEvento} + SAC XLM nativo. \\
+Blockchain & Stellar Testnet (Soroban) & \texttt{FabricaBoletos} + 12 instancias de \texttt{ContratoEvento} + \texttt{ticket\_nft\_contract} + SAC XLM nativo. \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -1093,7 +1093,7 @@ La estructura interna del monorepo \texttt{main\_contract} es:
 
 \begin{verbatim}
 main_contract/
-+-- contracts/     # Cargo workspace: event_contract + factory_contract
++-- contracts/     # Cargo workspace Soroban
 +-- backend/       # Node.js Express + Prisma + Indexador Soroban
 +-- frontend/      # React 18 + Vite + TypeScript + Freighter
 +-- docs/          # Documentación técnica (architecture, ADRs, backlog)
@@ -1102,7 +1102,7 @@ main_contract/
 
 \subsection{Estructura del workspace de contratos}
 
-El repositorio de contratos utiliza un workspace de Cargo con dos crates:
+El repositorio de contratos utiliza un workspace de Cargo con tres crates:
 
 \begin{verbatim}
 contracts/
@@ -1113,12 +1113,16 @@ contracts/
     |       +-- lib.rs       # ContratoEvento (~1140 lineas)
     |       +-- test.rs      # Suite de tests
     +-- factory_contract/
+    |   +-- src/
+    |       +-- lib.rs       # FabricaBoletos (~430 lineas)
+    |       +-- test.rs      # Suite de tests
+    +-- ticket_nft_contract/
         +-- src/
-            +-- lib.rs       # FabricaBoletos (~430 lineas)
+            +-- lib.rs       # Contrato NFT SEP-41
             +-- test.rs      # Suite de tests
 \end{verbatim}
 
-Dependencia: \texttt{factory\_contract} depende de \texttt{event\_contract} (importa \texttt{ContratoEventoClient} para inicializar contratos hijos).
+Dependencias: \texttt{factory\_contract} depende de \texttt{event\_contract} (importa \texttt{ContratoEventoClient} para inicializar contratos hijos) y el contrato de evento integra la semántica NFT expuesta por \texttt{ticket\_nft\_contract}.
 
 \subsection{Estructura del backend}
 
@@ -1160,7 +1164,7 @@ src/
 \toprule
 \textbf{Componente} & \textbf{Comando} & \textbf{Artefacto} \\
 \midrule
-Contratos & \texttt{stellar contract build} & \texttt{target/wasm32v1-none/release/\{event,factory\}\_contract.wasm} \\
+Contratos & \texttt{stellar contract build} & \texttt{event\_contract.wasm}, \texttt{factory\_contract.wasm} y \texttt{ticket\_nft\_contract.wasm} en \texttt{target/wasm32v1-none/release/} \\
 Backend & \texttt{npm run build} & \texttt{dist/} (JavaScript transpilado) \\
 Frontend & \texttt{npm run build} & \texttt{dist/} (SPA estática optimizada) \\
 Tests contratos & \texttt{cargo test} & Resultados de pruebas unitarias Soroban (48+ tests) \\

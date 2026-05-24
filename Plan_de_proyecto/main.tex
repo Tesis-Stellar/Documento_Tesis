@@ -100,7 +100,7 @@
     1.2 & 12 de marzo de 2026 & Alineación con el SRS y el SDD preliminar (vistas C4, secuencias y modelo de datos on-chain/off-chain): se incorporan los tres contratos Soroban como entregables (\texttt{event\_contract}, \texttt{factory\_contract}, \texttt{ticket\_nft\_contract}) y se actualizan los objetivos. & \team\\
     1.3 & 9 de abril de 2026 & Actualización con el avance del backend (Express + Prisma + Indexer) y el frontend (React/Vite + Freighter): se ajustan responsables y horas-persona por integrante; se documenta el patrón XDR proxy \textit{stateless}; se reorganizan los entregables en software y documentación. & \team\\
     1.4 & 30 de abril de 2026 & Incorporación de la Phase 4 (panel de administración y rol STAFF/verificadores on-chain) en el alcance; actualización de la carta Gantt y de los hitos cumplidos hasta semana 13; incorporación de glosario Web2.5 (Freighter, indexer, XDR proxy, SEP-41, burn/remint, STAFF). & \team\\
-    1.5 & 21 de mayo de 2026 & Cierre retrospectivo del SPMP: alineación final con el sistema entregado (12/12 eventos desplegados en \textit{testnet}), consolidación de la lista de entregables académicos finales (Memoria de TG, Plan de Proyecto, SRS, SDD, Propuesta de TG y Formato de Biblioteca), ajuste de horas-persona ejecutadas y presupuesto operativo final (servicios públicos del equipo). & \team\\
+    1.5 & 21 de mayo de 2026 & Cierre retrospectivo del SPMP: alineación final con el sistema entregado (12/12 eventos desplegados en \textit{testnet}), consolidación de la lista de entregables académicos finales (Memoria de TG, Plan de Proyecto, SRS, SDD, Propuesta de TG y Plan de Pruebas/AUT-UAT), ajuste de horas-persona ejecutadas y presupuesto operativo final (servicios públicos del equipo). & \team\\
   \end{longtable}
 
   \section*{Prefacio}
@@ -110,9 +110,9 @@
 
   \textbf{Uso del documento.} La \textbf{Sección~\ref{sec:vista-general}} ofrece la vista general del producto entregado (visión, propósito, alcance, supuestos, restricciones, entregables y resumen de calendario y presupuesto). Las secciones 8 a 12 detallan ciclo de vida y herramientas, administración del proyecto (estimación, WBS, Gantt, recursos), monitoreo y control (métricas y KPIs), entrega del producto y procesos de soporte (riesgos, configuración, calidad). El enfoque de trabajo fue \textbf{Ágil con tablero Kanban} (flujo continuo, WIP limitado, ceremonias ligeras y revisiones semanales con el director).
 
-  \textbf{Relación con artefactos.} Este SPMP se coordina con los demás documentos del trabajo de grado: Memoria de TG, Propuesta de TG, Especificación de Requisitos de Software (SRS), Especificación del Diseño (SDD), Formato de Biblioteca y el Demo final.
+  \textbf{Relación con artefactos.} Este SPMP se coordina con los demás documentos del trabajo de grado: Memoria de TG, Propuesta de TG, Especificación de Requisitos de Software (SRS), Especificación del Diseño (SDD), Plan de Pruebas/AUT-UAT y el Demo final.
 
-  \textbf{Convenciones.} Terminología consistente: plataforma de boletería, evento, ticket/boleto, NFT, contrato inteligente, Stellar, Soroban, Freighter Wallet, indexer, reventa atómica (burn/remint), verificación on-chain, testnet, KPI, incidente, cambio de alcance.
+  \textbf{Convenciones.} La terminología se mantiene alineada con el glosario técnico del proyecto. Para el flujo de ingreso se usa ``verificación QR DB-first en puerta''; ``redención on-chain contractual'' se reserva para la capacidad del contrato.
 
   \textbf{Mantenimiento.} El equipo mantiene el documento y su historial de cambios bajo control de versiones (Git). Las actualizaciones relevantes (alcance, hitos, presupuesto, riesgos críticos) se registraron en la siguiente revisión semanal del equipo con el director.
 
@@ -135,7 +135,7 @@
 
     \subsection{Visión del producto}
     \label{subsec:vision}
-    \textbf{\projectname} es una \textbf{plataforma Web2.5 de boletería} para eventos en Colombia, construida durante el semestre 2026-1 como prototipo funcional desplegado en \textit{testnet}. Combina la experiencia tradicional Web2 (catálogo de eventos, carrito, \textit{checkout} con pago fiat simulado y cuenta de usuario) con una capa Web3 \textbf{opcional} de propiedad on-chain: el boleto se representa como NFT SEP-41 en Soroban/Stellar, soporta reventa atómica \textit{peer-to-peer} mediante \textit{burn}/\textit{remint} y se verifica en puerta por verificadores autorizados on-chain.
+    \textbf{\projectname} es una \textbf{plataforma Web2.5 de boletería} para eventos en Colombia, construida durante el semestre 2026-1 como prototipo funcional desplegado en \textit{testnet}. Combina la experiencia tradicional Web2 (catálogo de eventos, carrito, \textit{checkout} con pago fiat simulado y cuenta de usuario) con una capa Web3 \textbf{opcional} de propiedad on-chain: el boleto se representa como NFT SEP-41 en Soroban/Stellar, soporta reventa atómica \textit{peer-to-peer} mediante \textit{burn}/\textit{remint} y se verifica en puerta mediante un escáner QR DB-first para operación de baja latencia, con redención on-chain validada a nivel contractual.
 
     La tesis subyacente es que blockchain puede \textbf{mitigar problemas estructurales del mercado tradicional de boletería} (reventa abusiva, falsificación, opacidad de comisiones) \textbf{sin sacrificar UX masiva}: el flujo de compra Web2 (carrito $\rightarrow$ checkout $\rightarrow$ orden $\rightarrow$ boleto) funciona sin billetera; ``asegurar en blockchain'' es una acción adicional opt-in.
 
@@ -146,14 +146,14 @@
       \item \textbf{Comisiones embebidas:} reglas de regalías programadas en el contrato (5\% organizador, 3\% plataforma en cada reventa).
       \item \textbf{Reventa atómica:} \textit{burn}/\textit{remint} en una sola transacción que evita estados inconsistentes.
       \item \textbf{No-custodial:} el backend nunca custodia llaves privadas; el usuario firma con Freighter Wallet.
-      \item \textbf{Verificación en puerta:} sólo verificadores autorizados (registrados on-chain) pueden redimir boletos.
+      \item \textbf{Verificación en puerta:} sólo verificadores autorizados pueden operar el escáner QR DB-first; la redención on-chain queda cubierta como capacidad contractual.
     \end{itemize}
 
     \subsection{Propósito, alcance y objetivos}
     \label{subsec:proposito-alcance}
 
       \subsubsection*{Propósito}
-      Construir un \textbf{prototipo académico funcional} que evidencie la viabilidad técnica de una plataforma de boletería Web2.5, integrando catálogo y carrito tradicionales con contratos inteligentes Soroban para la emisión de NFTs SEP-41, reventa atómica con comisiones programables y verificación on-chain en puerta. El prototipo se desplegó en la \textit{testnet} de Stellar y constituye la demostración del modelo ante el director y los jurados del trabajo de grado.
+      Construir un \textbf{prototipo académico funcional} que evidencie la viabilidad técnica de una plataforma de boletería Web2.5, integrando catálogo y carrito tradicionales con contratos inteligentes Soroban para la emisión de NFTs SEP-41, reventa atómica con comisiones programables y verificación QR DB-first en puerta. El prototipo se desplegó en la \textit{testnet} de Stellar y constituye la demostración del modelo ante el director y los jurados del trabajo de grado.
 
       \subsubsection*{Alcance (qué incluye el proyecto entregado)}
       \begin{itemize}
@@ -167,7 +167,7 @@
         \item \textbf{Backend (Node + Express + Prisma + Indexer):} API REST completa (catálogo, auth, carrito, \textit{checkout}, órdenes, boletos, operaciones on-chain); constructor de XDR \textit{stateless} (XDR proxy) que nunca custodia llaves; indexer que sincroniza PostgreSQL con eventos on-chain cada 5 s.
         \item \textbf{Frontend (React + Vite):} SPA responsive con flujo E2E (navegación, compra, asegurar en blockchain, reventa P2P, escáner QR de verificación); integración con Freighter Wallet para firma de transacciones.
         \item \textbf{Despliegue en testnet:} 12/12 eventos con \texttt{event\_contract} + \texttt{ticket\_nft\_contract} desplegados; wallets ADMIN, ORGANIZER, PLATFORM, BUYER1/2 y VERIFIER configuradas.
-        \item \textbf{Documentación académica:} Memoria de TG, este SPMP (Plan de Proyecto), SRS, SDD, Propuesta de TG, Formato de Biblioteca y Demo final.
+        \item \textbf{Documentación académica:} Memoria de TG, este SPMP (Plan de Proyecto), SRS, SDD, Propuesta de TG, Plan de Pruebas/AUT-UAT y Demo final.
       \end{itemize}
 
       \subsubsection*{Alcance (qué NO incluye el proyecto)}
@@ -188,7 +188,7 @@
         \item \textbf{Construir} el frontend React + Vite con flujo E2E completo, integración con Freighter y escáner QR.
         \item \textbf{Desplegar} 12 eventos demostrativos en \textit{testnet} con sus respectivos contratos y NFTs.
         \item \textbf{Validar} el sistema contra los criterios de aceptación del SRS mediante pruebas unitarias en Rust, de integración en Node y E2E desde el frontend.
-        \item \textbf{Producir} la documentación académica del trabajo de grado: Memoria de TG, Plan de Proyecto (este SPMP), SRS, SDD, Propuesta de TG y Formato de Biblioteca.
+        \item \textbf{Producir} la documentación académica del trabajo de grado: Memoria de TG, Plan de Proyecto (este SPMP), SRS, SDD, Propuesta de TG y Plan de Pruebas/AUT-UAT.
       \end{enumerate}
 
     \subsection{Supuestos y restricciones}
@@ -240,7 +240,7 @@
         \item \textbf{SRS:} Especificación de Requisitos de Software.
         \item \textbf{SDD:} Especificación del Diseño (vistas C4, secuencias, modelo de datos on-chain/off-chain, atributos de calidad).
         \item \textbf{Propuesta de TG:} anteproyecto del trabajo de grado.
-        \item \textbf{Formato de Biblioteca:} formato institucional para la entrega del TG a la biblioteca de la Universidad.
+        \item \textbf{Plan de Pruebas/AUT-UAT:} estrategia de validación, casos de prueba y evidencias de aceptación de usuario.
       \end{enumerate}
 
       \paragraph{Demo y código fuente (no se entregan como documento):}
@@ -286,7 +286,7 @@
         \midrule
         Pruebas y Validación & Ejecución de casos de prueba unitarios, integración y E2E; evidencias documentadas; despliegue final de 12/12 eventos en \textit{testnet} & Sem.~14--15 (abr 27 -- may 10) & QA/DevOps (Juan Camilo) + todos\\
         \midrule
-        Documentación final & Cierre de Memoria de TG, SDD, SRS, SPMP v1.5, Propuesta de TG y Formato de Biblioteca; preparación del Demo final & Sem.~15--16 (may 11 -- may 23) & Todos (PM coordina)\\
+        Documentación final & Cierre de Memoria de TG, SDD, SRS, SPMP v1.5, Propuesta de TG y Plan de Pruebas/AUT-UAT; preparación del Demo final & Sem.~15--16 (may 11 -- may 23) & Todos (PM coordina)\\
         \midrule
         Cierre y entrega & Entrega final del paquete documental a la coordinación; \textit{post-mortem} interno del equipo & Sem.~16 (24 may) & PM\\
         \midrule
@@ -514,7 +514,7 @@
         \item \textbf{Rust} (con \texttt{soroban-sdk 23}): contratos inteligentes en Soroban; compilación a WebAssembly con \texttt{cargo build --release --target wasm32v1-none}.
         \item \textbf{TypeScript} (Node 20): backend con Express + Prisma, indexer y \textit{scripts} de despliegue.
         \item \textbf{TypeScript / JavaScript} (React 18 + Vite): frontend SPA.
-        \item \textbf{SQL} (PostgreSQL 15 en Supabase): consultas analíticas y migraciones gestionadas con Prisma.
+        \item \textbf{SQL} (PostgreSQL 16 en Supabase): consultas analíticas y migraciones gestionadas con Prisma.
       \end{itemize}
 
       \subsubsection{Herramientas técnicas}
@@ -541,7 +541,7 @@
         Frontend & React 18 + Vite & SPA y \textit{tooling} de desarrollo.\\
         Frontend & Freighter Wallet & Firma de transacciones no-custodial por parte del usuario.\\
         Frontend & html5-qrcode & Escáner QR para verificación de boletos en puerta.\\
-        Datos & PostgreSQL 15 (Supabase) & Base de datos transaccional \textit{off-chain}.\\
+        Datos & PostgreSQL 16 (Supabase) & Base de datos transaccional \textit{off-chain}.\\
         Blockchain & Stellar \textit{testnet} & Red de pruebas para contratos y transacciones.\\
         Blockchain & Soroban RPC + Horizon & Endpoints consumidos por backend e indexer.\\
         Despliegue & Vercel & Hosting del frontend.\\
@@ -550,7 +550,7 @@
         Gestión & GitHub Projects (Kanban) & Tablero de tareas, asignación y seguimiento WIP.\\
         Comunicación & WhatsApp + Discord & Mensajería diaria y canales temáticos por subsistema.\\
         Reuniones & Microsoft Teams / Google Meet & Revisiones semanales con el director y reuniones internas.\\
-        Documentación & \LaTeX{} (MiKTeX, TeXstudio) & Memoria de TG, Plan de Proyecto, SRS, SDD, Propuesta y Formato de Biblioteca.\\
+        Documentación & \LaTeX{} (MiKTeX, TeXstudio) & Memoria de TG, Plan de Proyecto, SRS, SDD, Propuesta y Plan de Pruebas/AUT-UAT.\\
         Diagramas & draw.io / PlantUML & Diagramas C4, BPMN y de secuencia.\\
       \end{longtable}
 
@@ -601,14 +601,14 @@
       \begin{enumerate}
         \item \textbf{Validación técnica (interna del equipo):} ejecución exitosa de las suites de pruebas (unitarias en Rust, integración en Node y E2E desde el frontend) sobre la rama \texttt{main}, sin defectos críticos abiertos al cierre de la fase.
         \item \textbf{Validación funcional (revisión con el director):} demostración semanal del estado del flujo E2E sobre la \textit{testnet} (compra, asegurar en blockchain, reventa P2P, verificación en puerta), validando que los criterios de aceptación del SRS se cumplen tal como están escritos.
-        \item \textbf{Aceptación final (entrega y sustentación):} entrega del paquete final de seis documentos (Memoria, Plan de Proyecto, SRS, SDD, Propuesta y Formato de Biblioteca) a la coordinación académica el \textbf{24 de mayo de 2026}, y posterior sustentación ante el director y los jurados del trabajo de grado en una fecha asignada por la coordinación dentro de la ventana \textbf{25 de mayo -- 5 de junio de 2026}, con el sistema desplegado en \textit{testnet}.
+        \item \textbf{Aceptación final (entrega y sustentación):} entrega del paquete final de seis documentos (Memoria, Plan de Proyecto, SRS, SDD, Propuesta y Plan de Pruebas/AUT-UAT) a la coordinación académica el \textbf{24 de mayo de 2026}, y posterior sustentación ante el director y los jurados del trabajo de grado en una fecha asignada por la coordinación dentro de la ventana \textbf{25 de mayo -- 5 de junio de 2026}, con el sistema desplegado en \textit{testnet}.
       \end{enumerate}
 
       \subsubsection{Criterios de aceptación globales}
       Para considerar el producto aceptado se requirió el cumplimiento de los siguientes criterios:
       \begin{itemize}
-        \item \textbf{Suite de contratos desplegada:} \texttt{event\_contract}, \texttt{factory\_contract} y \texttt{ticket\_nft\_contract} desplegados en \textit{testnet} con direcciones verificables y al menos un evento operativo.
-        \item \textbf{Flujo E2E completo:} un usuario autenticado puede navegar el catálogo, comprar un boleto (Web2), asegurarlo on-chain (Web3), revenderlo a otro usuario (\textit{burn}/\textit{remint} con comisiones) y un verificador autorizado puede redimirlo en puerta (escáner QR).
+        \item \textbf{Suite de contratos desplegada:} tres contratos Soroban desplegados en \textit{testnet} con direcciones verificables y al menos un evento operativo.
+        \item \textbf{Flujo E2E completo:} un usuario autenticado puede navegar el catálogo, comprar un boleto (Web2), asegurarlo on-chain (Web3), revenderlo a otro usuario (\textit{burn}/\textit{remint} con comisiones) y un verificador autorizado puede verificarlo en puerta mediante escáner QR DB-first.
         \item \textbf{Cobertura de pruebas mínima:} todas las funciones públicas de los contratos tienen al menos un caso de prueba; el backend cubre las rutas críticas con pruebas de integración.
         \item \textbf{Documentación completa:} los seis documentos académicos entregables se encuentran finalizados, revisados y consistentes entre sí.
         \item \textbf{Sin defectos críticos abiertos:} cualquier defecto que impida la ejecución del flujo E2E está corregido al cierre del proyecto.
@@ -694,7 +694,7 @@
         SDD & C & C & R & C & A\\
         Memoria de TG & R & C & C & C & A\\
         Propuesta de TG & R & I & I & I & A\\
-        Formato de Biblioteca & R & I & I & I & A\\
+        Plan de Pruebas/AUT-UAT & R & C & C & C & A\\
         Demo final & C & C & C & R & A\\
       \end{longtable}
 
@@ -846,7 +846,7 @@
             \item SRS final.
             \item SDD final.
             \item Plan de Proyecto v1.5 (este documento).
-            \item Formato de Biblioteca.
+            \item Plan de Pruebas/AUT-UAT.
           \end{itemize}
         \item \textbf{Demo y sustentación final}
           \begin{itemize}[label=$\circ$]
@@ -1038,7 +1038,7 @@
         Abr.~2026 & Eliminación del modo de verificación \textit{offline} en puerta & Complejidad de implementación (sincronización al volver \textit{online}) no justificada en alcance académico. Liberó $\sim$15 h-persona reasignadas a Phase 4.\\
         Abr.~2026 & Incorporación de Phase 4 (panel admin + STAFF) & Necesidad detectada durante pruebas de integración: organizadores requerían gestión visual de eventos y los verificadores necesitaban un rol diferenciado. Aprobado por el director.\\
         Abr.~2026 & Adopción de \texttt{ticket\_nft\_contract} (SEP-41) & Freighter clasificaba los Classic Assets como ``Tokens'' en lugar de ``Collectibles''; SEP-41 corrige la presentación. Añadió un contrato nuevo al alcance.\\
-        May.~2026 & Eliminación de Plan de Pruebas, Guía de Despliegue, Manual de Usuario y Póster como entregables formales & Reorganización del paquete documental final a los seis documentos institucionales (Memoria, Plan de Proyecto, SRS, SDD, Propuesta, Formato de Biblioteca). La información se consolidó en la Memoria de TG.\\
+        May.~2026 & Reclasificación de documentos de soporte & Reorganización del paquete documental final a seis documentos académicos (Memoria, Plan de Proyecto, SRS, SDD, Propuesta y Plan de Pruebas/AUT-UAT). La Guía de Despliegue, el Manual de Usuario y el Póster se consolidaron en la Memoria y el Demo final.\\
       \end{longtable}
 
     \subsection{Monitoreo y control de progreso}
@@ -1165,7 +1165,7 @@
         Construir un backend con patrón XDR proxy \textit{stateless} (sin custodia de llaves). & Cumplido & Backend Express + Prisma; auditoría de no-custodia.\\
         Construir un frontend integrado con Freighter Wallet y catálogo Web2. & Cumplido & Frontend React/Vite desplegado en Vercel.\\
         Implementar reventa atómica P2P (\textit{burn/remint}) con comisiones organizador + plataforma. & Cumplido & Flujo E2E ejecutado en \textit{testnet}.\\
-        Implementar verificación \textit{on-chain} en puerta vía rol STAFF/Verificador. & Cumplido & Phase 4; demo de redención.\\
+        Implementar verificación QR DB-first en puerta vía rol STAFF/Verificador y validar redención on-chain a nivel contractual. & Cumplido & Phase 4; escáner operativo y pruebas de contrato.\\
         Documentar el trabajo de grado conforme a los estándares académicos de la PUJ. & Cumplido & Seis documentos entregados y validados.\\
         Desplegar al menos 8 eventos de prueba en \textit{testnet}. & Superado & 12/12 eventos desplegados.\\
       \end{longtable}
@@ -1213,7 +1213,7 @@
         SRS & Especificación de Requisitos de Software & PDF (\LaTeX) & Todos\\
         SDD & Especificación del Diseño (vistas C4, secuencias, datos) & PDF (\LaTeX) & Todos\\
         Propuesta de TG & Anteproyecto aprobado & PDF & Todos\\
-        Formato de Biblioteca & Formato institucional para entrega del TG & PDF & Todos\\
+        Plan de Pruebas/AUT-UAT & Plan de validación y evidencias de aceptación & PDF (\LaTeX) & Todos\\
         Enlace al repositorio Git & Código fuente (contratos, backend, frontend) & URL pública & Todos\\
         Direcciones de contratos en \textit{testnet} & WASM hashes y direcciones de 12 eventos desplegados & Lista en Memoria de TG & Blockchain (Santiago Mesa)\\
         Demo final & Sistema en \textit{testnet} en vivo o video grabado & Demo/MP4 & Todos\\
@@ -1221,7 +1221,7 @@
 
       \textbf{Aclaraciones:}
       \begin{itemize}
-        \item Sólo los \textbf{seis documentos} (Memoria, Plan de Proyecto, SRS, SDD, Propuesta y Formato de Biblioteca) se entregan formalmente a la coordinación académica.
+        \item Sólo los \textbf{seis documentos} (Memoria, Plan de Proyecto, SRS, SDD, Propuesta y Plan de Pruebas/AUT-UAT) se entregan formalmente a la coordinación académica.
         \item El \textbf{código fuente} no se anexa al paquete documental; sólo se entregan los enlaces públicos al repositorio.
         \item El \textbf{Demo final} no se anexa como artefacto descargable; se presenta el día de la sustentación.
       \end{itemize}
@@ -1399,7 +1399,7 @@
       Los \textbf{elementos de configuración (CI)} del proyecto, sometidos a control formal de versiones, son:
       \begin{itemize}
         \item \textbf{Código fuente:} contratos Rust, backend TypeScript, frontend TypeScript, esquemas Prisma, \textit{scripts} de despliegue.
-        \item \textbf{Documentos académicos:} fuentes \LaTeX{} de Memoria de TG, SPMP, SRS, SDD, Propuesta y Formato de Biblioteca, junto con sus imágenes/diagramas.
+        \item \textbf{Documentos académicos:} fuentes \LaTeX{} de Memoria de TG, SPMP, SRS, SDD, Propuesta y Plan de Pruebas/AUT-UAT, junto con sus imágenes/diagramas.
         \item \textbf{Configuración de infraestructura:} \texttt{.env.example}, \texttt{Cargo.toml}, \texttt{package.json}, archivos de Prisma, archivos de despliegue para Vercel y Railway.
         \item \textbf{Artefactos compilados:} archivos WASM de los contratos y sus \textit{hashes} (no versionados en Git, pero registrados en la documentación).
       \end{itemize}

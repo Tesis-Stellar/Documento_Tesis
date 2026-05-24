@@ -78,14 +78,14 @@ invocante pertenezca al conjunto de verificadores, marca el boleto como usado y 
 correspondiente.
 
 En el prototipo, el flujo en puerta opera contra la base de datos relacional para minimizar la latencia
-frente al usuario final, y la invocación on-chain se reserva como respaldo de auditoría. La
+frente al usuario final. La redención on-chain se conserva como capacidad contractual validada en pruebas,
+sin presentarse como dependencia operativa del escáner. La
 Figura~\ref{fig:seq-verificacion} resume la secuencia completa del proceso de verificación.
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Imagenes/05_secuencia_verificacion_puerta.png}
-\caption{Diagrama de secuencia: verificación del boleto en puerta (escaneo QR, validación en PostgreSQL y
-respaldo on-chain).}
+\caption{Diagrama de secuencia: verificación del boleto en puerta (escaneo QR, validación DB-first en PostgreSQL y redención on-chain validada a nivel contractual).}
 \label{fig:seq-verificacion}
 \end{figure}
 
