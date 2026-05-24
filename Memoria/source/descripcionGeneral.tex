@@ -186,43 +186,61 @@ simulación y
 
 \subsubsection{Entregables, Estándares y Justificación}
 
-La Tabla~\ref{tab:entregables} consolida los entregables del trabajo de grado, los estándares aplicados como
+La Tabla 1 consolida los entregables del trabajo de grado, los estándares aplicados como
 marco de referencia 
 y la justificación de cada uno.
 
 \begin{table}[H]
 \centering
-\small
-\renewcommand{\arraystretch}{1.3} 
-\definecolor{rowgray}{gray}{0.96}
-\caption{Entregables y estándares aplicados.}
-\label{tab:entregables}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{4.2cm} >{\raggedright\arraybackslash}p{4.2cm}
->{\raggedright\arraybackslash}X}
-\toprule
-\rowcolor{rowgray}
-\textbf{Entregable} & \textbf{Estándar de referencia} & \textbf{Justificación} \\
-\midrule
-Memoria de Trabajo de Grado (este documento) & Formato institucional PUJ & Documento autocontenido que
-sintetiza el trabajo realizado. \\
-\rowcolor{rowgray}
-Plan de Gestión del Proyecto (SPMP) & Plantilla institucional & Trazabilidad de la planeación, hitos, riesgos
-y presupuesto. \\
-Especificación de Requisitos (SRS) & Plantilla institucional & Definición detallada de RF, RNF, casos de uso
-y criterios de aceptación. \\
-\rowcolor{rowgray}
-Especificación del Diseño (SDD) y Propuesta de TG & Modelo C4 + secuencias UML & Vistas de contexto,
-contenedores, componentes y despliegue. \\
-Suite de tres contratos Soroban + 58 pruebas & Rust + \texttt{soroban-sdk} 23 & Materialización del modelo
-NFT con versionado, \textit{burn/remint} y NFT SEP-41. \\
-\rowcolor{rowgray}
-Backend Node.js + indexador & Express + Prisma + PostgreSQL & API REST, XDR proxy \textit{stateless} y
-Sincronización on-chain/off-chain. \\
-Frontend web (React/Vite) & SPA responsive + Freighter & Flujo E2E para usuarios finales y operadores. \\
-\rowcolor{rowgray}
-Integración continua & GitHub Actions & Compilación y pruebas automatizadas en cada \textit{push}. \\
-\bottomrule
-\end{tabularx}
+\scriptsize
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{4pt}
+
+\begin{tabular}{|p{3.5cm}|p{4cm}|p{7cm}|}
+\hline
+\textbf{Entregable} & \textbf{Estándares asociados} & \textbf{Justificación} \\ \hline
+
+\textbf{Memoria de trabajo de grado} &
+Normas institucionales PUJ, IEEE, ISO/IEC/IEEE 12207 &
+Documento principal que consolida el análisis, diseño, implementación, validación y resultados del proyecto, sintetizando todo el trabajo realizado. \\ \hline
+
+\textbf{Propuesta de trabajo de grado} &
+ISO/IEC/IEEE 29148, buenas prácticas de formulación de proyectos de ingeniería &
+Sustenta el problema, objetivos, alcance y justificación de la solución basada en una plataforma Web2.5 de ticketing con NFTs en Stellar. \\ \hline
+
+\textbf{Plan de Gestión del Proyecto (SPMP)} &
+PMBOK, ISO 21500, metodología Kanban y plantilla institucional &
+Permite la planificación, trazabilidad de actividades, hitos, recursos, riesgos y presupuesto, además del seguimiento continuo del flujo de trabajo mediante Kanban. \\ \hline
+
+\textbf{Especificación de Requisitos (SRS)} &
+ISO/IEC/IEEE 29148, IEEE 830, plantilla institucional &
+Define detalladamente los requisitos funcionales, no funcionales, casos de uso, restricciones, criterios de aceptación e interfaces externas del sistema. Incluye autenticación JWT, roles CUSTOMER/ADMIN/STAFF, integración wallet Freighter, reventa P2P y validación QR. \\ \hline
+
+\textbf{Especificación del Diseño (SDD) y propuesta de TG} &
+ISO/IEC/IEEE 42010, IEEE 1016, Modelo C4 y diagramas UML &
+Documenta las vistas de contexto, contenedores, componentes y despliegue del sistema, incluyendo frontend React/Vite, backend Node.js/Express, PostgreSQL, contratos Soroban y arquitectura Web2.5. \\ \hline
+
+\textbf{Suite de tres contratos Soroban + pruebas} &
+Rust, Soroban SDK 23, estándar NFT SEP-41 &
+Materializa el modelo blockchain mediante contratos inteligentes para emisión, transferencia, reventa y validación de tickets NFT sobre Stellar Testnet. \\ \hline
+
+\textbf{Backend Node.js + indexador} &
+Express, Prisma ORM, PostgreSQL, API REST sobre HTTPS &
+Implementa la lógica de negocio, autenticación JWT, sincronización on-chain/off-chain y persistencia de datos del sistema. \\ \hline
+
+\textbf{Frontend web React/Vite} &
+SPA responsive, Tailwind CSS, shadcn/ui, buenas prácticas UX/UI &
+Proporciona una interfaz accesible y responsive para usuarios finales y administradores, permitiendo compra, reventa, gestión y validación de tickets. \\ \hline
+
+\textbf{Integración continua} &
+GitHub Actions, buenas prácticas DevOps &
+Automatiza compilación, pruebas y validación continua del proyecto en cada actualización del repositorio. \\ \hline
+
+\end{tabular}
+
+\caption{Entregables, estándares asociados y justificación}
+\label{tab:entregables_completos}
+\normalsize
 \end{table}
 
 Los artefactos de gestión, requisitos, diseño y verificación se organizan de manera reproducible y auditable
