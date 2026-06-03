@@ -73,3 +73,7 @@ dinámico de reventa, devoluciones parciales, listas de bloqueo de direcciones y
 adicionales (USDC vía SAC). \textbf{Interoperabilidad}: definición de una interfaz B2B documentada para
 integración con plataformas comerciales de \textit{ticketing}. \textbf{Analítica}: evaluación de patrones de
 detección de especulación y modelos de scoring de riesgo a partir del historial indexado en PostgreSQL.
+
+En caso de que se decidiera integrar una pasarela de pagos real para procesar transacciones fiat para SecureTicket, esta se implementaría dentro de la capa de backend, específicamente en los endpoints responsables del checkout de boletos y la API gestionaría la comunicación entre el carrito de compras y la pasarela de pago, enviando la información de la orden y recibiendo la confirmación de la transacción, luego y tras la aprobación del pago, el backend actualizaría automáticamente el estado del boleto en la base de datos y registraría la transacción correspondiente en los contratos inteligentes, garantizando la trazabilidad de la propiedad y la correcta distribución de comisiones, correspondientes a la ticketera con la cual se deseara hacer la integracion de la solución. 
+
+Además, se deberían considerar medidas de seguridad adicionales, como cifrado de datos financieros, validación de tokens de autorización y control de accesos, para proteger la información sensible de los usuarios durante todo el proceso de pago.
