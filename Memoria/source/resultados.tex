@@ -140,7 +140,12 @@ Las limitaciones identificadas son: (i) la evaluación se realiza sobre testnet,
 carga distintas a las de mainnet bajo demanda real; (ii) la latencia E2E está dominada por el intervalo de
 \textit{poll} del indexador (5\,s), parámetro configurable a costa de mayor consumo del RPC; (iii) el costo
 nominal corresponde al \textit{base fee}: en saturación del ledger, el \textit{surge pricing} puede
-incrementar el costo efectivo, comportamiento que no se observó durante la evaluación.
+incrementar el costo efectivo, comportamiento que no se observó durante la evaluación; y (iv) la verificación
+en puerta resuelve contra la proyección relacional mediante \texttt{POST /api/admin/scan} y no contra el
+contrato en cada escaneo, lo que traslada momentáneamente la confianza al estado off-chain del indexador
+durante la ventana de sincronización; la \textit{redención on-chain} se mantiene como respaldo de auditoría
+pero no se ejecuta en la ruta crítica de baja latencia (esta vulnerabilidad y sus mitigaciones se detallan en
+la sección de desarrollo).
 
 \subsection{Evidencia funcional del prototipo}
 

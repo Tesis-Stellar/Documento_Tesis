@@ -81,6 +81,27 @@ En el prototipo, el flujo en puerta opera contra la base de datos relacional par
 frente al usuario final, y la invocación on-chain se reserva como respaldo de auditoría. La
 Figura~\ref{fig:seq-verificacion} resume la secuencia completa del proceso de verificación.
 
+\paragraph{Vulnerabilidad de la validación off-chain.} Esta decisión de diseño introduce un compromiso de
+seguridad que debe explicitarse. La validación en puerta se resuelve mediante una petición
+\texttt{POST /api/admin/scan} que contrasta el QR escaneado contra el estado \emph{proyectado} en
+PostgreSQL, y no mediante una consulta directa al contrato en cada escaneo. En consecuencia, la verdad
+operativa que decide el ingreso es la copia off-chain mantenida por el indexador, no el \textit{ledger}
+mismo. Esto abre una ventana de inconsistencia temporal: dado que el indexador sincroniza por
+\textit{polling} cada 5 segundos, un boleto que acaba de ser redimido, invalidado o revendido on-chain
+puede no estar aún reflejado en la base relacional, de modo que un escaneo realizado dentro de ese
+intervalo podría aceptar una versión obsoleta o rechazar una vigente. El riesgo se agrava si la base de
+datos relacional sufriera una manipulación o una desincronización no detectada, puesto que el escáner
+confiaría en un estado adulterado sin contrastarlo contra la cadena.
+
+Para acotar esta exposición, el prototipo adopta tres mitigaciones: (i) la redención se asienta de forma
+inmutable on-chain mediante \texttt{redimir\_boleto}, que actúa como árbitro final y registro de auditoría
+ante cualquier disputa; (ii) el escaneo valida la versión vigente del boleto, de manera que una copia
+anterior al \textit{burn/remint} no coincide con la versión esperada y es rechazada; y (iii) el indexador
+es idempotente y reposiciona su cursor para converger al estado real del \textit{ledger}. En un despliegue
+productivo, los escenarios de alto valor o sujetos a disputa deberían resolver la verificación contra el
+contrato en línea (\textit{redención on-chain}), aceptando la mayor latencia a cambio de eliminar la
+dependencia de la copia relacional como única fuente de verdad en el momento del acceso.
+
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{Imagenes/05_secuencia_verificacion_puerta.png}
@@ -127,6 +148,15 @@ del organizador (para firmar operaciones on-chain de su rol) y el identificador 
 \subsubsection{API: usuarios, eventos, carrito, checkout y Soroban}
 
 El flujo de checkout en SecureTicket permite a los usuarios adquirir boletos de forma segura y trazable, durante el proceso, el usuario selecciona los boletos deseados en el carrito de compras y procede a la confirmación de la compra mediante la simulación de pago fiat, que emula la operación financiera sin requerir integración con pasarelas reales y para garantizar la propiedad digital y la trazabilidad de cada boleto, la transacción se registra on-chain en los contratos inteligentes, generando o actualizando los NFTs correspondientes. En paralelo, el usuario puede conectar su wallet Freighter, la cual permite firmar transacciones Web3 y autenticar la transferencia de propiedad en la red de prueba de Stellar (Testnet) y la API del backend gestiona la actualización del estado de los boletos en la base de datos y sincroniza la información con el indexador de blockchain, asegurando coherencia entre el registro off-chain y on-chain.
+
+La simulación de pago fiat constituye, además, el punto de acoplamiento previsto para la integración con una
+pasarela de pago real. El flujo de \textit{checkout} aísla la confirmación del cobro en un único paso dentro
+de la transacción Prisma atómica, de modo que la incorporación de un proveedor como Wompi, PayU o Stripe se
+reduciría a sustituir el componente de simulación por el adaptador de la pasarela correspondiente,
+conservando intactas la creación atómica de la orden y el posterior asentamiento on-chain del boleto. La
+adopción del esquema de mensajería financiera ISO 20022 \cite{iso20022} en dicho adaptador habilitaría la
+interoperabilidad y la auditabilidad de las órdenes de pago frente a los sistemas bancarios, alineando la
+capa de liquidación fiduciaria con la trazabilidad ya garantizada en la capa on-chain.
 
 La API expone seis familias de endpoints, organizadas por responsabilidad funcional:
 

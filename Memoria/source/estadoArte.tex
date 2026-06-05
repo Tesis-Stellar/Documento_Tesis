@@ -80,6 +80,42 @@ resultar en pérdidas irrevocables, y el usuario no técnico queda expuesto a at
 \textit{phishing} sofisticado frente a los cuales las arquitecturas descentralizadas no ofrecen mecanismos
 centralizados de restitución \cite{wolfandco2023}.
 
+\subsubsection{Iniciativas sobre redes de alto rendimiento (Solana y Flow)}
+
+El espacio de tokenización de boletería no se circunscribe al ecosistema compatible con la Máquina Virtual de
+Ethereum (EVM). Diversos actores de la industria han experimentado con redes de capa base concebidas
+específicamente para maximizar el rendimiento transaccional y reducir los costos por operación, lo que
+introduce parámetros de comparación distintos a los de las plataformas previamente analizadas.
+
+El caso más visible sobre la red \textbf{Solana} corresponde a la \textit{Coachella Keys Collection}, una
+emisión lanzada en 2022 por el festival Coachella que tokenizó pases vitalicios y artículos coleccionables
+como NFTs sobre dicha cadena, apoyándose en la infraestructura de mercado de FTX \cite{coachella2022}. Solana
+sustituye el costoso consenso por cómputo de las redes PoW por una combinación de \textit{Proof of History}
+(PoH) ---un reloj criptográfico verificable que ordena los eventos--- y \textit{Proof of Stake} bajo el
+protocolo Tower BFT, lo que le permite anunciar capacidades teóricas de hasta $65\,000$\,TPS con comisiones
+del orden de fracciones de centavo de dólar \cite{solana2024}. No obstante, este diseño orientado a la
+maximización del rendimiento ha mostrado una tensión estructural con la disponibilidad: la red ha
+experimentado múltiples interrupciones totales (\textit{full outages}) documentadas entre 2021 y 2024,
+durante las cuales el procesamiento de transacciones se detuvo por completo durante varias horas
+\cite{helius2024solana}. Adicionalmente, el desplome de FTX a finales de 2022 ilustró el riesgo de anclar la
+experiencia de un activo descentralizado a un custodio o un mercado centralizado, dado que la negociabilidad
+y la visualización de los NFTs de Coachella quedaron comprometidas tras la quiebra de la plataforma.
+
+En contraste con la apuesta por el rendimiento puro, \textbf{Ticketmaster} ---el actor dominante del mercado
+primario--- habilitó en 2022 la emisión de NFTs ``token-gated'' sobre la red \textbf{Flow} de Dapper Labs
+\cite{ticketmasterflow2022}, una cadena con arquitectura multi-rol diseñada para aplicaciones de consumo
+masivo y coleccionables digitales \cite{flow2024}. Este movimiento es significativo porque evidencia que
+incluso los conglomerados Web2 reconocen el valor de la trazabilidad on-chain; sin embargo, su
+implementación se limita a la dimensión de \textit{engagement} (beneficios y coleccionables) y no aborda la
+liquidación financiera atómica del mercado secundario, que permanece dentro de los rieles fiduciarios
+tradicionales de la plataforma.
+
+El contraste entre estas aproximaciones revela que la elección de la red base no es un detalle de
+implementación, sino una decisión arquitectónica con consecuencias directas sobre la disponibilidad, el
+costo y la finalidad del sistema. Un modelo de boletería que privilegie la integridad del acceso al evento
+no puede tolerar las interrupciones totales observadas en redes optimizadas exclusivamente para el
+rendimiento, lo que motiva el análisis comparativo de redes de capa base que se presenta más adelante.
+
 \subsection{Posicionamiento Arquitectónico y Análisis Comparativo}
 
 El estado del arte revela una polarización ostensible: por un lado, la fluidez operativa de la Web2 que
@@ -166,6 +202,61 @@ A la luz de esta matriz, el ensamble Web2.5 orquestado sobre el protocolo Stella
 técnico óptimo. Conserva la elasticidad interactiva a la que está habituado el consumidor tradicional,
 mientras exilia el fraude P2P y la especulación desmedida delegando la lógica de propiedad y compensación al
 motor determinista de la cadena de bloques.
+
+\subsection{Comparativa de redes de capa base para la tokenización de boletos}
+
+La sección anterior contrastó modelos de plataforma (Web2, Web3 y Web2.5); sin embargo, dentro del
+paradigma descentralizado la red de capa base (L1) sobre la que se acuñan los activos determina atributos
+críticos para un sistema de boletería: el costo por operación, la velocidad de finalidad, la capacidad de
+procesamiento y, de forma frecuentemente subestimada, la disponibilidad del servicio. Las plataformas
+analizadas se distribuyen sobre redes heterogéneas: GET Protocol y YellowHeart operan sobre entornos
+EVM (Ethereum y la cadena lateral Polygon), Coachella experimentó sobre Solana y Ticketmaster sobre Flow.
+La Tabla~\ref{tab:comparativa-redes} sistematiza los parámetros técnicos de estas redes frente a la
+propuesta de este trabajo sobre Stellar.
+
+\begin{table}[H]
+\centering
+\small
+\renewcommand{\arraystretch}{1.3}
+\definecolor{rowgray}{gray}{0.96}
+\caption{Comparativa de redes de capa base para la emisión de boletos tokenizados.}
+\label{tab:comparativa-redes}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{2.4cm} >{\raggedright\arraybackslash}p{2.7cm}
+>{\raggedright\arraybackslash}p{2.0cm} >{\raggedright\arraybackslash}p{2.2cm}
+>{\raggedright\arraybackslash}X}
+\toprule
+\rowcolor{rowgray}
+\textbf{Red} & \textbf{Consenso} & \textbf{TPS nominal} & \textbf{Costo aprox. por tx} & \textbf{Rasgo
+distintivo} \\
+\midrule
+Ethereum 1.0 & PoW (histórico) / PoS & 15--30 & USD 5--50 (\textit{gas} volátil) & Congestión y costo
+impredecible en picos. \\
+\rowcolor{rowgray}
+Polygon (PoS) & PoS, cadena lateral EVM & $\approx$\,7\,000 & $<$ USD 0{,}01 & Bajo costo, pero depende de
+\textit{checkpoints} anclados en Ethereum. \\
+Solana & PoH + PoS (Tower BFT) & hasta 65\,000 (menor en la práctica) & $\approx$\,USD 0{,}00025 & Altísimo
+rendimiento, pero con historial de caídas totales de red \cite{helius2024solana}. \\
+\rowcolor{rowgray}
+Flow & PoS multi-rol & miles & bajo & Orientada a NFT de consumo y coleccionables (Dapper Labs). \\
+\textbf{Stellar (propuesta)} & SCP (FBA) & 1\,000--3\,000 & $\approx$\,0{,}02 COP & Prioriza consistencia y
+seguridad sobre disponibilidad; finalidad 3--5\,s. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+El contraste más ilustrativo se establece entre Solana y Stellar, dado que ambas renuncian al cómputo
+intensivo de PoW para alcanzar bajo costo y alta velocidad, pero resuelven de manera opuesta el dilema
+fundamental entre consistencia (\textit{safety}) y disponibilidad (\textit{liveness}). Solana optimiza el
+rendimiento bruto y, ante condiciones adversas, ha priorizado continuar produciendo bloques, lo que se ha
+traducido en interrupciones totales cuando la red se satura o se desincroniza \cite{helius2024solana}. El
+SCP de Stellar adopta la postura inversa: ante la imposibilidad de alcanzar consenso, detiene el avance del
+\textit{ledger} en lugar de arriesgar una bifurcación o un estado inconsistente \cite{mazieres2015stellar}.
+Para un sistema de boletería, en el que la coexistencia de dos copias válidas de un mismo boleto constituye
+el fallo más grave posible, la garantía de no bifurcación del SCP resulta preferible a la maximización del
+\textit{throughput}: es admisible que el sistema espere unos segundos adicionales, pero no que valide dos
+ingresos contradictorios para el mismo asiento. Esta propiedad, sumada al costo despreciable por operación y
+a la finalidad determinista de 3 a 5 segundos, sustenta la elección de Stellar como red base de
+\textit{SecureTicket}.
 
 \subsection{Riesgos tecnológicos o amenazas emergentes.}
 La computación cuántica se perfila como una tecnología capaz de alterar significativamente los sistemas criptográficos actuales, incluyendo aquellos que sustentan plataformas blockchain como Stellar y contratos Soroban utilizados en SecureTicket. En este sentido, algoritmos cuánticos como Shor y Grover podrían comprometer esquemas de firma digital y cifrado asimétrico, afectando la seguridad de las transacciones y la propiedad de los NFTs. Esto representa una amenaza directa para el proyecto, ya que la autenticidad y trazabilidad de los boletos digitales podrían verse vulneradas si los sistemas criptográficos actuales no evolucionan hacia mecanismos resistentes a ataques cuánticos \cite{postquantumblockchain}.
