@@ -1,0 +1,38 @@
+\babel@toc {spanish}{}\relax 
+\contentsline {section}{\numberline {1}Visión global}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Antecedentes, problema y solución propuesta}{4}{subsection.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.1}Descripción de la problemática u oportunidad}{4}{subsubsection.1.1.1}%
+\contentsline {subsubsection}{\numberline {1.1.2}Formulación del problema}{4}{subsubsection.1.1.2}%
+\contentsline {subsubsection}{\numberline {1.1.3}Propuesta de solución}{4}{subsubsection.1.1.3}%
+\contentsline {subsubsection}{\numberline {1.1.4}Justificación de la solución}{5}{subsubsection.1.1.4}%
+\contentsline {subsection}{\numberline {1.2}Descripción general del proyecto}{6}{subsection.1.2}%
+\contentsline {subsubsection}{\numberline {1.2.1}Objetivo general}{6}{subsubsection.1.2.1}%
+\contentsline {subsubsection}{\numberline {1.2.2}Objetivos específicos}{7}{subsubsection.1.2.2}%
+\contentsline {subsubsection}{\numberline {1.2.3}Entregables, estándares utilizados y justificación}{8}{subsubsection.1.2.3}%
+\contentsline {section}{\numberline {2}Análisis de impacto}{8}{section.2}%
+\contentsline {section}{\numberline {3}Proceso}{9}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Fase metodológica 1}{10}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Método}{10}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Actividades}{10}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Resultados esperados}{11}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}Fase metodológica 2}{12}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Método}{12}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Actividades}{12}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Resultados esperados}{13}{subsubsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.3}Fase metodológica 3}{14}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Método}{14}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Actividades}{14}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Resultados esperados}{15}{subsubsection.3.3.3}%
+\contentsline {section}{\numberline {4}Aspectos generales del proyecto}{16}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Compromiso de apoyo de la Institución}{16}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Derechos patrimoniales}{16}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Marco teórico}{17}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Fundamentos y conceptos relevantes para el proyecto}{17}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Fundamentos Criptográficos de la Cadenas de Bloques}{17}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Mecanismos Operativos y Consenso en Redes Distribuidas}{17}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}Entornos de Despliegue y Activos Digitales}{18}{subsubsection.5.1.3}%
+\contentsline {subsubsection}{\numberline {5.1.4}Arquitectura de Software e Interoperabilidad Empresarial}{19}{subsubsection.5.1.4}%
+\contentsline {subsection}{\numberline {5.2}Análisis de alternativas de solución}{19}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Alternativas de solución e impacto}{19}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Comparación de alternativas}{21}{subsubsection.5.2.2}%
+\contentsline {section}{\numberline {6}Referencias}{22}{section.6}%

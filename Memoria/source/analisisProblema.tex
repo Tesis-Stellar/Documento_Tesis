@@ -232,6 +232,19 @@ contrato, por Soroban RPC. El indexador no se ejecuta en entornos \textit{server
 proceso de fondo persistente.
     \item \textbf{Normativas.} La Ley 1493 de 2011 se incluye como referencia académica para la fiscalización
 digital de espectáculos públicos en Colombia.
+\item Como referencia para la interoperabilidad, trazabilidad y cumplimiento legal, la
+norma ISO 20022 define estándares de mensajes financieros estructurados que
+permitirían, en caso de integración futura con sistemas financieros, garantizar
+transacciones consistentes, auditables y compatibles globalmente
+\cite{iso20022}. La Ley CLARITY, aún en desarrollo, establece un marco
+regulatorio para activos digitales, por lo que cualquier expansión del sistema
+hacia pagos fiat o interoperabilidad comercial deberá considerar sus
+lineamientos \cite{clarityact2025}. Estas consideraciones legales condicionan
+la estructura de datos de NFTs, la identificación de wallets, la sincronización
+\textit{on-chain/off-chain} y la compatibilidad de flujos de reventa,
+asegurando que el proyecto pueda evolucionar dentro del margen legal y
+regulatorio.
+
     \item \textbf{Operativas.} La política de comisiones del prototipo se fija en 5\,\% organizador y 3\,\% plataforma; estos parámetros son configurables por contrato pero no se modifican durante la evaluación. La ventana de retención del método \texttt{getEvents} del RPC público obliga al indexador a poll-ear cada 5 segundos.
 \end{itemize}
 

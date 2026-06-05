@@ -126,6 +126,8 @@ del organizador (para firmar operaciones on-chain de su rol) y el identificador 
 
 \subsubsection{API: usuarios, eventos, carrito, checkout y Soroban}
 
+El flujo de checkout en SecureTicket permite a los usuarios adquirir boletos de forma segura y trazable, durante el proceso, el usuario selecciona los boletos deseados en el carrito de compras y procede a la confirmación de la compra mediante la simulación de pago fiat, que emula la operación financiera sin requerir integración con pasarelas reales y para garantizar la propiedad digital y la trazabilidad de cada boleto, la transacción se registra on-chain en los contratos inteligentes, generando o actualizando los NFTs correspondientes. En paralelo, el usuario puede conectar su wallet Freighter, la cual permite firmar transacciones Web3 y autenticar la transferencia de propiedad en la red de prueba de Stellar (Testnet) y la API del backend gestiona la actualización del estado de los boletos en la base de datos y sincroniza la información con el indexador de blockchain, asegurando coherencia entre el registro off-chain y on-chain.
+
 La API expone seis familias de endpoints, organizadas por responsabilidad funcional:
 
 \begin{itemize}\setlength{\itemsep}{2pt}
@@ -141,6 +143,8 @@ operaciones concurrentes de distintos compradores no interfieran entre sí.
     \item \textbf{Checkout fiat:} flujo de compra primaria transaccional. La creación de la orden, los ítems,
 los boletos y el registro de pago se ejecutan dentro de una transacción Prisma atómica, de modo que una falla
 en cualquier paso no deje registros huérfanos.
+
+
 
     \item \textbf{Integración Soroban:} construcción de transacciones XDR para los flujos Web3: asegurar un
 boleto en la blockchain, listar para reventa, cancelar un listado, generar la transacción de compra para
